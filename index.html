@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>LIGA PRO ELITE - ESTADÍSTICAS COMPLETAS</title>
+    <style>
+        :root { --primary: #0f172a; --accent: #3b82f6; --success: #10b981; --danger: #ef4444; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+
+        nav { background: var(--primary); padding: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; position: sticky; top: 0; z-index: 1000; }
+        .nav-link { background: #1e293b; color: white; border: 1px solid #334155; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
+        .nav-link:hover { background: var(--accent); }
+        .nav-link.active { background: var(--accent); border-color: white; }
+
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
+
+       .seccion {display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+	}
+
+	.seccion.visible { display: block !important;
+	}
+	
+        h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .form-group { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .input-std { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; padding: 12px; font-size: 11px; text-transform: uppercase; color: #64748b; border: 1px solid #eee; }
+        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 14px; }
+
+        .btn-main { background: var(--success); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+        
+        .equipo-card { 
+            background: white; border: 1px solid #eee; border-radius: 10px; padding: 15px; 
+            text-align: center; cursor: pointer; transition: 0.2s; position: relative;
+        }
+        .equipo-card:hover { border-color: var(--accent); background: #f0f9ff; }
+        .img-logo { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; display: block; margin: 0 auto; }
+        
+        .img-tabla { width: 24px; height: 24px; object-fit: contain; vertical-align: middle; margin-right: 8px; }
+
+        .partido-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
+        .stat-input-row { display: grid; grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 1.5fr; gap: 5px; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 5px; align-items: center; }
+        
+        .btn-del { background: var(--danger); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; margin-left: 5px; }
+
+        .backup-zone { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #ccc; }
+        .btn-backup { flex: 1; padding: 10px; font-size: 12px; cursor: pointer; border-radius: 6px; border: 1px solid #ddd; font-weight: bold; }
+
+    @media print { 
+    nav, .no-print, button, .form-group, .seccion { 
+        display: none !important; 
+    } 
+
+    /* La clase .print-active se la daremos por JS a la sección que queramos imprimir */
+    .only-print, .seccion.print-active { 
+        display: block !important; 
+    } 
+
+    .seccion { box-shadow: none !important; padding: 0 !important; }
+    body { background: white; }
+    table { border: 1px solid #000; width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; color: black; border: 1px solid #000; }
+    td { border: 1px solid #ddd; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="only-print" style="display: none; text-align: center; margin-bottom: 20px;">
+    <h1 style="color: #0f172a; margin: 0;">LIGA PRO ELITE</h1>
+    <h3 style="color: #3b82f6; margin: 5px 0;">REPORTE OFICIAL</h3>
+    <hr style="border: 1px solid #eee;">
+</div>
+
+<div id="auth-panel" style="background:#1e293b; color:white; padding:10px; display:flex; justify-content:center; gap:15px; align-items:center; font-size:12px;">
+    <span id="status-role">MODO: 👤 USUARIO (Solo Lectura)</span>
+    <div id="auth-actions">
+        <button onclick="loginAdmin()" id="btn-login" style="background:var(--accent); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;">Acceso Admin</button>
+    </div>
+</div>
+
+<nav>
+    <button class="nav-link active" onclick="navegar('sec-calendario', this)">📅 CALENDARIO</button>
+    <button class="nav-link" onclick="navegar('sec-equipos', this)">🛡️ EQUIPOS</button>
+    <button class="nav-link" onclick="navegar('sec-partido', this)">⚽ PARTIDO</button>
+    <button class="nav-link" onclick="navegar('sec-tabla', this)">🏆 TABLA</button>
+    <button class="nav-link" onclick="navegar('sec-playoffs', this)">🏆 PLAYOFFS</button> <button class="nav-link" onclick="navegar('sec-goleadores', this)">🎯 GOLES</button>
+    <button class="nav-link" onclick="navegar('sec-disciplina', this)">🟨 DISCIPLINA</button>
+    <button class="nav-link" onclick="navegar('sec-buscador', this)">🔍 BUSCAR</button>
+    <button onclick="navegar('sec-comparador'); prepararComparador();" class="nav-link">⚖️ COMPARAR</button>
+    <button class="nav-link" onclick="navegar('sec-mi-calendario', this)">🔍 MI CALENDARIO</button>
+    <button class="nav-link" onclick="navegar('sec-ajustes', this)">⚙️ AJUSTES</button>
+</nav>
+
+<div class="container">
+    
+    <div id="sec-inicio" class="seccion visible">
+        <div style="position: relative; width: 100%; height: 350px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop" 
+                 style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6);">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
+                <h1 id="banner-titulo" style="color: white; font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); font-style: italic;">
+                    LIGA PRO <span style="color: var(--accent);">ELITE</span>
+                </h1>
+                <div style="width: 120px; height: 6px; background: var(--accent); margin: 15px auto; border-radius: 3px;"></div>
+                <p id="banner-temporada" style="color: white; font-size: 1.3rem; font-weight: bold; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); letter-spacing: 1px;">
+                    ESTADÍSTICAS OFICIALES 2026
+                </p>
+            </div>
+        </div>
+    </div>
+
+	<div id="sec-calendario" class="seccion">
+    <h2>Calendario de Juegos</h2>
+    
+    <div class="form-group no-print admin-only" style="display: none;">
+        <label>Número de Vueltas:</label>
+        <select id="vueltas" class="input-std">
+            <option value="1">1 Vuelta</option>
+            <option value="2">2 Vueltas</option>
+        </select>
+        <button onclick="generarCalendario()" class="btn-main" style="background:var(--primary)">
+            GENERAR NUEVO CALENDARIO
+        </button>
+    </div>
+    
+    <div id="render-calendario"></div>
+</div>
+
+    <div id="sec-ajustes" class="seccion">
+        <h2>⚙️ Configuración del Sistema</h2>
+        
+        <div class="form-group">
+            <h3>📦 Gestión de Datos</h3>
+            <p style="font-size: 13px; color: #64748b;">Descarga una copia de seguridad o restaura una anterior.</p>
+            <div class="backup-zone" style="border-top: none; margin-top: 10px; padding-top: 0;">
+                <button onclick="exportarDatos()" class="btn-backup" style="background: #e2e8f0; border: 1px solid #cbd5e1;">📤 EXPORTAR RESPALDO</button>
+                <button onclick="document.getElementById('import-file-main').click()" class="btn-backup" style="background: #e2e8f0; border: 1px solid #cbd5e1;">📥 IMPORTAR RESPALDO</button>
+                <input type="file" id="import-file-main" style="display:none" accept=".json" onchange="importarDatos(this)">
+            </div>
+        </div>
+
+        <div class="form-group admin-only" style="border: 2px solid #fee2e2; background: #fffafb; padding: 20px;">
+            <h3 style="color: var(--danger); margin-top: 0;">⚠️ Zona de Peligro</h3>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+                Esta acción es irreversible. Se borrarán los resultados y estadísticas, manteniendo solo la estructura de equipos si así lo deseas.
+            </p>
+            
+            <button id="btn-reinicio-global" 
+                onclick="reiniciarTodo()" 
+                class="btn-main" 
+                style="background:var(--danger); color:white; border:none; padding:12px; border-radius:6px; cursor:pointer; width: 100%; font-weight: bold;">
+                ♻️ REINICIAR TEMPORADA COMPLETA
+            </button>
+        </div>
+    </div>
+
+    <div id="sec-equipos" class="seccion">
+        <h2>🛡️ Gestión de Equipos</h2>
+        
+       <div id="form-registro-equipo" class="form-group no-print admin-only">
+    <h3 id="titulo-form-equipo">Registrar Nuevo Equipo</h3>
+    <input type="hidden" id="edit-eq-id" value="-1">
+    <input type="text" id="eq-nombre" placeholder="Nombre del Equipo" class="input-std">
+    
+    <label style="font-size: 11px; font-weight: bold;">LOGO DEL EQUIPO:</label>
+    <input type="file" id="eq-logo-file" accept="image/*" class="input-std" onchange="procesarLogoEquipo(event)">
+    
+    <div style="display: flex; gap: 10px;">
+        <button onclick="guardarEquipo()" class="btn-main" style="flex: 2;">GUARDAR EQUIPO</button>
+        <button onclick="cancelarEdicionEquipo()" class="btn-main" style="background: var(--danger); flex: 1; display: none;" id="btn-cancelar-eq">X</button>
+    </div>
+</div>
+
+        <div id="grid-equipos" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:15px; margin-top: 20px;"></div>
+
+        <div id="panel-plantilla" style="display:none; margin-top:30px; border-top: 3px solid var(--accent); padding-top: 20px;">
+            <h3 id="tit-equipo"></h3>
+            
+            <div class="form-group editor-only" style="background: #f8fafc; border: 2px solid var(--accent); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+    <h4 style="margin-top: 0; color: var(--primary);">Ficha de Jugador</h4>
+    
+    <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <div style="text-align: center; min-width: 120px;">
+            <div style="width: 100px; height: 100px; border: 2px dashed #cbd5e1; border-radius: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: white; margin-bottom: 8px;">
+                <img id="previsualizar-foto" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <span id="placeholder-foto" style="font-size: 24px; color: #94a3b8;">👤</span>
+            </div>
+            <label for="foto-archivo" style="background: var(--primary); color: white; padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; display: block;">
+                SUBIR FOTO
+            </label>
+            <input type="file" id="foto-archivo" accept="image/*" style="display: none;" onchange="procesarFoto(event)">
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+            <input type="hidden" id="edit-pj-id" value="-1">
+            <input type="text" id="pj-nombre" placeholder="Nombre del Jugador" class="input-std" style="margin:0;">
+            <input type="text" id="pj-curp" placeholder="ID/DNI/CURP" class="input-std" style="margin:0;">
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="guardarJugador()" class="btn-main" style="background: var(--success); flex: 2;">GUARDAR / FICHAR</button>
+                <button onclick="limpiarFormularioJugador()" class="btn-main" style="background: var(--danger); flex: 1;">X</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jugador</th><th>PJ</th><th>Goles</th><th>🟨</th><th>🟥</th>
+                        <th class="admin-only">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="body-plantilla"></tbody>
+            </table>
+        </div>
+    </div>    <div id="sec-partido" class="seccion"><div id="area-carga"></div></div>
+    <div id="sec-tabla" class="seccion">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 10px; padding-bottom: 10px;">
+        <h2 style="margin:0; border:none;">Tabla de Posiciones</h2>
+        <button onclick="imprimirTabla()" class="btn-main no-print" style="width: auto; padding: 8px 20px; background: var(--primary);">
+            🖨️ EXPORTAR PDF
+        </button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Pos</th>
+                <th style="text-align:left">Equipo</th>
+                <th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th>
+            </tr>
+        </thead>
+        <tbody id="body-tabla"></tbody>
+    </table>
+</div>
+    <div id="sec-goleadores" class="seccion">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 10px; padding-bottom: 10px;">
+        <h2 style="margin:0; border:none;">Tabla de Goleadores</h2>
+        <button onclick="prepararImpresionGoleadores()" class="btn-main no-print" style="width: auto; padding: 8px 20px; background: #f59e0b;">
+            🖨️ EXPORTAR TOP 10 PDF
+        </button>
+    </div>
+        <table>
+        <thead>
+            <tr>
+                <th>Pos</th>
+                <th style="text-align:left">Jugador</th>
+                <th>Equipo</th>
+                <th>Goles</th>
+                <th>Promedio</th>
+            </tr>
+        </thead>
+        <tbody id="body-goleadores"></tbody>
+    </table>
+</div>
+    <div id="sec-disciplina" class="seccion"><h2>Disciplina</h2><div class="form-group no-print"><select id="orden-disc" onchange="renderTodo()" class="input-std" style="width:200px"><option value="roja">Ordenar por Rojas</option><option value="ama">Ordenar por Amarillas</option></select></div><table><thead><tr><th style="text-align:left">Jugador</th><th>Equipo</th><th>🟨</th><th>🟥</th></tr></thead><tbody id="body-disciplina"></tbody></table></div>
+
+<div id="sec-buscador" class="seccion">
+    <h2>Buscador de Jugadores</h2>
+    <div class="form-group no-print">
+        <input type="text" id="input-busqueda" oninput="buscarJugador()" placeholder="Escribe el nombre del jugador..." class="input-std" style="font-size: 18px; border: 2px solid var(--accent);">
+    </div>
+       <div id="resultados-busqueda">
+        <p style="text-align:center; color:#64748b;">Escribe un nombre para comenzar la búsqueda...</p>
+    </div>
+</div>
+
+<div id="sec-playoffs" class="seccion">
+    <div style="background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+        <h2 style="color: white; border: none; margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">🏆 Fase de Eliminatorias</h2>
+        <p style="opacity: 0.9; margin-top: 10px;">Define el camino hacia el campeonato</p>
+    </div>
+
+    <div class="form-group no-print editor-only" style="background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; display: flex; gap: 15px; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <label style="font-weight: bold; color: #64748b; font-size: 12px;">SELECCIONAR FORMATO:</label>
+            <select id="p-formato" class="input-std" style="margin: 0; min-width: 200px;">
+                <option value="2">Gran Final (Top 2)</option>
+                <option value="4">Semifinales (Top 4)</option>
+                <option value="8">Cuartos de Final (Top 8)</option>
+            </select>
+        </div>
+        <button onclick="generarCrucesPlayoffs()" class="btn-main" style="background: #3b82f6; width: auto; padding: 15px 30px; margin-top: 18px; transition: all 0.3s ease;">
+            ⚡ GENERAR CRUCES
+        </button>
+    </div>
+
+    <div id="render-playoffs" style="margin-top: 30px;">
+        </div>
+</div>
+<div id="sec-disciplina" class="seccion" style="display:none;">
+    </div>
+<div id="sec-comparador" class="seccion" style="display:none; padding:10px; max-width: 900px; margin: 0 auto;">
+    
+    <div style="text-align:center; margin-bottom:15px;">
+        <h1 style="margin:0; font-size: 30px; font-weight: 900; color: #0f172a; letter-spacing: -1px; text-transform: uppercase; font-style: italic;">
+            CARA <span style="color: #3b82f6;">A</span> CARA
+        </h1>
+        <div style="width: 40px; height: 3px; background: #3b82f6; margin: 5px auto; border-radius: 2px;"></div>
+    </div>
+    
+    <div style="max-width: 350px; margin: 0 auto 15px auto; position: relative;">
+        <input type="text" id="main-search" placeholder="🔍 Buscar jugador..." 
+               oninput="filtrarBusquedaUnica()" 
+               style="width:100%; padding:12px; border:2px solid #e2e8f0; border-radius:12px; font-size:14px; text-align:center; outline:none; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        
+        <div id="main-results" style="position:absolute; top:105%; left:0; right:0; background:white; z-index:1000; box-shadow:0 10px 20px rgba(0,0,0,0.1); border-radius:10px; max-height:200px; overflow-y:auto; display:none; border:1px solid #e2e8f0;"></div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 10px;">
+        <button onclick="limpiarDuelo()" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:11px; text-decoration:underline;">
+            🔄 Limpiar
+        </button>
+    </div>
+
+    <input type="hidden" id="select-j1" value="">
+    <input type="hidden" id="select-j2" value="">
+
+    <div id="render-comparativa"></div>
+</div>
+
+<style>
+    /* Animación de aparición para las cartas */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px) scale(0.9); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .animar-entrada { animation: fadeInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+/* Por defecto todo oculto */
+/* 1. Las secciones se controlan por la clase .visible, NO por el rol */
+.seccion { 
+    display: none; 
+}
+.seccion.visible { 
+    display: block !important; 
+}
+
+/* 2. Los elementos internos sí se controlan por rol */
+.admin-only, .editor-only { 
+    display: none !important; 
+}
+
+/* Mostrar según el rol activo en el body */
+body.role-admin .admin-only,
+body.role-admin .editor-only { 
+    display: block !important; 
+}
+
+body.role-editor .editor-only { 
+    display: block !important; 
+}
+</style>
+
+<div id="sec-mi-calendario" class="seccion">
+        <h2 style="text-align: center;">🔍 Partidos de la Temporada</h2>
+        
+        <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px; background: #f1f5f9; padding: 15px; border-radius: 12px;">
+            <input type="text" id="busqueda-usuario" 
+                   placeholder="Escribe el nombre de tu equipo..." 
+                   style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 16px;"
+                   onkeyup="renderMiCalendario()">
+            
+            <button onclick="window.print()" class="btn-publico-pdf" 
+                    style="background: #ef4444; color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                PDF 📄
+            </button>
+        </div>
+
+        <div id="render-mi-calendario"></div>
+    </div> 
+    </div>
+
+
+<script>
+let equipoActual = ""; // <--- AÑADE ESTA LÍNEA
+let fotoBase64Temp = ""; 
+let modoAdmin = false; 
+let db = JSON.parse(localStorage.getItem('LIGA_PRO_FINAL')) || { 
+    equipos: [], 
+    jugadores: [], 
+    calendario: [], 
+    playoffs: {},
+    nombreTemporada: "ESTADÍSTICAS OFICIALES 2026" 
+};
+
+const persist = () => localStorage.setItem('LIGA_PRO_FINAL', JSON.stringify(db));
+
+// --- INICIALIZACIÓN ---
+document.addEventListener('DOMContentLoaded', () => {
+    actualizarBanner();
+    renderTodo();
+    aplicarRestricciones();
+});
+
+let rolActual = "usuario"; // "usuario", "editor", "admin"
+
+function loginAdmin() {
+    const input = prompt("Internal Access Code");
+    if (!input) return;
+
+    // Convertimos lo que el usuario escribió a Base64
+    const hashedInput = btoa(input);
+
+    // Definimos las llaves ocultas
+    const keyEditor = "Y2FyZ2E5ODc="; 
+    const keyAdmin = "ZGlvczExOTA=";
+
+    if (hashedInput === keyAdmin) {
+        rolActual = 'admin';
+        modoAdmin = true;
+        document.body.classList.add('role-admin');
+        document.body.classList.remove('role-editor');
+        alert("Acceso total concedido (ADMIN).");
+    } 
+    else if (hashedInput === keyEditor) {
+        rolActual = 'editor';
+        modoAdmin = false; // El editor no es admin total, pero puede editar
+        document.body.classList.add('role-editor');
+        document.body.classList.remove('role-admin');
+        alert("Acceso de edición concedido (EDITOR).");
+    } 
+    else {
+        alert("Código de sistema no reconocido.");
+        return;
+    }
+
+    // Actualizamos la interfaz para mostrar/ocultar botones
+    aplicarRestricciones();
+    renderTodo();
+}
+
+function actualizarInterfazAdmin() {
+    // REGLA DE ORO: No toques .style.display manualmente aquí.
+    // El CSS ocultará el form-registro-equipo automáticamente
+    // porque el Editor NO tiene la clase .role-admin en el body.
+    
+    renderEquipos(); 
+}
+function aplicarRestricciones() {
+    const status = document.getElementById('status-role');
+    const btnLogin = document.getElementById('btn-login');
+    const body = document.body;
+
+    body.classList.remove('role-admin', 'role-editor');
+
+    if (rolActual === 'admin' || rolActual === 'editor') {
+        body.classList.add(rolActual === 'admin' ? 'role-admin' : 'role-editor');
+        if (status) status.innerText = rolActual === 'admin' ? "MODO: 🛡️ ADMINISTRADOR" : "MODO: 📝 EDITOR";
+        
+        if (btnLogin) {
+            btnLogin.innerText = "Cerrar Sesión";
+            btnLogin.onclick = logout; // <-- CAMBIO CLAVE: Ahora el botón cierra sesión
+            btnLogin.style.background = "var(--danger)"; // Opcional: ponerlo rojo
+        }
+    } 
+    else {
+        if (status) status.innerText = "MODO: 👤 USUARIO (Solo Lectura)";
+        if (btnLogin) {
+            btnLogin.innerText = "Acceso Admin";
+            btnLogin.onclick = loginAdmin; // <-- CAMBIO CLAVE: Vuelve a ser para loguearse
+            btnLogin.style.background = "var(--accent)";
+        }
+    }
+
+    // 3. Control de botones de navegación (Ajustes y Calendario Admin)
+    const botonesNav = document.querySelectorAll('.nav-link');
+    
+    botonesNav.forEach(btn => {
+        const texto = btn.innerText.toUpperCase();
+        
+        // El botón AJUSTES solo para ADMIN
+        if (texto.includes('AJUSTES')) {
+            btn.style.display = (rolActual === 'admin') ? "inline-block" : "none";
+        }
+    });
+
+    // 4. Asegurar que el panel de generación de calendario solo sea para ADMIN
+    const panelGenerador = document.querySelector('#sec-calendario .admin-only');
+    if (panelGenerador) {
+        panelGenerador.style.display = (rolActual === 'admin') ? "block" : "none";
+    }
+}
+    // --- FUNCIONES DE RESPALDO ---
+   // --- RESPALDOS ---
+function exportarDatos() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "respaldo_liga.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
+function importarDatos(input) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        db = JSON.parse(e.target.result);
+        persist();
+        location.reload();
+    };
+    reader.readAsText(input.files[0]);
+}
+
+   function navegar(idSeccion, boton) {
+    // 1. Gestión de visibilidad (Ocultar todas, mostrar una)
+    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('visible'));
+    const seccionActiva = document.getElementById(idSeccion);
+    if(seccionActiva) seccionActiva.classList.add('visible');
+
+    // 2. Gestión de Botones (Clase Active)
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    if(boton) {
+        boton.classList.add('active');
+    } else {
+        const btnNav = Array.from(document.querySelectorAll('.nav-link'))
+                            .find(b => b.getAttribute('onclick')?.includes(idSeccion));
+        if(btnNav) btnNav.classList.add('active');
+    }
+
+    // --- RENDERIZADO BAJO DEMANDA ---
+    switch(idSeccion) {
+        case 'sec-inicio':
+            actualizarBanner(); // Actualiza el nombre de la liga en la foto
+            renderTodo(); // Carga la tabla de posiciones rápida si la tienes ahí
+            break;
+        case 'sec-equipos':
+            renderEquipos(); // Dibuja los escudos de los equipos
+            // Si había un equipo seleccionado, refrescamos su plantilla
+            if (equipoActual !== null) verPlantilla(equipoActual);
+            break;
+        case 'sec-calendario':
+            renderCalendario();
+            break;
+        case 'sec-buscador':
+            buscarJugador();
+            break;
+        case 'sec-mi-calendario':
+            renderMiCalendario();
+            break;
+        case 'sec-goleadores':
+            renderGoleadores();
+            break;
+        case 'sec-tabla':
+            renderTabla();
+            break;
+        case 'sec-playoffs':
+            // Aquí llamarías a tu función de render de playoffs
+            break;
+        default:
+            renderTodo();
+    }
+
+    // 3. Aplicar seguridad (Ocultar botones de Admin si es Usuario)
+    aplicarRestricciones(); 
+}
+function guardarEquipo() {
+    // BLOQUEO TOTAL: Solo el rol admin puede entrar aquí
+    if (rolActual !== 'admin') {
+        return alert("⛔ Permiso insuficiente. Solo el Administrador puede crear o editar equipos.");
+    }
+
+    const nombre = document.getElementById('eq-nombre').value.trim();
+    const idEditando = document.getElementById('edit-eq-id').value;
+    
+    if (!nombre) return alert("Ingresa el nombre del equipo");
+
+    if (idEditando === "-1") {
+        // NUEVO EQUIPO
+        db.equipos.push({
+            id: Date.now(),
+            nombre: nombre,
+            logo: fotoBase64Temp || "",
+            pj:0, g:0, e:0, p:0, gf:0, gc:0, pts:0 
+        });
+    } else {
+        // EDITAR EXISTENTE
+        const idx = parseInt(idEditando);
+        let antiguoNombre = db.equipos[idx].nombre;
+        
+        db.equipos[idx].nombre = nombre;
+        if (fotoBase64Temp) db.equipos[idx].logo = fotoBase64Temp;
+
+        // Actualizar el nombre en jugadores y calendario si cambió
+        if (antiguoNombre !== nombre) {
+            actualizarVinculosEquipo(antiguoNombre, nombre);
+        }
+    }
+
+    persist();
+    cancelarEdicionEquipo();
+    renderTodo();
+    alert("✅ Equipo guardado correctamente");
+}
+
+// Función auxiliar para mantener la integridad de los datos
+function actualizarVinculosEquipo(viejo, nuevo) {
+    db.jugadores.filter(j => j.equipo === viejo).forEach(j => j.equipo = nuevo);
+    db.calendario.forEach(jor => {
+        jor.partidos.forEach(p => {
+            if(p.l === viejo) p.l = nuevo;
+            if(p.v === viejo) p.v = nuevo;
+            if(p.inc) p.inc.forEach(i => { if(i.e === viejo) i.e = nuevo; });
+        });
+    });
+}
+
+function borrarEquipo(i) {
+    // Solo el rol admin puede borrar
+    if (rolActual !== 'admin') {
+        return alert("⛔ Acción bloqueada: Solo el Administrador puede eliminar equipos.");
+    }
+
+    if(confirm(`¿Estás seguro de borrar a ${db.equipos[i].nombre}? Se eliminarán también sus jugadores.`)) {
+        const nombre = db.equipos[i].nombre;
+        db.jugadores = db.jugadores.filter(j => j.equipo !== nombre);
+        db.equipos.splice(i, 1);
+        persist(); 
+        renderTodo();
+    }
+}
+
+function editarEq(i) {
+    // Solo el rol admin puede cargar el formulario de edición
+    if (rolActual !== 'admin') {
+        return alert("⛔ Acceso denegado. Solo administradores pueden modificar equipos.");
+    }
+    document.getElementById('eq-nombre').value = db.equipos[i].nombre;
+    document.getElementById('edit-eq-id').value = i;
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+ function verPlantilla(referencia) {
+    // --- 0. LIMPIEZA TOTAL DEL FORMULARIO ---
+    // Esto evita que la foto y datos del equipo anterior se queden visibles
+    if (typeof limpiarFormularioJugador === 'function') {
+        limpiarFormularioJugador();
+    }
+
+    // 1. Detectar si nos pasaron un ID o un Nombre
+    let nombreEquipo;
+    if (typeof referencia === 'number') {
+        nombreEquipo = db.equipos[referencia].nombre;
+    } else {
+        nombreEquipo = referencia;
+    }
+
+    equipoActual = nombreEquipo;
+
+    // 2. Filtrar y Dibujar
+    const plantilla = db.jugadores.filter(j => j.equipo === nombreEquipo);
+    const tbody = document.getElementById('body-plantilla');
+    
+    document.getElementById('tit-equipo').innerText = nombreEquipo;
+    document.getElementById('panel-plantilla').style.display = "block";
+
+    if (plantilla.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; color:#94a3b8;">No hay jugadores registrados.</td></tr>`;
+    } else {
+        tbody.innerHTML = plantilla.map(j => {
+            // Usamos una estampa de tiempo o validamos el base64 para forzar al navegador a refrescar la imagen
+            const fotoUrl = j.foto ? j.foto : 'https://placehold.jp/24/cccccc/ffffff/40x40.png?text=👤';
+            
+            return `
+            <tr>
+                <td style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                    <img src="${fotoUrl}" 
+                         style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                    <span>${j.nombre}</span>
+                </td>
+                <td>${j.pj || 0}</td>
+                <td>${j.goles || 0}</td>
+                <td>${j.ama || 0}</td>
+                <td>${j.roja || 0}</td>
+                <td class="editor-only"> 
+                    <button class="btn-edit" onclick="editarPj(${j.id})">✏️</button>
+                    <button class="btn-del" onclick="eliminarPj(${j.id}, '${nombreEquipo}')">🗑️</button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    aplicarRestricciones();
+    document.getElementById('panel-plantilla').scrollIntoView({ behavior: 'smooth' });
+}
+
+function guardarJugador() {
+    if (!modoAdmin) return alert("Acción bloqueada: Permisos requeridos.");
+
+    const nombre = document.getElementById('pj-nombre').value.trim();
+    const curp = document.getElementById('pj-curp').value.trim().toUpperCase();
+    const idEditando = document.getElementById('edit-pj-id').value;
+    const equipoActual = document.getElementById('tit-equipo').innerText.trim();
+
+    if (!nombre || !curp) {
+        return alert("Por favor, ingresa Nombre y CURP.");
+    }
+
+    const duplicado = db.jugadores.find(j => 
+        j.curp === curp && String(j.id) !== String(idEditando)
+    );
+    
+    if (duplicado) {
+        return alert(`¡ERROR! El CURP ${curp} ya existe en el equipo: ${duplicado.equipo}`);
+    }
+
+    // --- LÓGICA DE GUARDADO ---
+    if (idEditando === "-1") {
+        db.jugadores.push({ 
+            id: Date.now(), 
+            nombre: nombre, 
+            curp: curp,
+            equipo: equipoActual, 
+            pj: 0, goles: 0, ama: 0, roja: 0,
+            foto: fotoBase64Temp || "" 
+        });
+    } else {
+        const j = db.jugadores.find(x => String(x.id) === String(idEditando));
+        if (j) {
+            j.nombre = nombre;
+            j.curp = curp;
+            if (fotoBase64Temp) j.foto = fotoBase64Temp;
+        }
+    }
+
+    // 1. Guardar permanentemente
+    persist();
+    
+    // 2. Notificar ÉXITO PRIMERO (esto detiene la ejecución un segundo para el usuario)
+    alert("✅ Proceso completado con éxito.");
+
+    // 3. Ahora sí, limpiar el formulario
+    limpiarFormularioJugador();
+
+    // 4. Refrescar las tablas
+    if (equipoActual) {
+        verPlantilla(equipoActual); 
+    }
+    
+    if (typeof renderTodo === 'function') renderTodo(); 
+}
+
+function editarPj(id) {
+    // Usamos String() para asegurar que la búsqueda funcione sin importar el origen del ID
+    const j = db.jugadores.find(x => String(x.id) === String(id));
+    if (!j) return;
+
+    document.getElementById('pj-nombre').value = j.nombre;
+    document.getElementById('pj-curp').value = j.curp || "";
+    document.getElementById('edit-pj-id').value = j.id; // Guardamos el ID original
+
+    // MOSTRAR FOTO ACTUAL
+    const preview = document.getElementById('previsualizar-foto');
+    if (j.foto) {
+        preview.src = j.foto;
+        preview.style.display = "inline-block";
+        // IMPORTANTE: Reseteamos la variable temporal para que no se guarde 
+        // la foto vieja como si fuera nueva a menos que el usuario la cambie.
+        fotoBase64Temp = ""; 
+    } else {
+        preview.src = "";
+        preview.style.display = "none";
+    }
+    
+    // Opcional: Hacer scroll automático hacia el formulario para que el usuario vea que se cargó
+    document.getElementById('pj-nombre').focus();
+}
+
+    	// --- LÓGICA DE CALENDARIO CON ALTERNANCIA ---
+
+	function generarCalendario() {
+    if (rolActual !== 'admin') {
+        alert("⛔ Solo el Administrador principal puede regenerar el calendario.");
+        return;
+    }
+    
+    if (!confirm("⚠️ ¿Estás seguro? Se borrarán todos los resultados actuales.")) return;	
+
+        if (db.equipos.length < 2) return alert("Mínimo 2 equipos");
+        
+        const numVueltas = parseInt(document.getElementById('vueltas').value);
+        let eqs = db.equipos.map(e => e.nombre);
+        
+        if (eqs.length % 2 !== 0) eqs.push("DESCANSO");
+        
+        db.calendario = [];
+        let n = eqs.length;
+        let jornadasPrimeraVuelta = [];
+
+        for (let i = 0; i < n - 1; i++) {
+            let jor = { num: i + 1, partidos: [] };
+            for (let j = 0; j < n / 2; j++) {
+                let local = eqs[j];
+                let visitante = eqs[n - 1 - j];
+                
+                if (local !== "DESCANSO" && visitante !== "DESCANSO") {
+                    // ALTERNANCIA L/V: Si la jornada es par, invertimos el orden
+                    if (i % 2 === 1) {
+                        let temp = local;
+                        local = visitante;
+                        visitante = temp;
+                    }
+
+                    jor.partidos.push({
+                        id: Math.random(),
+                        l: local,
+                        v: visitante,
+                        score: "vs",
+                        jugado: false,
+                        inc: []
+                    });
+                }
+            }
+            jornadasPrimeraVuelta.push(jor);
+            eqs.splice(1, 0, eqs.pop()); 
+        }
+
+        db.calendario = [...jornadasPrimeraVuelta];
+
+        if (numVueltas === 2) {
+            let totalIda = jornadasPrimeraVuelta.length;
+            jornadasPrimeraVuelta.forEach((jorIda, idx) => {
+                let jorVuelta = { num: totalIda + idx + 1, partidos: [] };
+                jorIda.partidos.forEach(pIda => {
+                    jorVuelta.partidos.push({
+                        id: Math.random(),
+                        l: pIda.v,
+                        v: pIda.l,
+                        score: "vs",
+                        jugado: false,
+                        inc: []
+                    });
+                });
+                db.calendario.push(jorVuelta);
+            });
+        }
+
+        persist();
+        renderTodo();
+        alert("CALENDARIO GENERADO");
+	    }
+
+// --- LÓGICA DE CALENDARIO CON ALTERNANCIA ---
+function generarCalendario() {
+    if (rolActual !== 'admin') {
+        alert("⛔ Solo el Administrador principal puede regenerar el calendario.");
+        return;
+    }
+    
+    if (!confirm("⚠️ ¿Estás seguro? Se borrarán todos los resultados actuales.")) return;	
+
+    if (db.equipos.length < 2) return alert("Mínimo 2 equipos");
+    
+    const numVueltas = parseInt(document.getElementById('vueltas').value);
+    let eqs = db.equipos.map(e => e.nombre);
+    
+    if (eqs.length % 2 !== 0) eqs.push("DESCANSO");
+    
+    db.calendario = [];
+    let n = eqs.length;
+    let jornadasPrimeraVuelta = [];
+
+    for (let i = 0; i < n - 1; i++) {
+        let jor = { num: i + 1, partidos: [] };
+        for (let j = 0; j < n / 2; j++) {
+            let local = eqs[j];
+            let visitante = eqs[n - 1 - j];
+            
+            if (local !== "DESCANSO" && visitante !== "DESCANSO") {
+                if (i % 2 === 1) {
+                    let temp = local;
+                    local = visitante;
+                    visitante = temp;
+                }
+
+                jor.partidos.push({
+                    id: Math.random(),
+                    l: local,
+                    v: visitante,
+                    score: "vs",
+                    jugado: false,
+                    inc: []
+                });
+            }
+        }
+        jornadasPrimeraVuelta.push(jor);
+        eqs.splice(1, 0, eqs.pop()); 
+    }
+
+    db.calendario = [...jornadasPrimeraVuelta];
+
+    if (numVueltas === 2) {
+        let totalIda = jornadasPrimeraVuelta.length;
+        jornadasPrimeraVuelta.forEach((jorIda, idx) => {
+            let jorVuelta = { num: totalIda + idx + 1, partidos: [] };
+            jorIda.partidos.forEach(pIda => {
+                jorVuelta.partidos.push({
+                    id: Math.random(),
+                    l: pIda.v,
+                    v: pIda.l,
+                    score: "vs",
+                    jugado: false,
+                    inc: []
+                });
+            });
+            db.calendario.push(jorVuelta);
+        });
+    }
+
+    persist();
+    renderTodo();
+    alert("CALENDARIO GENERADO");
+}
+
+function renderCalendario() {
+    const contenedor = document.getElementById('render-calendario');
+    if (!contenedor) return;
+
+    contenedor.innerHTML = ""; 
+    if (!db.calendario || db.calendario.length === 0) {
+        contenedor.innerHTML = `<div style="text-align:center; padding:40px; color:#94a3b8;">
+            <div style="font-size:40px; margin-bottom:10px;">📅</div>
+            <p>Aún no hay jornadas generadas en el sistema.</p>
+        </div>`;
+        return;
+    }
+
+    // Definimos quién tiene permiso de edición (Admin y Editor)
+    const tienePermiso = (rolActual === 'admin' || rolActual === 'editor');
+
+    let html = "";
+    db.calendario.forEach(jornada => {
+        html += `
+        <div style="margin-top:30px; background:#fff; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+            <div style="background:var(--primary); color:white; padding:15px; font-weight:900; text-align:center; letter-spacing:2px; text-transform:uppercase; font-size:14px;">
+                JORNADA ${jornada.num}
+            </div>`;
+        
+        jornada.partidos.forEach(p => {
+            let botonAccion = "";
+            
+            if (p.jugado) {
+                // PARTIDO FINALIZADO
+                botonAccion = `
+                    <div style="font-size:32px; font-weight:900; color:#1e293b; line-height:1;">${p.score}</div>
+                    <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
+                        <button onclick="verReporte(${p.id})" style="background:#3b82f6; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">📄 REPORTE</button>
+                        ${tienePermiso ? `
+                            <button onclick="resolverProtesta(${p.id})" style="background:#e11d48; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">🚫 PROTESTA</button>
+                            <button onclick="resetearPartido(${p.id})" style="background:#64748b; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">🔄 RESETEAR</button>
+                        ` : ''}
+                    </div>`;
+            } else {
+                // PARTIDO PENDIENTE
+                botonAccion = `
+                    <div style="font-weight:900; color:#cbd5e1; font-size:20px; letter-spacing:2px;">VS</div>
+                    <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
+                        ${tienePermiso ? `
+                            <button onclick="prepararCarga(${p.id})" style="background:var(--success); color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:bold;">CARGAR</button>
+                            <button onclick="resolverDefault(${p.id})" style="background:#64748b; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:bold;">DEFAULT</button>
+                        ` : '<span style="color:#94a3b8; font-size:10px; font-weight:bold;">PENDIENTE</span>'}
+                    </div>`;
+            }
+
+            const eqL = db.equipos.find(e => e.nombre === p.l) || {};
+            const eqV = db.equipos.find(e => e.nombre === p.v) || {};
+
+            html += `
+                <div class="partido-row" style="display:flex; align-items:center; justify-content:space-between; padding:25px 15px; border-bottom:1px solid #f1f5f9;">
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px;">
+                        <img src="${eqL.logo || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:contain;">
+                        <span style="font-size:14px; font-weight:800; text-align:center;">${p.l}</span>
+                    </div>
+
+                    <div style="flex:0.6; text-align:center; display:flex; flex-direction:column; align-items:center;">
+                        ${botonAccion}
+                    </div>
+
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px;">
+                        <img src="${eqV.logo || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:contain;">
+                        <span style="font-size:14px; font-weight:800; text-align:center;">${p.v}</span>
+                    </div>
+                </div>`;
+        });
+        html += `</div>`;
+    });
+    contenedor.innerHTML = html;
+}
+function prepararCarga(id) {
+    let p; 
+    db.calendario.forEach(j => { 
+        let x = j.partidos.find(part => part.id === id); 
+        if(x) p = x; 
+    });
+
+    if (p.jugado) {
+        alert("Este partido ya fue finalizado y no puede ser editado.");
+        navegar('sec-calendario');
+        return;
+    }
+
+    const eqLocal = db.equipos.find(e => e.nombre === p.l);
+    const eqVisita = db.equipos.find(e => e.nombre === p.v);
+    const jl = db.jugadores.filter(j => j.equipo === p.l).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+    const jv = db.jugadores.filter(j => j.equipo === p.v).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+    
+    navegar('sec-partido', document.querySelectorAll('.nav-link')[2]);
+    
+    document.getElementById('area-carga').innerHTML = `
+        <div style="text-align:center; background: var(--primary); color:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <div style="display:flex; justify-content:space-around; align-items:center;">
+                <div style="flex:1;">
+                    <img src="${eqLocal.logo || ''}" onerror="this.src='https://via.placeholder.com/80?text=LOGO'" style="width:80px; height:80px; object-fit:contain; background:white; border-radius:10px; padding:5px; border: 2px solid var(--accent);">
+                    <h3 style="margin:10px 0 0; font-size:18px; text-transform:uppercase;">${p.l}</h3>
+                </div>
+
+                <div style="flex:1;">
+                    <div style="font-size:12px; opacity:0.6; margin-bottom:5px;">MARCADOR</div>
+                    <h1 style="margin:0; font-size:55px; letter-spacing: 5px;"><span id="live-gl">0</span> - <span id="live-gv">0</span></h1>
+                </div>
+
+                <div style="flex:1;">
+                    <img src="${eqVisita.logo || ''}" onerror="this.src='https://via.placeholder.com/80?text=LOGO'" style="width:80px; height:80px; object-fit:contain; background:white; border-radius:10px; padding:5px; border: 2px solid var(--accent);">
+                    <h3 style="margin:10px 0 0; font-size:18px; text-transform:uppercase;">${p.v}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div style="background:#fff; padding:15px; border-radius:10px; border:1px solid #eee;">
+                <h4 style="margin-top:0; color:var(--primary); border-bottom:2px solid #eee; padding-bottom:5px;">🛡️ ${p.l}</h4>
+                ${jl.map(j => statInput(j, 'L')).join('')}
+                ${statInput({id: 'AGL', nombre: 'AUTOGOL', equipo: p.l}, 'L', true)}
+            </div>
+            <div style="background:#fff; padding:15px; border-radius:10px; border:1px solid #eee;">
+                <h4 style="margin-top:0; color:var(--primary); border-bottom:2px solid #eee; padding-bottom:5px;">🛡️ ${p.v}</h4>
+                ${jv.map(j => statInput(j, 'V')).join('')}
+                ${statInput({id: 'AGV', nombre: 'AUTOGOL', equipo: p.v}, 'V', true)}
+            </div>
+        </div>
+
+        <div style="margin-top:20px; background:#fff; border:1px solid #ddd; border-radius:12px; overflow:hidden;">
+            <div style="background:#f1f5f9; padding:10px; font-weight:bold; text-align:center; border-bottom:1px solid #ddd;">
+                📝 INCIDENCIAS DEL ENCUENTRO
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0; min-height:80px;">
+                <div id="incidencias-L" style="padding:15px; border-right:1px solid #eee; font-size:13px; background:#fafafa;">
+                    <small style="color:#64748b; display:block; margin-bottom:5px;">LOCAL</small>
+                </div>
+                <div id="incidencias-V" style="padding:15px; font-size:13px;">
+                    <small style="color:#64748b; display:block; margin-bottom:5px;">VISITANTE</small>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="guardarPartido(${id})" class="btn-main" style="margin-top:20px; height:60px; font-size:20px; background:var(--success); box-shadow:0 4px 10px rgba(16,185,129,0.3);">
+            ✅ FINALIZAR Y GUARDAR PARTIDO
+        </button>`;
+}
+
+function statInput(j, lado, esAutogol = false) {
+    const displayTarjetas = esAutogol ? 'none' : 'flex';
+    const bgFila = esAutogol ? 'background: #fff1f2;' : 'background: white;';
+    
+    return `
+    <div class="stat-input-row" 
+         id="row-${j.id}" 
+         data-jid="${j.id}" 
+         data-nombre="${j.nombre}" 
+         data-equipo="${j.equipo}" 
+         data-lado="${lado}"
+         data-es-ag="${esAutogol}"
+         data-g="0" data-a="0" data-r="0" data-da="0"
+         style="display:flex; align-items:center; justify-content:space-between; padding:5px; margin-bottom:5px; border-radius:6px; border:1px solid #eee; ${bgFila}">
+        
+        <div style="display:flex; align-items:center; gap:5px;">
+            <input type="checkbox" class="disp" checked onchange="actualizarMarcadorVivo()" ${esAutogol ? 'style="display:none"' : ''}>
+            <span style="font-size:12px; font-weight:${esAutogol ? 'bold' : 'normal'}; color:${esAutogol ? '#e11d48' : 'black'}">
+                ${j.nombre}
+            </span>
+        </div>
+        
+        <div style="display:flex; gap:5px; align-items:center;">
+            <div onclick="accionarStat('${j.id}', 'g')" id="btn-g-${j.id}" 
+                 style="width:35px; height:30px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:4px; background:white;">
+                 ⚽<span class="val" style="font-size:10px; margin-left:2px;">0</span>
+            </div>
+            
+            <div style="display:${displayTarjetas}; gap:5px;">
+                <div onclick="accionarStat('${j.id}', 'a')" id="btn-a-${j.id}" style="width:35px; height:30px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:4px; background:white;">🟨</div>
+                <div onclick="accionarStat('${j.id}', 'r')" id="btn-r-${j.id}" style="width:35px; height:30px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:4px; background:white;">🟥</div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function accionarStat(id, tipo) {
+    const row = document.getElementById(`row-${id}`);
+    const btnA = document.getElementById(`btn-a-${id}`);
+    const btnR = document.getElementById(`btn-r-${id}`);
+    const btnG = document.getElementById(`btn-g-${id}`);
+
+    // Detectar si ya está expulsado (por roja directa o por doble amarilla)
+    const tieneRoja = parseInt(row.dataset.r) === 1;
+    const tieneDobleA = row.dataset.da === "1";
+    const expulsado = tieneRoja || tieneDobleA;
+
+    // BLOQUEO DE GOLES: Si está expulsado, no puede sumar goles
+    if (tipo === 'g') {
+        if (expulsado) return; // Si ya tiene roja o doble amarilla, salimos de la función
+        
+        let goles = parseInt(row.dataset.g) + 1;
+        row.dataset.g = goles;
+        btnG.querySelector('.val').innerText = goles;
+        btnG.style.background = "#dcfce7";
+    }
+
+    // LÓGICA DE AMARILLAS (Doble clic para roja)
+    if (tipo === 'a') {
+        // Si tiene roja directa, no permitimos poner amarillas
+        if (tieneRoja) return;
+
+        let amarillas = parseInt(row.dataset.a);
+        if (amarillas === 0) {
+            row.dataset.a = 1;
+            btnA.style.background = "#fef08a"; 
+            btnA.innerHTML = "🟨";
+        } else if (amarillas === 1) {
+            row.dataset.a = 2;
+            row.dataset.da = 1; // Aquí se activa la doble amarilla
+            btnA.innerHTML = "🟨🟥";
+            btnA.style.background = "#fee2e2";
+        } else {
+            // Tercer clic: Limpia todo
+            row.dataset.a = 0;
+            row.dataset.da = 0;
+            btnA.innerHTML = "🟨";
+            btnA.style.background = "white";
+        }
+    }
+
+    // LÓGICA DE ROJA DIRECTA
+    if (tipo === 'r') {
+        // Si tiene doble amarilla, no permitimos roja directa encima (o viceversa según prefieras)
+        if (tieneDobleA) return;
+
+        let roja = parseInt(row.dataset.r);
+        if (roja === 0) {
+            row.dataset.r = 1;
+            btnR.style.background = "#fecaca";
+        } else {
+            row.dataset.r = 0;
+            btnR.style.background = "white";
+        }
+    }
+
+    // Sincronizar visualmente (colores de fila, marcador e incidencias)
+    actualizarMarcadorVivo();
+}
+
+
+function actualizarMarcadorVivo() {
+    let golesL = 0, golesV = 0;
+    let htmlL = "", htmlV = "";
+
+    document.querySelectorAll('.stat-input-row').forEach(row => {
+        const g = parseInt(row.dataset.g);
+        const a = parseInt(row.dataset.a);
+        const r = parseInt(row.dataset.r);
+        const da = row.dataset.da === "1";
+        const nombre = row.dataset.nombre;
+        const lado = row.dataset.lado;
+        const esAG = row.dataset.esAg === "true"; 
+
+        if (lado === 'L') golesL += g; else golesV += g;
+
+        let icons = "";
+        // Personalización del texto de Autogol
+        if (g > 0) {
+            if (esAG) {
+                icons += ` <b style="color: #e11d48;">(AUTOGOL) ⚽x${g}</b>`;
+            } else {
+                icons += ` ⚽x${g}`;
+            }
+        }
+        
+        if (da) icons += ` 🟨🟥`; 
+        else if (a > 0) icons += ` 🟨`;
+        if (r > 0) icons += ` 🟥`;
+
+        if (g > 0 || a > 0 || r > 0) {
+            // Si es autogol, también podemos poner el nombre en rojo para que combine
+            const estiloNombre = esAG ? 'style="color: #e11d48; font-weight: bold;"' : '';
+            const linea = `<div style="margin-bottom:2px;">• <span ${estiloNombre}>${nombre}</span>${icons}</div>`;
+            
+            if (lado === 'L') htmlL += linea; else htmlV += linea;
+        }
+    });
+
+    document.getElementById('live-gl').innerText = golesL;
+    document.getElementById('live-gv').innerText = golesV;
+    document.getElementById('incidencias-L').innerHTML = htmlL || "Sin incidencias";
+    document.getElementById('incidencias-V').innerHTML = htmlV || "Sin incidencias";
+}
+
+   function guardarPartido(idPartido) {
+    // 0. BLOQUEO DE SEGURIDAD: Evita que el usuario pulse varias veces
+    const btnGuardar = event.target; // Captura el botón pulsado
+    if (btnGuardar && btnGuardar.tagName === 'BUTTON') {
+        btnGuardar.disabled = true;
+        btnGuardar.innerText = "PROCESANDO...";
+    }
+
+    let gl = parseInt(document.getElementById('live-gl').innerText);
+    let gv = parseInt(document.getElementById('live-gv').innerText);
+    
+    const detalleL = document.getElementById('incidencias-L').innerHTML;
+    const detalleV = document.getElementById('incidencias-V').innerHTML;
+
+    // 1. ACTUALIZAR ESTADO DEL PARTIDO Y REPORTE
+    let partidoObj;
+    db.calendario.forEach(j => {
+        let p = j.partidos.find(x => x.id === idPartido);
+        if(p) {
+            // Verificamos si ya estaba jugado por si acaso
+            if(p.jugado) return alert("Este partido ya fue registrado anteriormente.");
+            
+            p.score = `${gl} - ${gv}`;
+            p.jugado = true;
+            p.reporteHtml = { local: detalleL, visita: detalleV };
+            partidoObj = p;
+        }
+    });
+
+    if(!partidoObj) return; // Si no se encontró el partido, cancelamos.
+
+    // 2. ACTUALIZAR TABLA DE POSICIONES (EQUIPOS)
+    const eqL = db.equipos.find(e => e.nombre === partidoObj.l);
+    const eqV = db.equipos.find(e => e.nombre === partidoObj.v);
+
+    eqL.pj++; eqV.pj++;
+    eqL.gf += gl; eqL.gc += gv;
+    eqV.gf += gv; eqV.gc += gl;
+
+    if(gl > gv) { eqL.g++; eqL.pts += 3; eqV.p++; }
+    else if(gv > gl) { eqV.g++; eqV.pts += 3; eqL.p++; }
+    else { eqL.e++; eqV.e++; eqL.pts += 1; eqV.pts += 1; }
+
+    // 3. ACTUALIZAR JUGADORES
+    document.querySelectorAll('.stat-input-row').forEach(row => {
+        const esAG = row.dataset.esAg === "true";
+        if (esAG) return; 
+
+        const checkJugo = row.querySelector('.disp');
+        if (checkJugo && !checkJugo.checked) return;
+
+        const jid = parseInt(row.dataset.jid);
+        const j = db.jugadores.find(x => x.id === jid);
+        
+        if(j) {
+            j.pj = (j.pj || 0) + 1;
+            j.goles = (j.goles || 0) + (parseInt(row.dataset.g) || 0);
+            
+            const da = row.dataset.da === "1"; 
+            if(da) {
+                j.ama = (j.ama || 0) + 2;
+                j.roja = (j.roja || 0) + 1;
+            } else {
+                j.ama = (j.ama || 0) + (parseInt(row.dataset.a) || 0);
+                j.roja = (j.roja || 0) + (parseInt(row.dataset.r) || 0);
+            }
+        }
+    });
+
+    // 4. PERSISTENCIA Y LIMPIEZA
+    persist();
+    renderTodo();
+    
+    // LIMPIEZA CRÍTICA: Vaciamos el área de carga para que no quede rastro del partido procesado
+    const areaCarga = document.getElementById('area-carga');
+    if(areaCarga) areaCarga.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">✅ Partido guardado. Selecciona otro juego del calendario.</p>`;
+
+    alert("Partido finalizado y estadísticas actualizadas.");
+    
+    // REDIRECCIÓN: Buscamos el botón de la nav para que visualmente cambie la pestaña
+    const btnNavCalendario = document.querySelector('button[onclick*="sec-calendario"]');
+    navegar('sec-calendario', btnNavCalendario);
+    
+    // Forzamos el render del calendario para ver el nuevo score
+    if(typeof renderCalendario === 'function') renderCalendario();
+}
+
+    function verReporte(idPartido) {
+    let partido;
+    let jornadaNum = 0;
+    
+    // Buscamos el partido y capturamos el número de jornada
+    db.calendario.forEach(j => {
+        let p = j.partidos.find(x => x.id === idPartido);
+        if(p) {
+            partido = p;
+            jornadaNum = j.num;
+        }
+    });
+
+    if(!partido || !partido.reporteHtml) return alert("No hay reporte detallado.");
+
+    const logoL = db.equipos.find(e => e.nombre === partido.l)?.logo || '';
+    const logoV = db.equipos.find(e => e.nombre === partido.v)?.logo || '';
+    
+    // Generamos la fecha actual para el reporte
+    const ahora = new Date();
+    const fechaFomateada = ahora.toLocaleDateString() + " - " + ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+        <html>
+        <head>
+            <title>Reporte J${jornadaNum} - ${partido.l} vs ${partido.v}</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; text-align: center; color: #1e293b; background: #f8fafc; }
+                .box { border-radius: 20px; padding: 40px; background: white; display: inline-block; min-width: 700px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; }
+                
+                /* Cintillo superior */
+                .top-bar { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 12px; color: #64748b; font-weight: bold; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+                
+                .header-title { font-weight: 900; color: #1e293b; letter-spacing: 3px; margin-bottom: 5px; font-size: 20px; }
+                .sub-title { color: #3b82f6; font-weight: bold; margin-bottom: 30px; font-size: 14px; }
+                
+                .scoreboard { display: flex; align-items: center; justify-content: center; gap: 40px; margin: 30px 0; }
+                .team-info { flex: 1; text-align: center; max-width: 200px; }
+                .logo-img { width: 120px; height: 120px; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+                .team-name { font-size: 20px; font-weight: 800; text-transform: uppercase; color: #0f172a; line-height: 1.2; }
+                
+                .score-display { font-size: 70px; font-weight: 900; color: #ffffff; background: #1e293b; padding: 10px 40px; border-radius: 20px; min-width: 140px; box-shadow: 0 8px 0 #3b82f6; }
+                
+                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; text-align: left; margin-top: 40px; border-top: 2px solid #f1f5f9; padding-top: 30px; }
+                h3 { font-size: 14px; color: #3b82f6; border-left: 4px solid #3b82f6; padding-left: 10px; margin-bottom: 20px; text-transform: uppercase; }
+                
+                .incidencia-item { margin-bottom: 6px; font-size: 15px; color: #334155; }
+                .footer-note { margin-top: 40px; font-size: 11px; color: #94a3b8; font-style: italic; }
+                
+                .btn-print { margin-top: 30px; padding: 15px 40px; cursor: pointer; background: #3b82f6; color: white; border: none; border-radius: 50px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4); }
+
+                @media print { .btn-print { display: none; } body { background: white; padding: 0; } .box { box-shadow: none; border: 1px solid #eee; } }
+            </style>
+        </head>
+        <body>
+            <div class="box">
+                <div class="top-bar">
+                    <span>LIGA PRO ELITE</span>
+                    <span>JORNADA ${jornadaNum}</span>
+                    <span>ID PARTIDO: #${idPartido.toString().slice(-4)}</span>
+                </div>
+                
+                <div class="header-title">INFORME DE COMPETICIÓN</div>
+                <div class="sub-title">TEMPORADA OFICIAL 2026</div>
+                
+                <div class="scoreboard">
+                    <div class="team-info">
+                        <img src="${logoL}" onerror="this.src='https://via.placeholder.com/120?text=LOGO'" class="logo-img">
+                        <div class="team-name">${partido.l}</div>
+                    </div>
+                    
+                    <div class="score-display">${partido.score}</div>
+                    
+                    <div class="team-info">
+                        <img src="${logoV}" onerror="this.src='https://via.placeholder.com/120?text=LOGO'" class="logo-img">
+                        <div class="team-name">${partido.v}</div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <h3>Eventos: ${partido.l}</h3>
+                        <div class="incidencia-item">${partido.reporteHtml.local || 'Sin incidencias registradas'}</div>
+                    </div>
+                    <div>
+                        <h3>Eventos: ${partido.v}</h3>
+                        <div class="incidencia-item">${partido.reporteHtml.visita || 'Sin incidencias registradas'}</div>
+                    </div>
+                </div>
+
+                <div class="footer-note">Este documento es una representación digital del encuentro. Generado el: ${fechaFomateada}</div>
+                
+                <button class="btn-print" onclick="window.print()">🖨️ IMPRIMIR REPORTE OFICIAL</button>
+            </div>
+        </body>
+        </html>
+    `);
+}
+
+ function renderTodo() {
+	renderEquipos();
+    // 1. ORDENAR DATOS (Siempre primero para mantener el orden A-Z)
+    db.equipos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    db.jugadores.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    // 2. RENDERIZAR CALENDARIO Y GOLEADORES
+    // Estas funciones ya tienen su propia lógica de "document.getElementById"
+    renderCalendario();
+    renderGoleadores();
+    
+    // 3. RENDERIZAR GRILLA DE EQUIPOS (Aquí es donde se habían borrado)
+    const contenedorEquipos = document.getElementById('grid-equipos');
+    if (contenedorEquipos) {
+        contenedorEquipos.innerHTML = db.equipos.map((e) => {
+            // Buscamos el índice real dentro del array ordenado
+            const idx = db.equipos.indexOf(e); 
+            
+            return `
+            <div class="equipo-card" onclick="verPlantilla('${e.nombre}')">
+                <img src="${e.logo || 'https://via.placeholder.com/60?text=LOGO'}" class="img-logo">
+                <h4 style="margin:0 0 10px 0">${e.nombre}</h4>
+                
+                ${modoAdmin ? `
+                    <div class="no-print" style="margin-top:10px;">
+                       <button onclick="event.stopPropagation(); editarEq(${idx})" style="cursor:pointer; font-size:10px; padding:2px 5px;">✎ EDITAR</button>
+                       <button onclick="event.stopPropagation(); borrarEquipo(${idx})" class="btn-del" style="font-size:10px; padding:2px 5px;">🗑 BORRAR</button>
+                    </div>
+                ` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    // 4. APLICAR SEGURIDAD Y RESTRICCIONES
+    if (typeof aplicarRestricciones === 'function') aplicarRestricciones();
+
+        const t = [...db.equipos].sort((a,b) => b.pts - a.pts || (b.gf-b.gc) - (a.gf-a.gc));
+        document.getElementById('body-tabla').innerHTML = t.map((e,i) => `<tr><td>${i+1}</td><td style="text-align:left"><img src="${e.logo || 'https://via.placeholder.com/24?text=L'}" class="img-tabla"><b>${e.nombre}</b></td><td>${e.pj}</td><td>${e.g||0}</td><td>${e.e||0}</td><td>${e.p||0}</td><td>${e.gf}</td><td>${e.gc}</td><td>${e.gf-e.gc}</td><td><b>${e.pts}</b></td></tr>`).join('');
+
+        // --- 1. FILTRADO Y ORDENAMIENTO (CON DESEMPATE POR PROMEDIO) ---
+        const g = db.jugadores
+            .filter(j => j.goles > 0)
+            .sort((a, b) => {
+                // Primer criterio: Goles totales
+                if (b.goles !== a.goles) return b.goles - a.goles;
+                
+                // Segundo criterio: Promedio (Eficiencia)
+                const promA = a.goles / (a.pj || 1);
+                const promB = b.goles / (b.pj || 1);
+                return promB - promA; // El promedio más alto queda arriba
+            });
+
+        // --- 2. DIBUJAR LA TABLA EN EL HTML ---
+        document.getElementById('body-goleadores').innerHTML = g.map((j, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td style="text-align:left"><b>${j.nombre}</b></td>
+                <td>${j.equipo}</td>
+                <td><b style="color:var(--success)">${j.goles}</b></td>
+                <td style="color:#64748b; font-size:12px;">${(j.goles / (j.pj || 1)).toFixed(2)}</td>
+            </tr>`).join('');
+
+        // Filtramos: solo jugadores con amarillas > 0 O rojas > 0
+const d = db.jugadores
+    .filter(j => j.ama > 0 || j.roja > 0) 
+    .sort((a,b) => {
+        return document.getElementById('orden-disc').value === 'roja' 
+            ? b.roja - a.roja || b.ama - a.ama 
+            : b.ama - a.ama || b.roja - a.roja;
+    });
+
+document.getElementById('body-disciplina').innerHTML = d.length > 0 
+    ? d.map(j => `
+        <tr>
+            <td style="text-align:left">${j.nombre}</td>
+            <td>${j.equipo}</td>
+            <td><span style="color:#b45309; font-weight:bold">${j.ama > 0 ? ' ' + j.ama : '-'}</span></td>
+            <td><span style="color:#ef4444; font-weight:bold">${j.roja > 0 ? ' ' + j.roja : '-'}</span></td>
+        </tr>`).join('')
+    : `<tr><td colspan="4" style="padding:20px; color:#64748b;">No hay jugadores sancionados actualmente.</td></tr>`;
+    }
+// 1. FUNCIONES DE ACTUALIZACIÓN Y RENDERIZADO
+function actualizarGoles(idx, campo, valor) {
+    db.playoffs.llaves[idx][campo] = parseInt(valor) || 0;
+    persist();
+    renderPlayoffs(); // Esto refresca el Global visualmente al instante
+}
+
+function renderPlayoffs() {
+    const p = db.playoffs;
+    if (!p.llaves || p.llaves.length === 0) return;
+
+    let nombreFase = "";
+    if (p.faseActual === 8) nombreFase = "CUARTOS DE FINAL";
+    else if (p.faseActual === 4) nombreFase = "SEMIFINALES";
+    else if (p.faseActual === 2) nombreFase = "GRAN FINAL";
+
+    let html = `<div style="display:grid; gap:20px; margin-top:20px;">
+                <h2 style="text-align:center; color:var(--primary); margin-bottom:5px;">${nombreFase}</h2>
+                <p style="text-align:center; font-size:12px; color:#64748b; margin-top:0;">
+                    Formato: ${p.tipoDuelo === 2 ? 'Ida y Vuelta' : 'Partido Único'}
+                </p>`;
+
+    p.llaves.forEach((llave, i) => {
+        const esIdaVuelta = (p.tipoDuelo === 2);
+        // Lógica de suma corregida para el Global
+        const totalSup = esIdaVuelta ? (llave.gIdaSup + llave.gVtaSup) : llave.gIdaSup;
+        const totalInf = esIdaVuelta ? (llave.gIdaInf + llave.gVtaInf) : llave.gIdaInf;
+
+        html += `
+            <div style="border:2px solid #3b82f6; border-radius:12px; background:#fff; overflow:hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <div style="padding:15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:10px; color:#94a3b8; width:45px;">${esIdaVuelta ? 'IDA' : 'ÚNICO'}</span>
+                        <div style="flex:1; text-align:right;">${esIdaVuelta ? llave.inf : '<b>'+llave.sup+'</b>'}</div>
+                        <div style="margin:0 15px;">
+                            <input type="number" value="${esIdaVuelta ? llave.gIdaInf : llave.gIdaSup}" oninput="actualizarGoles(${i}, '${esIdaVuelta ? 'gIdaInf' : 'gIdaSup'}', this.value)" style="width:45px; text-align:center; border:1px solid #cbd5e1; border-radius:4px;"> - 
+                            <input type="number" value="${esIdaVuelta ? llave.gIdaSup : llave.gIdaInf}" oninput="actualizarGoles(${i}, '${esIdaVuelta ? 'gIdaSup' : 'gIdaInf'}', this.value)" style="width:45px; text-align:center; border:1px solid #cbd5e1; border-radius:4px;">
+                        </div>
+                        <div style="flex:1; text-align:left;">${esIdaVuelta ? llave.sup : llave.inf}</div>
+                    </div>
+
+                    ${esIdaVuelta ? `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px dashed #eee;">
+                        <span style="font-size:10px; color:#94a3b8; width:45px;">VUELTA</span>
+                        <div style="flex:1; text-align:right;"><b>${llave.sup}</b></div>
+                        <div style="margin:0 15px;">
+                            <input type="number" value="${llave.gVtaSup}" oninput="actualizarGoles(${i}, 'gVtaSup', this.value)" style="width:45px; text-align:center; border:1px solid #cbd5e1; border-radius:4px;"> - 
+                            <input type="number" value="${llave.gVtaInf}" oninput="actualizarGoles(${i}, 'gVtaInf', this.value)" style="width:45px; text-align:center; border:1px solid #cbd5e1; border-radius:4px;">
+                        </div>
+                        <div style="flex:1; text-align:left;">${llave.inf}</div>
+                    </div>` : ''}
+                </div>
+                <div style="background:#f8fafc; padding:10px; text-align:center; border-top:1px solid #e2e8f0;">
+                    <div style="font-size:14px; font-weight:bold;">
+                        GLOBAL: ${llave.sup} ${totalSup} - ${totalInf} ${llave.inf}
+                    </div>
+                </div>
+            </div>`;
+    });
+
+    let textoBoton = p.faseActual === 2 ? "🏆 FINALIZAR TORNEO" : "➡️ AVANZAR SIGUIENTE FASE";
+    html += `<button onclick="avanzarFase()" class="btn-main" style="background:var(--success); height:50px;">${textoBoton}</button>`;
+    
+    document.getElementById('render-playoffs').innerHTML = html;
+}
+
+// 2. FUNCIÓN DE GENERACIÓN INICIAL
+function generarCrucesPlayoffs() {
+    const cantidad = parseInt(document.getElementById('p-formato').value);
+    const tipoDuelo = parseInt(document.getElementById('p-tipo-duelo')?.value || 2); // Por defecto ida/vuelta si no existe el select
+    
+    const clasificados = [...db.equipos]
+        .sort((a,b) => b.pts - a.pts || (b.gf-b.gc) - (a.gf-a.gc))
+        .slice(0, cantidad);
+
+    if (clasificados.length < cantidad) return alert("No hay suficientes equipos.");
+
+    db.playoffs = { faseActual: cantidad, tipoDuelo: tipoDuelo, llaves: [] };
+
+    for (let i = 0; i < cantidad / 2; i++) {
+        db.playoffs.llaves.push({
+            sup: clasificados[i].nombre,
+            inf: clasificados[cantidad - 1 - i].nombre,
+            gIdaInf: 0, gIdaSup: 0, gVtaSup: 0, gVtaInf: 0
+        });
+    }
+    renderPlayoffs();
+}
+
+// 3. FUNCIÓN DE AVANCE Y CAMPEÓN (LÓGICA DE DESEMPATE)
+function avanzarFase() {
+    const p = db.playoffs;
+    const ordenTabla = [...db.equipos]
+        .sort((a,b) => b.pts - a.pts || (b.gf-b.gc) - (a.gf-a.gc))
+        .map(e => e.nombre);
+
+    const esLaFinal = (p.faseActual === 2);
+
+    const ganadores = p.llaves.map(ll => {
+        const esIdaVuelta = (p.tipoDuelo === 2);
+        const totalSup = esIdaVuelta ? (ll.gIdaSup + ll.gVtaSup) : ll.gIdaSup;
+        const totalInf = esIdaVuelta ? (ll.gIdaInf + ll.gVtaInf) : ll.gIdaInf;
+
+        if (totalSup === totalInf) {
+            if (esLaFinal) {
+                let m = "";
+                while (!m) {
+                    m = prompt(`EMPATE GLOBAL (${totalSup}-${totalInf}).\nEscriba el nombre del CAMPEÓN:\n1. ${ll.sup}\n2. ${ll.inf}`);
+                    if (m !== ll.sup && m !== ll.inf) m = "";
+                }
+                return m;
+            } else {
+                // Ventaja deportiva
+                return ordenTabla.indexOf(ll.sup) < ordenTabla.indexOf(ll.inf) ? ll.sup : ll.inf;
+            }
+        }
+        return totalSup > totalInf ? ll.sup : ll.inf;
+    });
+
+    if (esLaFinal) {
+        const campeon = ganadores[0];
+        const eq = db.equipos.find(e => e.nombre === campeon);
+        const logo = eq?.logo || 'https://via.placeholder.com/150?text=SIN+LOGO';
+
+        document.getElementById('render-playoffs').innerHTML = `
+            <div style="text-align:center; padding:40px; background:white; border:5px solid #fbbf24; border-radius:20px;">
+                <h1 style="font-size:60px; margin:0;">🏆</h1>
+                <h2 style="color:#b45309;">¡EL CAMPEÓN ES!</h2>
+                <div style="margin:20px auto; width:180px; height:180px; border:4px solid #fbbf24; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#f8fafc;">
+                    <img src="${logo}" style="max-width:140px; max-height:140px; object-fit:contain;">
+                </div>
+                <h1 style="font-size:45px; color:var(--primary); text-transform:uppercase;">${campeon}</h1>
+                <button onclick="location.reload()" class="btn-main" style="margin-top:20px; background:var(--primary)">IR A CALENDARIO</button>
+            </div>`;
+        return;
+    }
+
+    // Generar siguiente fase re-sembrando por posición en tabla
+    const nuevaFase = p.faseActual / 2;
+    p.faseActual = nuevaFase;
+    let nuevasLlaves = [];
+    for (let i = 0; i < ganadores.length; i += 2) {
+        const p1 = ganadores[i];
+        const p2 = ganadores[i+1];
+        const mejorP1 = ordenTabla.indexOf(p1) < ordenTabla.indexOf(p2);
+        nuevasLlaves.push({
+            sup: mejorP1 ? p1 : p2,
+            inf: mejorP1 ? p2 : p1,
+            gIdaInf: 0, gIdaSup: 0, gVtaSup: 0, gVtaInf: 0
+        });
+    }
+    p.llaves = nuevasLlaves;
+    persist();
+    renderPlayoffs();
+	setTimeout(aplicarRestricciones, 50);
+}
+
+    renderTodo();
+
+function prepararImpresionGoleadores() {
+    // 1. Filtrar, Ordenar con desempate por promedio y tomar solo los 10 mejores
+    const top10 = db.jugadores
+        .filter(j => j.goles > 0)
+        .sort((a, b) => {
+            // 1er Criterio: Más Goles
+            if (b.goles !== a.goles) return b.goles - a.goles;
+            // 2do Criterio: Mejor Promedio (Menos partidos jugados)
+            const promA = a.goles / (a.pj || 1);
+            const promB = b.goles / (b.pj || 1);
+            return promB - promA;
+        })
+        .slice(0, 10); // Solo el Top 10 para el reporte
+    
+    // 2. Renderizado temporal para la foto/impresión
+    document.getElementById('body-goleadores').innerHTML = top10.map((j, i) => `
+        <tr>
+            <td>${i + 1}</td>
+            <td style="text-align:left"><b>${j.nombre}</b></td>
+            <td>${j.equipo}</td>
+            <td><b style="font-size:16px;">${j.goles}</b></td>
+            <td>${(j.goles / (j.pj || 1)).toFixed(2)}</td>
+        </tr>`).join('');
+
+    // 3. Activar modo impresión y disparar ventana
+    document.getElementById('sec-goleadores').classList.add('print-active');
+    window.print();
+
+    // 4. Quitar modo impresión y restaurar la tabla completa en pantalla
+    document.getElementById('sec-goleadores').classList.remove('print-active');
+    renderTodo(); 
+}
+
+// También actualizamos el botón de Tabla de Posiciones para que use esta nueva lógica
+// Cambia el onclick de tu botón de PDF de la tabla por: onclick="imprimirTabla()"
+function imprimirTabla() {
+    document.getElementById('sec-tabla').classList.add('print-active');
+    window.print();
+    document.getElementById('sec-tabla').classList.remove('print-active');
+}
+
+function buscarJugador() {
+    const input = document.getElementById('input-busqueda');
+    const contenedor = document.getElementById('resultados-busqueda');
+    
+    if (!input || !contenedor) return;
+    const texto = input.value.toLowerCase().trim();
+
+    // 1. Calcular Ranking Dinámico
+    let rankeados = db.jugadores.map(j => {
+        const pts = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10);
+        return { ...j, puntos: pts };
+    }).sort((a, b) => b.puntos - a.puntos);
+
+    // 2. Lógica de Filtrado
+    let encontrados;
+    if (texto === "") {
+        encontrados = rankeados;
+    } else {
+        encontrados = rankeados.filter(j => 
+            j.nombre.toLowerCase().includes(texto) || (j.curp && j.curp.toLowerCase().includes(texto))
+        );
+    }
+
+    if (encontrados.length === 0) {
+        contenedor.innerHTML = "<p style='color:gray; text-align:center; padding:20px;'>Sin resultados</p>";
+        return;
+    }
+
+    // 3. Renderizar las Tarjetas
+    contenedor.innerHTML = encontrados.map(j => {
+        const posicion = rankeados.findIndex(x => x.id === j.id) + 1;
+        const datosEquipo = db.equipos.find(e => e.nombre === j.equipo);
+        const logoEquipo = datosEquipo ? datosEquipo.logo : '';
+        const fotoPj = j.foto ? j.foto : 'https://via.placeholder.com/60?text=👤';
+
+        return `
+        <div style="background:white; padding:15px; border-radius:12px; margin-bottom:12px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+            
+            <div style="background:${posicion === 1 ? '#fbbf24' : (posicion <= 3 ? '#94a3b8' : '#64748b')}; color:white; width:35px; height:35px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; flex-shrink:0;">
+                #${posicion}
+            </div>
+            
+            <img src="${logoEquipo}" onerror="this.src='https://via.placeholder.com/40?text=🛡️'" 
+                 style="width:40px; height:40px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
+
+            <div style="flex:1;">
+                <div style="font-weight:bold; color:#1e293b; font-size:14px; text-transform:uppercase;">${j.nombre}</div>
+                <div style="color:var(--accent); font-weight:bold; font-size:11px; margin-bottom:4px;">${j.equipo}</div>
+                
+                <div style="display:flex; gap:5px;">
+                    <span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:10px; color:#475569;">🏟️ ${j.pj}</span>
+                    <span style="background:#dcfce7; padding:2px 6px; border-radius:4px; font-size:10px; color:#166534; font-weight:bold;">⚽ ${j.goles}</span>
+                    <span style="background:#fef9c3; padding:2px 6px; border-radius:4px; font-size:10px; color:#854d0e;">🟨 ${j.ama}</span>
+                    <span style="background:#fee2e2; padding:2px 6px; border-radius:4px; font-size:10px; color:#991b1b;">🟥 ${j.roja}</span>
+                </div>
+            </div>
+
+            <div style="flex-shrink:0;">
+                <img src="${fotoPj}" 
+                     style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            </div>
+
+        </div>`;
+    }).join('');
+}
+  
+function calcularRating(j) {
+    if (j.pj === 0) return 0;
+    
+    // Puntos base por goles (pesan un 60%)
+    let puntosGoles = (j.goles / j.pj) * 70;
+    
+    // Puntos por regularidad (pesan un 30%)
+    let puntosPJ = Math.min(j.pj * 5, 30);
+    
+    // Penalización por disciplina
+    let penalizacion = (j.ama * 2) + (j.roja * 10);
+    
+    let total = puntosGoles + puntosPJ - penalizacion;
+    
+    // Ajustar entre 0 y 100
+    return Math.max(0, Math.min(100, Math.round(total)));
+	}
+
+
+function obtenerJugadoresRankeados() {
+    // 1. Clonamos y calculamos puntos para cada uno
+    let lista = db.jugadores.map(j => {
+        const puntos = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10);
+        return { ...j, puntos };
+    });
+
+    // 2. Ordenamos de mayor a menor puntuación
+    lista.sort((a, b) => b.puntos - a.puntos);
+
+    // 3. Asignamos la posición real (el índice + 1)
+    return lista.map((j, index) => ({ ...j, posicion: index + 1 }));
+	}
+
+function reiniciarTodo() {
+    // SOLO el Admin puede borrar todo
+    if (typeof rolActual !== 'undefined' && rolActual !== "admin") {
+        return alert("⚠️ Solo el Administrador puede reiniciar la temporada.");
+    }
+
+    // 1. Pedir nombre de la etapa
+    let nuevoNombre = prompt("¿Cómo se llamará la nueva temporada?\n(Ej: CLAUSURA 2026)");
+
+    // 2. Validación de entrada
+    if (nuevoNombre === null || nuevoNombre.trim() === "") {
+        alert("Reinicio cancelado. Debes asignar un nombre a la temporada.");
+        return;
+    }
+
+    nuevoNombre = nuevoNombre.trim().toUpperCase();
+
+    // 3. Confirmación final
+    if(confirm(`⚠️ ATENCIÓN: Se iniciará la temporada: "${nuevoNombre}".\n\nSe mantendrán los equipos pero se borrarán jugadores y partidos.\n\n¿Deseas continuar?`)) {
+        
+        db.nombreTemporada = nuevoNombre;
+
+        // Resetear estadísticas de equipos
+        db.equipos.forEach(e => {
+            e.pj = 0; e.g = 0; e.e = 0; e.p = 0; 
+            e.gf = 0; e.gc = 0; e.pts = 0;
+        });
+
+        // Limpiar base de datos
+        db.jugadores = [];
+        db.calendario = [];
+        db.playoffs = {}; 
+
+        persist(); 
+        location.reload(); 
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Cargar datos y preparar interfaz
+    init(); 
+    actualizarBanner(); // Pintamos el nombre de la temporada inmediatamente
+    
+    // 2. Navegar al inicio y marcar el primer botón como activo
+    const btnInicio = document.querySelector('.nav-link');
+    navegar('sec-inicio', btnInicio);
+    
+    // 3. Aplicar permisos (Ocultar/Mostrar botones de Admin)
+    aplicarRestricciones();
+
+    // 4. Renderizado diferido (Seguridad para que el DOM esté listo)
+    setTimeout(() => {
+        renderTodo();       // Dibuja equipos y tabla
+        renderCalendario(); // Pre-carga el calendario en memoria
+        console.log("🚀 Sistema inicializado y renderizado");
+    }, 100);
+});
+// ESCUCHADOR DE EVENTOS PARA LA FOTO
+document.addEventListener('change', function(e) {
+    // Verificamos que el cambio sea en el input de la foto del jugador
+    if (e.target && e.target.id === 'foto-archivo') {
+        const archivo = e.target.files[0];
+        
+        if (archivo) {
+            // Validar que sea una imagen
+            if (!archivo.type.startsWith('image/')) {
+                alert("Por favor, selecciona un archivo de imagen válido.");
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                // Guardamos el resultado en la variable global que creaste
+                fotoBase64Temp = event.target.result;
+                
+                // Mostramos la vista previa para confirmar que se cargó bien
+                const preview = document.getElementById('previsualizar-foto');
+                if (preview) {
+                    preview.src = fotoBase64Temp;
+                    preview.style.display = "inline-block";
+                }
+            };
+
+            // Leer el archivo de la PC
+            reader.readAsDataURL(archivo);
+        }
+    }
+});
+
+function renderGoleadores() {
+    const contenedor = document.getElementById('render-goleadores');
+    if (!contenedor) return;
+
+    // Ordenar por goles y luego por promedio (eficiencia)
+    const topGoleadores = [...db.jugadores]
+        .filter(j => j.goles > 0)
+        .sort((a, b) => {
+            if (b.goles !== a.goles) return b.goles - a.goles;
+            const promA = a.pj > 0 ? a.goles / a.pj : 0;
+            const promB = b.pj > 0 ? b.goles / b.pj : 0;
+            return promB - promA;
+        });
+
+    let html = `
+    <table class="tabla-goleadores">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Equipo</th>
+                <th>PJ</th>
+                <th>Goles</th>
+                <th>Prom</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    html += topGoleadores.map((j, index) => {
+        // Buscamos el logo del equipo
+        const eq = db.equipos.find(e => e.nombre === j.equipo);
+        const logoEq = eq ? eq.logo : '';
+        // Si no tiene foto de PC, usamos el logo del equipo o avatar
+        const fotoPj = j.foto ? j.foto : 'https://via.placeholder.com/40?text=👤';
+
+        return `
+        <tr>
+            <td><strong style="color:var(--primary)">${index + 1}</strong></td>
+            <td style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                <img src="${fotoPj}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #eee;">
+                <div style="line-height: 1.1;">
+                    <div style="font-weight: bold; font-size: 13px;">${j.nombre}</div>
+                    <small style="color: gray; font-size: 10px;">${j.curp || ''}</small>
+                </div>
+            </td>
+            <td>
+                <img src="${logoEq}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                <span style="font-size: 12px;">${j.equipo}</span>
+            </td>
+            <td>${j.pj}</td>
+            <td><b style="font-size: 16px; color: var(--primary);">${j.goles}</b></td>
+            <td style="color: gray; font-size: 11px;">${(j.goles / (j.pj || 1)).toFixed(2)}</td>
+        </tr>`;
+    }).join('');
+
+    html += `</tbody></table>`;
+    contenedor.innerHTML = html;
+}
+
+function prepararComparador() {
+    const s1 = document.getElementById('select-j1');
+    const s2 = document.getElementById('select-j2');
+    
+    // Si no existen los elementos, salimos de la función sin dar error
+    if (!s1 || !s2) return; 
+
+    // Aseguramos que db.jugadores existe
+    const jugadores = (db.jugadores || []).sort((a,b) => a.nombre.localeCompare(b.nombre));
+    
+    const options = jugadores.length > 0 
+        ? jugadores.map(j => `<option value="${j.id}">${j.nombre} (${j.equipo})</option>`).join('')
+        : '<option value="">No hay jugadores</option>';
+    
+    s1.innerHTML = options;
+    s2.innerHTML = options;
+    
+    if(s2.options && s2.options.length > 1) s2.selectedIndex = 1;
+    
+    compararJugadores();
+}
+
+function compararJugadores() {
+    const val1 = document.getElementById('select-j1').value;
+    const val2 = document.getElementById('select-j2').value;
+    const contenedor = document.getElementById('render-comparativa');
+
+    const j1 = db.jugadores.find(x => x.id == val1);
+    const j2 = db.jugadores.find(x => x.id == val2);
+
+    if (!j1 && !j2) {
+        contenedor.innerHTML = "";
+        return;
+    }
+
+    const rankingGoleadores = [...db.jugadores].sort((a, b) => {
+        const gA = parseInt(a.goles) || 0;
+        const gB = parseInt(b.goles) || 0;
+        if (gB !== gA) return gB - gA;
+        return (gB / (b.pj || 1)) - (gA / (a.pj || 1));
+    });
+
+    let ganaJ1 = false;
+    let ganaJ2 = false;
+    
+    if (j1 && j2) {
+        const g1 = parseInt(j1.goles) || 0;
+        const g2 = parseInt(j2.goles) || 0;
+        const p1 = parseFloat((g1 / (j1.pj || 1)).toFixed(2));
+        const p2 = parseFloat((g2 / (j2.pj || 1)).toFixed(2));
+
+        if (g1 > g2) ganaJ1 = true;
+        else if (g2 > g1) ganaJ2 = true;
+        else if (p1 > p2) ganaJ1 = true;
+        else if (p2 > p1) ganaJ2 = true;
+    }
+
+    contenedor.innerHTML = `
+    <div style="display: flex; align-items: stretch; justify-content: center; gap: 15px; margin-top: 15px; flex-wrap: wrap; padding: 10px;">
+        
+        ${j1 ? renderCardComparador(j1, (j1.goles / (j1.pj || 1)).toFixed(2), '#3b82f6', ganaJ1, rankingGoleadores.findIndex(x => x.id == val1) + 1, ganaJ1 ? "LÍDER" : "JUGADOR 1", 1) 
+             : `<div class="animar-entrada" style="flex:1; min-width:280px; max-width:360px; border:2px dashed #cbd5e1; border-radius:25px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#cbd5e1; background:#f8fafc; min-height:400px;">
+                    <span style="font-size:40px;">👤</span>
+                    <p style="font-weight:bold; margin-top:10px; font-size:12px;">ESPERANDO JUGADOR 1</p>
+                </div>`}
+
+        <div style="align-self: center; font-size: 40px; font-weight: 900; color: #cbd5e1; font-style: italic; text-shadow: 2px 2px 0px #0f172a; margin: 10px 0;">VS</div>
+
+        ${j2 ? renderCardComparador(j2, (j2.goles / (j2.pj || 1)).toFixed(2), '#ef4444', ganaJ2, rankingGoleadores.findIndex(x => x.id == val2) + 1, ganaJ2 ? "LÍDER" : "JUGADOR 2", 2) 
+             : `<div class="animar-entrada" style="flex:1; min-width:280px; max-width:360px; border:2px dashed #cbd5e1; border-radius:25px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#cbd5e1; background:#f8fafc; min-height:400px;">
+                    <span style="font-size:40px;">👤</span>
+                    <p style="font-weight:bold; margin-top:10px; font-size:12px;">ESPERANDO JUGADOR 2</p>
+                </div>`}
+    </div>`;
+}
+
+
+function renderCardComparador(j, prom, colorBase, esGanador, puesto, titulo, numSlot) {
+    const shadow = esGanador ? '0 0 35px rgba(245, 158, 11, 0.3)' : '0 10px 25px rgba(0,0,0,0.08)';
+    const headerBg = esGanador ? 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)' : `linear-gradient(135deg, ${colorBase} 0%, #1e293b 100%)`;
+
+    return `
+    <div class="animar-entrada" style="flex: 1; min-width: 280px; max-width: 360px; background: white; border-radius: 25px; overflow: hidden; box-shadow: ${shadow}; position: relative; border: ${esGanador ? '3px solid #f59e0b' : '1px solid #e2e8f0'};">
+        
+        <div onclick="quitarSoloUno(${numSlot})" 
+             style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; z-index: 100;">
+            ×
+        </div>
+        
+        <div style="background: ${headerBg}; padding: 20px 15px; text-align: center; color: white;">
+            <div style="font-size: 24px; font-weight: 950; text-transform: uppercase; letter-spacing: -1px;">${j.nombre}</div>
+            <div style="margin-top: 5px; background: rgba(0,0,0,0.2); display: inline-block; padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 1px;">
+                RANKING #${puesto}
+            </div>
+        </div>
+        
+        <div style="padding: 20px; text-align: center;">
+            <img src="${j.foto || 'https://via.placeholder.com/120?text=👤'}" style="width: 120px; height: 120px; border-radius: 20px; object-fit: cover; border: 4px solid #f1f5f9; margin-bottom: 15px;">
+            
+            <div style="background: #f8fafc; padding: 15px; border-radius: 20px; border: 1px solid #f1f5f9; margin-bottom: 15px;">
+                <div style="font-size: 45px; font-weight: 900; color: #0f172a; line-height: 1;">${j.goles}</div>
+                <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700;">Goles Anotados</div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                <div style="background: #f1f5f9; padding: 10px; border-radius: 12px;">
+                    <small style="font-size: 9px; color: #94a3b8; font-weight: 800;">PARTIDOS</small><br>
+                    <b style="font-size: 18px; color: #1e293b;">${j.pj}</b>
+                </div>
+                <div style="background: #f1f5f9; padding: 10px; border-radius: 12px;">
+                    <small style="font-size: 9px; color: #94a3b8; font-weight: 800;">PROMEDIO</small><br>
+                    <b style="font-size: 18px; color: #1e293b;">${prom}</b>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 15px;">
+                <div style="flex: 1; background: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 6px; border-radius: 8px; font-weight: 900; font-size: 12px;">🟨 ${j.ama}</div>
+                <div style="flex: 1; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 6px; border-radius: 8px; font-weight: 900; font-size: 12px;">🟥 ${j.roja}</div>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ... aquí terminan tus otras funciones (como guardarEquipo, generarCalendario, etc.) ...
+
+    // PASO 3: FUNCIÓN DEL BUSCADOR
+    function renderMiCalendario() {
+        const contenedor = document.getElementById('render-mi-calendario');
+        const filtro = document.getElementById('busqueda-usuario').value.toLowerCase();
+        
+        if (filtro === "") {
+            contenedor.innerHTML = "<p style='text-align:center; color:#64748b;'>Escribe el nombre de tu equipo para ver sus partidos.</p>";
+            return;
+        }
+
+        let html = "";
+        // Recorremos el calendario oficial
+        db.calendario.forEach(jornada => {
+            const partidosEncontrados = jornada.partidos.filter(p => 
+                p.l.toLowerCase().includes(filtro) || p.v.toLowerCase().includes(filtro)
+            );
+
+            if (partidosEncontrados.length > 0) {
+                html += `
+                    <div style="margin-bottom:15px; border:1px solid #eee; border-radius:8px; overflow:hidden;">
+                        <div style="background:#1e293b; color:white; padding:8px 15px; font-weight:bold; font-size:13px;">
+                            JORNADA ${jornada.num}
+                        </div>
+                `;
+                partidosEncontrados.forEach(p => {
+                    html += `
+                        <div style="display:flex; justify-content:space-between; padding:12px; background:white; align-items:center;">
+                            <span style="flex:1; text-align:right; font-weight:bold; font-size:14px;">${p.l}</span>
+                            <span style="flex:0.3; text-align:center; color:#3b82f6; font-weight:bold;">${p.score || 'vs'}</span>
+                            <span style="flex:1; text-align:left; font-weight:bold; font-size:14px;">${p.v}</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+        });
+
+        contenedor.innerHTML = html || `<p style='text-align:center; padding:20px;'>No se encontraron partidos para "${filtro}".</p>`;
+    }
+
+function resolverDefault(idPartido) {
+    let partido;
+    db.calendario.forEach(j => {
+        let x = j.partidos.find(p => p.id === idPartido);
+        if (x) partido = x;
+    });
+
+    if (!partido) return;
+
+    // 1. Pedir ganador
+    const opcion = prompt(`RESOLVER POR DEFAULT (W.O.)\n\n1. Ganó Local (${partido.l})\n2. Ganó Visita (${partido.v})\n\nEscribe 1 o 2:`);
+
+    if (opcion !== "1" && opcion !== "2") {
+        alert("Operación cancelada.");
+        return;
+    }
+
+    // 2. Pedir el motivo
+    const motivo = prompt("Escribe el motivo del Default (ej. El equipo no se presentó):") || "No se presentaron";
+
+    const gL = (opcion === "1") ? 3 : 0;
+    const gV = (opcion === "2") ? 3 : 0;
+
+    // 3. Actualizar estado del partido
+    partido.score = `${gL} - ${gV}`;
+    partido.jugado = true;
+
+    // --- DISEÑO VISUAL PARA EL REPORTE ---
+    const cajaMotivo = `
+        <div style="margin-top: 15px; padding: 15px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; text-align: center;">
+            <div style="color: #475569; font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">
+                🚫 Incomparecencia (W.O.)
+            </div>
+            <div style="color: #1e293b; font-size: 16px; font-weight: 600; font-style: italic;">
+                "${motivo}"
+            </div>
+        </div>
+    `;
+
+    partido.reporteHtml = {
+        local: gL > gV ? 
+            `<b style='color:#10b981; font-size:18px;'>GANÓ POR DEFAULT (3-0)</b>${cajaMotivo}` : 
+            `<b style='color:#ef4444; font-size:18px;'>PERDIÓ POR DEFAULT (0-3)</b>`,
+        visita: gV > gL ? 
+            `<b style='color:#10b981; font-size:18px;'>GANÓ POR DEFAULT (3-0)</b>${cajaMotivo}` : 
+            `<b style='color:#ef4444; font-size:18px;'>PERDIÓ POR DEFAULT (0-3)</b>`
+    };
+
+    // 4. Actualizar tabla de posiciones
+    const eqL = db.equipos.find(e => e.nombre === partido.l);
+    const eqV = db.equipos.find(e => e.nombre === partido.v);
+
+    if (eqL && eqV) {
+        eqL.pj++; eqV.pj++;
+        eqL.gf += gL; eqL.gc += gV;
+        eqV.gf += gV; eqV.gc += gL;
+
+        if (gL > gV) {
+            eqL.g++; eqL.pts += 3; eqV.p++;
+        } else {
+            eqV.g++; eqV.pts += 3; eqL.p++;
+        }
+    }
+
+    persist();    
+    renderTodo(); 
+    alert("Partido resuelto por default con reporte visual.");
+}
+
+function resolverProtesta(idPartido) {
+    if(!confirm("¡ATENCIÓN! Se eliminarán los goles de los jugadores del Pichichi y el marcador cambiará a 3-0. ¿Continuar?")) return;
+
+    let partido;
+    db.calendario.forEach(j => {
+        let x = j.partidos.find(p => p.id === idPartido);
+        if (x) partido = x;
+    });
+
+    // --- 1. LIMPIEZA DE JUGADORES (Analizando tu HTML) ---
+    const tempDiv = document.createElement('div');
+    const reportes = [partido.reporteHtml.local, partido.reporteHtml.visita];
+    
+    reportes.forEach(html => {
+        if (!html) return;
+        tempDiv.innerHTML = html;
+        const lineas = tempDiv.querySelectorAll('div'); 
+        lineas.forEach(linea => {
+            const texto = linea.innerText; 
+            if (texto.includes('⚽x')) {
+                const partes = texto.split('⚽x');
+                const nombreJugador = partes[0].replace('•', '').trim();
+                const golesARestar = parseInt(partes[1]);
+                const j = db.jugadores.find(x => x.nombre === nombreJugador);
+                if (j) {
+                    j.goles = Math.max(0, (j.goles || 0) - golesARestar);
+                    j.pj = Math.max(0, (j.pj || 0) - 1);
+                }
+            }
+        });
+    });
+
+    // --- 2. REVERTIR PUNTOS DE EQUIPOS ---
+    const eqL = db.equipos.find(e => e.nombre === partido.l);
+    const eqV = db.equipos.find(e => e.nombre === partido.v);
+    const sAnt = partido.score.split('-').map(s => parseInt(s.trim()) || 0);
+
+    eqL.pj--; eqV.pj--;
+    eqL.gf -= sAnt[0]; eqL.gc -= sAnt[1];
+    eqV.gf -= sAnt[1]; eqV.gc -= sAnt[0];
+
+    if(sAnt[0] > sAnt[1]) { eqL.g--; eqL.pts -= 3; eqV.p--; }
+    else if(sAnt[1] > sAnt[0]) { eqV.g--; eqV.pts -= 3; eqL.p--; }
+    else { eqL.e--; eqV.e--; eqL.pts -= 1; eqV.pts -= 1; }
+
+    // --- 3. NUEVO RESULTADO Y MOTIVO (ESTILO VISUAL IMPACTANTE) ---
+    const res = prompt(`¿Quién gana la protesta?\n1. ${partido.l}\n2. ${partido.v}`);
+    if (res !== "1" && res !== "2") return alert("Cancelado.");
+
+    const motivo = prompt("Escribe el motivo de la protesta:") || "No especificado";
+
+    const gL_n = (res === "1") ? 3 : 0;
+    const gV_n = (res === "2") ? 3 : 0;
+
+    partido.score = `${gL_n} - ${gV_n}`;
+
+    // Diseño visual para el reporte
+    const cajaMotivo = `
+        <div style="margin-top: 15px; padding: 15px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; text-align: center;">
+            <div style="color: #b45309; font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">
+                ⚠️ Resolución de Mesa
+            </div>
+            <div style="color: #78350f; font-size: 16px; font-weight: 600; font-style: italic;">
+                "${motivo}"
+            </div>
+        </div>
+    `;
+
+    partido.reporteHtml = { 
+        local: gL_n === 3 ? 
+            `<b style='color:#10b981; font-size:18px;'>GANÓ PROTESTA (3-0)</b>${cajaMotivo}` : 
+            `<b style='color:#ef4444; font-size:18px;'>PERDIÓ PROTESTA (0-3)</b>`, 
+        visita: gV_n === 3 ? 
+            `<b style='color:#10b981; font-size:18px;'>GANÓ PROTESTA (3-0)</b>${cajaMotivo}` : 
+            `<b style='color:#ef4444; font-size:18px;'>PERDIÓ PROTESTA (0-3)</b>` 
+    };
+
+    // --- 4. SUMAR NUEVOS PUNTOS ---
+    eqL.pj++; eqV.pj++;
+    eqL.gf += gL_n; eqL.gc += gV_n;
+    eqV.gf += gV_n; eqV.gc += gL_n;
+    if(gL_n > gV_n) { eqL.g++; eqL.pts += 3; eqV.p++; }
+    else { eqV.g++; eqV.pts += 3; eqL.p++; }
+
+    persist();
+    renderTodo();
+    alert("Protesta aplicada correctamente.");
+}
+
+function resetearPartido(idPartido) {
+    if(!confirm("¿ESTÁS SEGURO? Se borrarán todos los goles de este partido, se restarán los puntos a los equipos y el partido volverá a estar pendiente.")) return;
+
+    let partido;
+    db.calendario.forEach(j => {
+        let x = j.partidos.find(p => p.id === idPartido);
+        if (x) partido = x;
+    });
+
+    // 1. LIMPIAR GOLES DE JUGADORES (Usando la lógica de lectura de HTML que ya tenemos)
+    const tempDiv = document.createElement('div');
+    const reportes = [partido.reporteHtml.local, partido.reporteHtml.visita];
+    
+    reportes.forEach(html => {
+        if (!html) return;
+        tempDiv.innerHTML = html;
+        const lineas = tempDiv.querySelectorAll('div'); 
+        lineas.forEach(linea => {
+            const texto = linea.innerText; 
+            if (texto.includes('⚽x')) {
+                const partes = texto.split('⚽x');
+                const nombreJugador = partes[0].replace('•', '').trim();
+                const golesARestar = parseInt(partes[1]);
+                const j = db.jugadores.find(x => x.nombre === nombreJugador);
+                if (j) {
+                    j.goles = Math.max(0, (j.goles || 0) - golesARestar);
+                    j.pj = Math.max(0, (j.pj || 0) - 1);
+                }
+            }
+        });
+    });
+
+    // 2. REVERTIR PUNTOS DE EQUIPOS
+    const eqL = db.equipos.find(e => e.nombre === partido.l);
+    const eqV = db.equipos.find(e => e.nombre === partido.v);
+    const sAnt = partido.score.split('-').map(s => parseInt(s.trim()) || 0);
+
+    eqL.pj--; eqV.pj--;
+    eqL.gf -= sAnt[0]; eqL.gc -= sAnt[1];
+    eqV.gf -= sAnt[1]; eqV.gc -= sAnt[0];
+
+    if(sAnt[0] > sAnt[1]) { eqL.g--; eqL.pts -= 3; eqV.p--; }
+    else if(sAnt[1] > sAnt[0]) { eqV.g--; eqV.pts -= 3; eqL.p--; }
+    else { eqL.e--; eqV.e--; eqL.pts -= 1; eqV.pts -= 1; }
+
+    // 3. RESETEAR ESTADO DEL PARTIDO
+    partido.score = "0 - 0";
+    partido.jugado = false;
+    partido.reporteHtml = null;
+
+    persist();
+    renderTodo();
+    alert("Partido reseteado. Ahora puedes cargarlo de nuevo.");
+}
+
+let proximoSlot = 1; // Controla qué lado se llena primero
+
+function filtrarBusquedaUnica() {
+    const input = document.getElementById('main-search');
+    const divResultados = document.getElementById('main-results');
+    if (!input || !divResultados) return; // Validación de seguridad
+    const texto = input.value.toLowerCase().trim();
+
+    if (texto.length < 1) {
+        divResultados.style.display = 'none';
+        return;
+    }
+
+    const coincidencias = db.jugadores.filter(j => 
+        j.nombre.toLowerCase().includes(texto) || j.equipo.toLowerCase().includes(texto)
+    );
+
+    if (coincidencias.length === 0) {
+        divResultados.innerHTML = `<div style="padding:15px; color:#94a3b8;">No se encontraron jugadores</div>`;
+    } else {
+        divResultados.innerHTML = coincidencias.map(j => `
+            <div onclick="asignarAlDuelo(${j.id})" 
+                 style="padding:12px 15px; border-bottom:1px solid #f1f5f9; cursor:pointer; display:flex; align-items:center; gap:12px;">
+                <img src="${j.foto || 'https://via.placeholder.com/40'}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
+                <div style="flex:1">
+                    <div style="font-weight:900; color:#1e293b; font-size:14px;">${j.nombre}</div>
+                    <div style="font-size:11px; color:#3b82f6; font-weight:700;">${j.equipo}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    divResultados.style.display = 'block';
+}
+
+function asignarAlDuelo(id) {
+    // Buscamos al jugador en la BD por su ID directamente
+    const jugador = db.jugadores.find(j => String(j.id) === String(id));
+    if (!jugador) return;
+
+    const s1 = document.getElementById('select-j1');
+    const s2 = document.getElementById('select-j2');
+
+    if (proximoSlot === 1) {
+        s1.value = id;
+        const slot1 = document.getElementById('slot-1');
+        if(slot1) slot1.innerHTML = `<b style="color:#3b82f6">🔵 ${jugador.nombre}</b>`;
+        proximoSlot = 2;
+    } else {
+        s2.value = id;
+        const slot2 = document.getElementById('slot-2');
+        if(slot2) slot2.innerHTML = `<b style="color:#ef4444">🔴 ${jugador.nombre}</b>`;
+        proximoSlot = 1;
+    }
+
+    // Limpieza total del buscador
+    document.getElementById('main-search').value = "";
+    document.getElementById('main-results').style.display = 'none';
+
+    // Disparar comparativa
+    compararJugadores();
+}
+function limpiarDuelo() {
+    document.getElementById('select-j1').value = "";
+    document.getElementById('select-j2').value = "";
+    document.getElementById('render-comparativa').innerHTML = "";
+    
+    // Resetear slots visuales si existen
+    if(document.getElementById('slot-1')) document.getElementById('slot-1').innerHTML = "ESPERANDO JUGADOR 1...";
+    if(document.getElementById('slot-2')) document.getElementById('slot-2').innerHTML = "ESPERANDO JUGADOR 2...";
+    
+    proximoSlot = 1;
+}
+
+function quitarSoloUno(num) {
+    // 1. Limpiamos el ID en el input oculto
+    document.getElementById('select-j' + num).value = "";
+    
+    // 2. Sincronizamos la variable global para que el buscador use este slot
+    proximoSlot = num; 
+
+    // 3. Limpiamos el texto de ayuda si lo usas
+    const slotVisual = document.getElementById('slot-' + num);
+    if(slotVisual) slotVisual.innerHTML = "ESPERANDO JUGADOR " + num + "...";
+
+    // 4. Volvemos a renderizar la comparativa
+    compararJugadores();
+}
+
+function init() {
+    // Usamos el mismo nombre que en persist() para que coincidan
+    const NOMBRE_DB = 'LIGA_PRO_FINAL'; 
+    const datosGuardados = localStorage.getItem(NOMBRE_DB);
+    
+    try {
+        if (datosGuardados) {
+            window.db = JSON.parse(datosGuardados);
+            // Si por alguna razón faltan los arrays básicos, los reponemos
+            if (!window.db.equipos) window.db.equipos = [];
+            if (!window.db.jugadores) window.db.jugadores = [];
+            if (!window.db.calendario) window.db.calendario = [];
+        } else {
+            // Estructura inicial limpia
+            window.db = {
+                jugadores: [],
+                equipos: [],
+                calendario: [],
+                playoffs: {},
+                nombreTemporada: "LIGA PRO ELITE 2026"
+            };
+        }
+    } catch (e) {
+        console.error("Error cargando base de datos, iniciando limpia:", e);
+        window.db = { jugadores: [], equipos: [], calendario: [], nombreTemporada: "Nueva Temporada" };
+    }
+}
+
+// --- GESTIÓN DE TEMPORADA ---
+function actualizarBanner() {
+    const tempElement = document.getElementById('banner-temporada');
+    if (tempElement) {
+        tempElement.innerText = db.nombreTemporada || "ESTADÍSTICAS OFICIALES 2026";
+    }
+}
+
+function renderEquipos() {
+    const grid = document.getElementById('grid-equipos');
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    db.equipos.forEach((eq, index) => {
+        const card = document.createElement('div');
+        card.className = "equipo-card";
+        
+        card.setAttribute('onclick', `verPlantilla("${eq.nombre}")`);
+        
+        // 1. Lógica para el logo: Si no hay eq.logo, usamos un div con emoji
+        const logoHTML = eq.logo 
+            ? `<img src="${eq.logo}" class="img-logo" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">`
+            : `<div style="width:60px; height:60px; background:#e2e8f0; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:30px; margin: 0 auto 10px;">🛡️</div>`;
+        
+        card.innerHTML = `
+            ${logoHTML}
+            <div style="font-weight:bold">${eq.nombre}</div>
+            ${(rolActual === 'admin' || rolActual === 'editor') ? `
+                <div class="admin-only" style="margin-top:10px; display:flex; gap:5px; justify-content:center;">
+                    <button class="btn-del" style="padding:4px 8px;" onclick="event.stopPropagation(); prepararEdicionEquipo(${index})">✏️</button>
+                    <button class="btn-del" style="padding:4px 8px;" onclick="event.stopPropagation(); eliminarEquipo(${index})">🗑️</button>
+                </div>` : ''}
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function eliminarPj(id, nombreEquipo) {
+    if (!modoAdmin) return alert("Acción bloqueada: Requiere permisos de Administrador.");
+
+    // 1. Buscar al jugador para confirmar por nombre
+    const jugador = db.jugadores.find(j => String(j.id) === String(id));
+    
+    if (!jugador) {
+        alert("Error: No se encontró al jugador.");
+        return;
+    }
+
+    // 2. Confirmación con el usuario
+    if (confirm(`¿Estás seguro de eliminar a "${jugador.nombre}" de la base de datos?\nEsta acción borrará todas sus estadísticas.`)) {
+        
+        // 3. Filtrar el array (Dejar a todos menos al eliminado)
+        db.jugadores = db.jugadores.filter(j => String(j.id) !== String(id));
+
+        // 4. Guardar cambios permanentemente
+        persist();
+
+        // 5. Refrescar la vista actual
+        verPlantilla(nombreEquipo);
+        
+        // 6. Opcional: Refrescar tablas generales por si estaba en el Pichichi
+        if (typeof renderTodo === 'function') renderTodo();
+
+        alert("Jugador eliminado con éxito.");
+    }
+}
+
+function procesarFoto(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        
+        img.onload = function() {
+            // --- INICIO DE COMPRESIÓN ---
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 200; // Suficiente para una miniatura de jugador
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Convertimos a JPEG con calidad baja (0.6) para ahorrar espacio
+            const fotoData = canvas.toDataURL('image/jpeg', 0.6);
+            // --- FIN DE COMPRESIÓN ---
+
+            fotoBase64Temp = fotoData;
+
+            const idEditando = document.getElementById('edit-pj-id').value;
+            if (idEditando !== "-1") {
+                const index = db.jugadores.findIndex(j => String(j.id) === String(idEditando));
+                if (index !== -1) {
+                    db.jugadores[index].foto = fotoData;
+                    persist();
+                    
+                    const equipoActual = document.getElementById('tit-equipo').innerText.trim();
+                    verPlantilla(equipoActual);
+                    alert("✅ Foto optimizada y guardada");
+                }
+            } else {
+                // Previsualización para nuevo jugador
+                const preview = document.getElementById('previsualizar-foto');
+                if (preview) {
+                    preview.src = fotoData;
+                    preview.style.display = "block";
+                }
+            }
+        };
+    };
+    reader.readAsDataURL(file);
+}
+function limpiarFormularioJugador() {
+    document.getElementById('pj-nombre').value = "";
+    document.getElementById('pj-curp').value = "";
+    document.getElementById('edit-pj-id').value = "-1";
+    document.getElementById('foto-archivo').value = "";
+    document.getElementById('previsualizar-foto').style.display = "none";
+    document.getElementById('placeholder-foto').style.display = "block";
+    fotoBase64Temp = "";
+}
+
+function aplicarPermisosVisuales() {
+    // Si modoAdmin es true, mostramos todo lo que sea admin-only
+    const displayStyle = modoAdmin ? 'block' : 'none';
+    const displayTable = modoAdmin ? 'table-cell' : 'none';
+
+    document.querySelectorAll('.admin-only').forEach(el => {
+        // Si es un elemento de tabla (TD o TH) usamos table-cell, si no block
+        if (el.tagName === 'TD' || el.tagName === 'TH') {
+            el.style.setProperty('display', displayTable, 'important');
+        } else {
+            el.style.setProperty('display', displayStyle, 'important');
+        }
+    });
+}
+
+function prepararEdicionEquipo(index) {
+    const eq = db.equipos[index];
+    if (!eq) return;
+
+    // Llenamos los campos del formulario de equipos
+    document.getElementById('eq-nombre').value = eq.nombre;
+    document.getElementById('edit-eq-id').value = index; // Usamos el index como referencia
+    
+    // Cambiamos el texto del botón para que el usuario sepa que está editando
+    const btn = document.querySelector('#form-registro-equipo .btn-main');
+    if (btn) btn.innerText = "ACTUALIZAR EQUIPO";
+
+    // Opcional: Scroll suave hacia el formulario
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelarEdicionEquipo() {
+    document.getElementById('eq-nombre').value = "";
+    document.getElementById('edit-eq-id').value = "-1";
+    document.getElementById('eq-logo-file').value = "";
+    const btn = document.querySelector('#form-registro-equipo .btn-main');
+    if (btn) btn.innerText = "GUARDAR EQUIPO";
+    fotoBase64Temp = "";
+}
+
+function logout() {
+    // 1. Resetear el estado de seguridad
+    rolActual = 'usuario';
+    modoAdmin = false;
+
+    // 2. Quitar las clases CSS del body (para esconder botones de borrar/editar)
+    document.body.classList.remove('role-admin', 'role-editor');
+
+    // 3. LIMPIEZA VISUAL: Escondemos el panel de edición si estaba abierto
+    const panelPlantilla = document.getElementById('panel-plantilla');
+    if (panelPlantilla) panelPlantilla.style.display = "none";
+
+    // 4. EL PASO QUE BUSCABAS: Mandar a la pantalla de inicio
+    // Usamos 'sec-inicio' que es el ID que vimos en tu función navegar
+    navegar('sec-inicio'); 
+
+    // 5. Actualizar el botón de login (para que vuelva a decir "Acceso Admin")
+    aplicarRestricciones();
+
+    // 6. Refrescar datos por si acaso
+    renderTodo();
+
+    alert("Sesión cerrada. Has vuelto al Modo Usuario.");
+}
+
+function renderTabla() {
+    const contenedorTabla = document.getElementById('body-tabla');
+    
+    // Si el contenedor no existe en el DOM, salimos de la función sin dar error
+    if (!contenedorTabla) return; 
+
+    // Solo si existe, hacemos el ordenamiento y el mapeo
+    const t = [...db.equipos].sort((a,b) => b.pts - a.pts || (b.gf-b.gc) - (a.gf-a.gc));
+    
+    contenedorTabla.innerHTML = t.map((e,i) => `
+        <tr>
+            <td>${i+1}</td>
+            <td style="text-align:left">
+                ${e.logo ? `<img src="${e.logo}" class="img-tabla">` : '🛡️'} 
+                <b>${e.nombre}</b>
+            </td>
+            <td>${e.pj || 0}</td>
+            <td>${e.g || 0}</td>
+            <td>${e.e || 0}</td>
+            <td>${e.p || 0}</td>
+            <td>${e.gf || 0}</td>
+            <td>${e.gc || 0}</td>
+            <td>${(e.gf || 0) - (e.gc || 0)}</td>
+            <td><b>${e.pts || 0}</b></td>
+        </tr>`).join('');
+}
+
+</script>
+</body>
+</html>
