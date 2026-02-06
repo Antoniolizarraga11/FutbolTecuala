@@ -3599,22 +3599,22 @@ function actualizarBanner() {
     const temporadaBanner = document.getElementById('banner-temporada');
 
     if (tituloBanner) {
-        // Mantiene el estilo de la última palabra en color (accent)
-        const palabras = nombreTorneoActual.split(" ");
+        // LEER DIRECTO DE LA DB PARA QUE SEA DINÁMICO
+        const nombreParaMostrar = db.nombreTorneoActual || "Torneo";
+        const palabras = nombreParaMostrar.split(" ");
+        
         if (palabras.length > 1) {
             const ultima = palabras.pop();
             tituloBanner.innerHTML = `${palabras.join(" ")} <span style="color: var(--accent);">${ultima}</span>`;
         } else {
-            tituloBanner.innerText = nombreTorneoActual;
+            tituloBanner.innerText = nombreParaMostrar;
         }
     }
 
     if (temporadaBanner) {
-        // Usa el nombre de la temporada guardado en la DB
-        temporadaBanner.innerText = db.nombreTemporada;
+        temporadaBanner.innerText = db.nombreTemporada || "2026";
     }
 }
-
 function renderEquipos() {
     const grid = document.getElementById('grid-equipos');
     if (!grid) return;
