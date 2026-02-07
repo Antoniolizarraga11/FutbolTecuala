@@ -1226,34 +1226,39 @@ body.role-editor .editor-only {
   console.log("🔥 Firebase conectado a Futbol Tecuala");
 </script>
 <script>
+// 1. Inicialización de la base de datos (La única fuente de verdad)
 let db = JSON.parse(localStorage.getItem('LIGA_PRO_FINAL')) || { 
     equipos: [], 
     jugadores: [], 
     calendario: [], 
     playoffs: {},
     nombreTemporada: "ESTADÍSTICAS OFICIALES 2026",
-    nombreTorneoActual: "COPA CHAMPIONS 2026" // Valor por defecto inicial
+    nombreTorneoActual: "COPA CHAMPIONS 2026" 
 };
 
-// Ahora la variable global toma el valor de la db (lo que se guardó) 
-// o el valor por defecto si la db es nueva.
-let nombreTorneoActual = db.nombreTorneoActual || "COPA CHAMPIONS 2026";
-
+// 2. Variables de estado de la App
 let equipoActual = "";
 let proximoSlot = 1;
 let fotoBase64Temp = ""; 
 let modoAdmin = false; 
 
+// 3. Función para guardar (Local + Firebase)
 const persist = () => {
-    // 1. Sigue guardando en la memoria del navegador (local)
+    // Primero actualizamos los nombres en el objeto db antes de guardar
+    // (Asegúrate de que tus inputs de edición actualicen db.nombreTorneoActual)
+    
+    // Guardar en memoria local
     localStorage.setItem('LIGA_PRO_FINAL', JSON.stringify(db));
 
-    // 2. NUEVO: Manda los datos a tu base de datos en Firebase
+    // Guardar en la nube (Firebase)
     database.ref('liga_datos').set(db)
-        .then(() => console.log("☁️ Sincronizado en la nube"))
+        .then(() => {
+            console.log("☁️ Sincronizado en la nube");
+            // Al guardar con éxito, refrescamos el banner localmente
+            if (typeof actualizarBanner === 'function') actualizarBanner();
+        })
         .catch(err => console.error("❌ Error de Firebase:", err));
 };
-
 function procesarLogoEquipo(event) {
     const file = event.target.files[0];
     if (file) {
@@ -4058,17 +4063,14 @@ function guardarConfiguracionGeneral() {
 
     if (nuevoTorneo === "" || nuevaTemp === "") return alert("Por favor, llena los campos.");
 
-    // 1. Actualizamos la variable de sesión
-    nombreTorneoActual = nuevoTorneo;
-
-    // 2. Actualizamos el OBJETO DB (Esto es lo que se guarda en el disco)
+    // 1. ACTUALIZAMOS EL OBJETO DB (Esta es la única fuente de verdad)
     db.nombreTorneoActual = nuevoTorneo; 
     db.nombreTemporada = nuevaTemp;
 
-    // 3. Guardamos permanentemente
+    // 2. Guardamos permanentemente (Local + Firebase)
     persist();
     
-    // 4. Actualizamos el banner visualmente
+    // 3. Actualizamos el banner visualmente para nosotros mismos
     actualizarBanner();
     
     alert("✅ Cambios guardados. Ahora sí son permanentes.");
