@@ -1410,7 +1410,10 @@ function importarDatos(input) {
             // Rellenamos los inputs con los valores actuales al entrar
             const inputTorneo = document.getElementById('cfg-nombre-torneo');
             const inputTemp = document.getElementById('cfg-nombre-temporada');
-            if(inputTorneo) inputTorneo.value = nombreTorneoActual;
+            
+            // CAMBIO AQUÍ: Usamos db.nombreTorneoActual en lugar de nombreTorneoActual solo
+            if(inputTorneo) inputTorneo.value = db.nombreTorneoActual; 
+            
             if(inputTemp) inputTemp.value = db.nombreTemporada;
             break;
         // --------------------------------
