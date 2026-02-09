@@ -446,17 +446,20 @@
     <div style="position: relative; width: 100%; height: 350px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
         <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop" 
              style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6);">
+        
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
             <h1 id="banner-titulo" style="color: white; font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); font-style: italic;">
-                LIGA PRO <span style="color: var(--accent);">ELITE</span>
+                ...
             </h1>
+            
             <div style="width: 120px; height: 6px; background: var(--accent); margin: 15px auto; border-radius: 3px;"></div>
+            
             <p id="banner-temporada" style="color: white; font-size: 1.3rem; font-weight: bold; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); letter-spacing: 1px;">
-                ESTADÍSTICAS OFICIALES 2026
+                Cargando...
             </p>
         </div>
     </div>
-
+</div>
     <h2 style="text-align: center; margin-top: 30px; font-weight: 900; color: #1e293b;">📊 RESUMEN DE TEMPORADA</h2>
     <div id="render-resumen-inicio"></div>
 </div>
@@ -3574,30 +3577,36 @@ function quitarSoloUno(num) {
 }
 
 function init() {
-    // Usamos el mismo nombre que en persist() para que coincidan
     const NOMBRE_DB = 'LIGA_PRO_FINAL'; 
     const datosGuardados = localStorage.getItem(NOMBRE_DB);
     
     try {
         if (datosGuardados) {
             window.db = JSON.parse(datosGuardados);
-            // Si por alguna razón faltan los arrays básicos, los reponemos
             if (!window.db.equipos) window.db.equipos = [];
             if (!window.db.jugadores) window.db.jugadores = [];
             if (!window.db.calendario) window.db.calendario = [];
+            // Agregamos esta validación por seguridad
+            if (!window.db.nombreTorneoActual) window.db.nombreTorneoActual = "COPA CHAMPIONS 2026";
         } else {
-            // Estructura inicial limpia
             window.db = {
                 jugadores: [],
                 equipos: [],
                 calendario: [],
                 playoffs: {},
-                nombreTemporada: "LIGA PRO ELITE 2026"
+                nombreTemporada: "LIGA PRO ELITE 2026",
+                nombreTorneoActual: "COPA CHAMPIONS 2026" // <-- IMPORTANTE: Agregar esto aquí
             };
         }
     } catch (e) {
         console.error("Error cargando base de datos, iniciando limpia:", e);
-        window.db = { jugadores: [], equipos: [], calendario: [], nombreTemporada: "Nueva Temporada" };
+        window.db = { 
+            jugadores: [], 
+            equipos: [], 
+            calendario: [], 
+            nombreTemporada: "Nueva Temporada",
+            nombreTorneoActual: "Torneo Nuevo" 
+        };
     }
 }
 
