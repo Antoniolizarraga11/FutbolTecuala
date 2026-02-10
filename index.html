@@ -1626,7 +1626,8 @@ function verPlantilla(referencia) {
         const idMvp = (rankingInterno[0].goles > 0) ? rankingInterno[0].id : null;
         
         contenedor.innerHTML = plantilla.map(j => {
-            const fotoUrl = j.foto || 'https://via.placeholder.com/200x180?text=SIN+FOTO';
+            const fotoUrl = j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=200&background=random&color=fff`;
+	    const nombreJugador = j.nombre || "Jugador";
             const claseNombreCorto = j.nombre.length > 15 ? 'style="font-size: 10px;"' : '';
             const esMvp = (j.id === idMvp) ? 'card-mvp' : '';
 
@@ -1945,7 +1946,9 @@ function renderCalendario() {
             html += `
                 <div class="partido-row" style="display:flex; align-items:center; justify-content:space-between; padding:25px 15px; border-bottom:1px solid #f1f5f9;">
                     <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px;">
-                        <img src="${eqL.logo || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:contain;">
+                        <img src="${eqL.logo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(eqL.nombre || 'EQ') + '&size=60&background=0D8ABC&color=fff'}" 
+     style="width:60px; height:60px; object-fit:contain;" 
+     alt="Logo">
                         <span style="font-size:14px; font-weight:800; text-align:center;">${p.l}</span>
                     </div>
 
@@ -1954,7 +1957,9 @@ function renderCalendario() {
                     </div>
 
                     <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px;">
-                        <img src="${eqV.logo || 'https://via.placeholder.com/60'}" style="width:60px; height:60px; object-fit:contain;">
+                        <img src="${eqV.logo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(eqV.nombre || 'V') + '&size=60&background=F44336&color=fff'}" 
+     style="width:60px; height:60px; object-fit:contain;" 
+     alt="Logo Visitante">
                         <span style="font-size:14px; font-weight:800; text-align:center;">${p.v}</span>
                     </div>
                 </div>`;
@@ -1987,7 +1992,9 @@ document.getElementById('area-carga').innerHTML = `
     <div style="text-align:center; background: var(--primary); color:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
         <div style="display:flex; justify-content:space-around; align-items:center;">
             <div style="flex:1;">
-                <img src="${eqLocal.logo || ''}" onerror="this.src='https://via.placeholder.com/80?text=LOGO'" style="width:80px; height:80px; object-fit:contain; background:white; border-radius:10px; padding:5px; border: 2px solid var(--accent);">
+                <img src="${eqLocal.logo || ''}" 
+     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=80&background=ddd&color=666';" 
+     style="width:80px; height:80px; object-fit:contain; background:white; border-radius:10px; padding:5px; border: 2px solid var(--accent);">
                 <h3 style="margin:10px 0 0; font-size:18px; text-transform:uppercase;">${p.l}</h3>
             </div>
 
@@ -1997,7 +2004,9 @@ document.getElementById('area-carga').innerHTML = `
             </div>
 
             <div style="flex:1;">
-                <img src="${eqVisita.logo || ''}" onerror="this.src='https://via.placeholder.com/80?text=LOGO'" style="width:80px; height:80px; object-fit:contain; background:white; border-radius:10px; padding:5px; border: 2px solid var(--accent);">
+                <img src="${eqVisita.logo || ''}" 
+     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=80&background=f0f0f0&color=999';" 
+     style="width:80px; height:80px; object-fit:contain; background:white; border-radius:10px; padding:5px; border: 2px solid var(--accent);">
                 <h3 style="margin:10px 0 0; font-size:18px; text-transform:uppercase;">${p.v}</h3>
             </div>
         </div>
@@ -2413,14 +2422,18 @@ function actualizarMarcadorVivo() {
                 
                 <div class="scoreboard">
                     <div class="team-info">
-                        <img src="${logoL}" onerror="this.src='https://via.placeholder.com/120?text=LOGO'" class="logo-img">
+                        <img src="${logoL}" 
+     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=120&background=f0f0f0&color=666';" 
+     class="logo-img">
                         <div class="team-name">${partido.l}</div>
                     </div>
                     
                     <div class="score-display">${partido.score}</div>
                     
                     <div class="team-info">
-                        <img src="${logoV}" onerror="this.src='https://via.placeholder.com/120?text=LOGO'" class="logo-img">
+                        <img src="${logoV}" 
+     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=120&background=f0f0f0&color=666';" 
+     class="logo-img">
                         <div class="team-name">${partido.v}</div>
                     </div>
                 </div>
@@ -2596,7 +2609,7 @@ function avanzarFase() {
     if (esLaFinal) {
         const campeon = ganadores[0];
         const eq = db.equipos.find(e => e.nombre === campeon);
-        const logo = eq?.logo || 'https://via.placeholder.com/150?text=SIN+LOGO';
+        const logo = eq?.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(eq?.nombre || 'S-L')}&size=150&background=f0f0f0&color=999`;
 
         document.getElementById('render-playoffs').innerHTML = `
             <div style="text-align:center; padding:40px; background:white; border:5px solid #fbbf24; border-radius:20px;">
@@ -2744,7 +2757,7 @@ function prepararImpresionGoleadores() {
         const posicion = rankeados.findIndex(x => x.id === j.id) + 1;
         const datosEquipo = db.equipos.find(e => e.nombre === j.equipo);
         const logoEquipo = datosEquipo ? datosEquipo.logo : '';
-        const fotoPj = j.foto ? j.foto : 'https://via.placeholder.com/60?text=👤';
+        const fotoPj = j.foto ? j.foto : `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=60&background=random&color=fff`;
 
         return `
         <div style="background:white; padding:15px; border-radius:12px; margin-bottom:12px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
@@ -2753,8 +2766,9 @@ function prepararImpresionGoleadores() {
                 #${posicion}
             </div>
             
-            <img src="${logoEquipo}" onerror="this.src='https://via.placeholder.com/40?text=🛡️'" 
-                 style="width:40px; height:40px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
+            <img src="${logoEquipo}" 
+     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=EQ&size=40&background=f1f5f9&color=64748b';" 
+     style="width:40px; height:40px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
 
             <div style="flex:1;">
                 <div style="font-weight:bold; color:#1e293b; font-size:14px; text-transform:uppercase;">${j.nombre}</div>
@@ -2919,7 +2933,9 @@ function renderGoleadores() {
         <div class="mvp-card" style="background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding-bottom: 25px;">
             
             <div class="mvp-photo-wrapper" style="margin-bottom: 10px;">
-                <img src="${mvp.foto || 'https://via.placeholder.com/200?text=👤'}" class="mvp-photo">
+                <img src="${mvp.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mvp.nombre)}&size=200&background=FFD700&color=000`}" 
+     class="mvp-photo" 
+     alt="MVP">
                 <div class="mvp-number">1º</div>
             </div>
 
@@ -2962,7 +2978,10 @@ function renderGoleadores() {
                 return `
                 <div class="item-goleador" style="display:flex; align-items:center; padding:12px 15px; background:${background}; border-radius:12px; margin-bottom:8px; border:1px solid #edf2f7;">
                     <div class="rank" style="width:35px; font-weight:800; color:#1e293b; font-size:15px;">${i + 2}º</div>
-                    <img src="${j.foto || 'https://via.placeholder.com/40?text=👤'}" class="img-pj" style="width:48px; height:48px; border-radius:12px; border:2px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); object-fit:cover; margin: 0 12px;">
+                    <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=48&background=random&color=fff`}" 
+     class="img-pj" 
+     style="width:48px; height:48px; border-radius:12px; border:2px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); object-fit:cover; margin: 0 12px;"
+     alt="Foto">
                     <div class="name-pj" style="flex:1;">
                         <strong style="font-size:15px; color:#0f172a; display:block;">${j.nombre}</strong>
                         <span style="font-size:12px; color:#64748b; font-weight:600; text-transform:uppercase;">${j.equipo}</span>
@@ -3098,7 +3117,9 @@ function renderContenidoCarta(j, slot) {
             <img src="${eq?.logo || ''}" class="fc-team-badge-small">
         </div>
         <div class="fc-photo-container">
-            <img src="${j.foto || 'https://via.placeholder.com/150'}" class="fc-player-photo">
+            <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=150&background=random&color=fff`}" 
+     class="fc-player-photo" 
+     alt="Foto de ${j.nombre}">
         </div>
         <div class="fc-info">
             <div class="fc-name">${j.nombre}</div>
@@ -3146,7 +3167,9 @@ function renderCardComparador(j, prom, colorBase, esGanador, puesto, titulo, num
         </div>
         
         <div style="padding: 20px; text-align: center;">
-            <img src="${j.foto || 'https://via.placeholder.com/120?text=👤'}" style="width: 120px; height: 120px; border-radius: 20px; object-fit: cover; border: 4px solid #f1f5f9; margin-bottom: 15px;">
+            <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=120&background=random&color=fff`}" 
+     style="width: 120px; height: 120px; border-radius: 20px; object-fit: cover; border: 4px solid #f1f5f9; margin-bottom: 15px;"
+     alt="Perfil">
             
             <div style="background: #f8fafc; padding: 15px; border-radius: 20px; border: 1px solid #f1f5f9; margin-bottom: 15px;">
                 <div style="font-size: 45px; font-weight: 900; color: #0f172a; line-height: 1;">${j.goles}</div>
@@ -3480,7 +3503,9 @@ divResultados.innerHTML = coincidencias.map(j => `
     <div onmousedown="asignarAlDuelo(${j.id})" 
          style="padding:12px 15px; border-bottom:1px solid #f1f5f9; cursor:pointer; display:flex; align-items:center; gap:12px;"
          class="resultado-item">
-        <img src="${j.foto || 'https://via.placeholder.com/40'}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
+        <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=40&background=random&color=fff`}" 
+     style="width:40px; height:40px; border-radius:8px; object-fit:cover;"
+     alt="Foto">
         <div style="flex:1">
             <div style="font-weight:900; color:#1e293b; font-size:14px;">${j.nombre}</div>
             <div style="font-size:11px; color:#3b82f6; font-weight:700;">${j.equipo}</div>
@@ -3887,9 +3912,11 @@ function renderTabla() {
 // USA "function" en lugar de "const" para que estén disponibles en todo el archivo
 function cardPj(titulo, pj, valor, sub, color, icono, destino) {
     if(!pj) return "";
-    const foto = pj.foto || 'https://via.placeholder.com/100?text=👤';
+    const foto = pj.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(pj.nombre)}&size=100&background=random&color=fff`;
     const eqObj = db.equipos.find(e => e.nombre === pj.equipo);
-    const logoEq = eqObj && eqObj.logo ? eqObj.logo : 'https://via.placeholder.com/40?text=🛡️';
+    const logoEq = (eqObj && eqObj.logo) 
+    ? eqObj.logo 
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(eqObj?.nombre || 'EQ')}&size=40&background=f1f5f9&color=64748b`;
     
     return `
     <div class="card-resumen" onclick="navegar('${destino}')" style="border-top: 5px solid ${color}; cursor: pointer;">
@@ -3910,7 +3937,7 @@ function cardPj(titulo, pj, valor, sub, color, icono, destino) {
 
 function cardEq(titulo, eq, valor, sub, color, icono, destino) {
     if(!eq) return "";
-    const logo = eq.logo || 'https://via.placeholder.com/100?text=🛡️';
+    const logo = eq.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'EQ')}&size=100&background=0284c7&color=fff`;
     return `
     <div class="card-resumen" onclick="navegar('${destino}')" style="border-top: 5px solid ${color}; cursor: pointer;">
         <small>${icono} ${titulo}</small>
@@ -4051,8 +4078,9 @@ function renderDisciplina() {
         <tr>
             <td style="text-align:left">
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <img src="${j.foto || 'https://via.placeholder.com/35?text=👤'}" 
-                         style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:1px solid #ddd;">
+                    <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=35&background=random&color=fff`}" 
+     style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:1px solid #ddd;"
+     alt="Foto">
                     <b style="font-size:14px;">${j.nombre}</b>
                 </div>
             </td>
