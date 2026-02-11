@@ -414,7 +414,6 @@
     text-transform: uppercase;
     font-size: 12px;
 }
-@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 </style>
 
 </head>
@@ -1209,7 +1208,7 @@ body.role-editor .editor-only {
 
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
 <script>
   // 2. Tu configuración (la que me pasaste)
   const firebaseConfig = {
@@ -1223,9 +1222,11 @@ body.role-editor .editor-only {
   };
 
   // 3. Inicializamos Firebase para que esté disponible en todo tu código
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-  console.log("🔥 Firebase conectado a Futbol Tecuala");
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const storage = firebase.storage(); // <--- AGREGA ESTA LÍNEA
+
+console.log("🔥 Firebase y Storage conectados a Futbol Tecuala");
 </script>
 <script>
 // 1. Inicialización de la base de datos (La única fuente de verdad)
@@ -2339,8 +2340,6 @@ function actualizarMarcadorVivo() {
         }
     });
 
-// ... (todo tu código anterior de actualización de jugadores) ...
-
     // ACTUALIZAMOS EL OBJETO PARTIDO CON EL HTML MODIFICADO
     partidoObj.reporteHtml = { local: htmlReporteL, visita: htmlReporteV };
 
@@ -2351,21 +2350,14 @@ function actualizarMarcadorVivo() {
     const areaCarga = document.getElementById('area-carga');
     if(areaCarga) areaCarga.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">✅ Partido guardado. Selecciona otro juego del calendario.</p>`;
 
-    // --- NUEVA ALERTA DINÁMICA ---
-    const mensajeAlerta = `⚽ ¡PARTIDO REGISTRADO!\n\n` +
-                          `${partidoObj.l} ${gl} - ${gv} ${partidoObj.v}\n\n` +
-                          `🏟️ Estadio: ${partidoObj.estadio}\n` +
-                          `⚖️ Árbitro: ${partidoObj.arbitro}\n\n` +
-                          `Las tablas de posiciones y jugadores han sido actualizadas.`;
-    
-    alert(mensajeAlerta);
-    // ----------------------------
+    alert("Partido finalizado y estadísticas actualizadas.");
     
     const btnNavCalendario = document.querySelector('button[onclick*="sec-calendario"]');
     navegar('sec-calendario', btnNavCalendario);
     
     if(typeof renderCalendario === 'function') renderCalendario();
 }
+
     function verReporte(idPartido) {
     let partido;
     let jornadaNum = 0;
@@ -3627,8 +3619,8 @@ function init() {
                 equipos: [],
                 calendario: [],
                 playoffs: {},
-                nombreTemporada: "LIGA PRO ELITE 2026",
-                nombreTorneoActual: "COPA CHAMPIONS 2026" // <-- IMPORTANTE: Agregar esto aquí
+                nombreTemporada: "Cargando",
+                nombreTorneoActual: "..." // <-- IMPORTANTE: Agregar esto aquí
             };
         }
     } catch (e) {
@@ -3744,15 +3736,18 @@ function procesarFoto(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Indicador visual de que algo está pasando
+    console.log("Iniciando subida a Storage...");
+
     const reader = new FileReader();
     reader.onload = function(e) {
         const img = new Image();
         img.src = e.target.result;
         
         img.onload = function() {
-            // --- INICIO DE COMPRESIÓN ---
+            // --- MANTENEMOS TU COMPRESIÓN ---
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 200; // Suficiente para una miniatura de jugador
+            const MAX_WIDTH = 300; // Subimos un poco a 300px (ya no pesa en la DB)
             const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scaleSize;
@@ -3760,31 +3755,46 @@ function procesarFoto(event) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // Convertimos a JPEG con calidad baja (0.6) para ahorrar espacio
-            const fotoData = canvas.toDataURL('image/jpeg', 0.6);
-            // --- FIN DE COMPRESIÓN ---
+            // --- CAMBIO CLAVE: Convertimos a Blob para subir el archivo ---
+            canvas.toBlob((blob) => {
+                // Creamos un nombre único para el archivo
+                const nombreArchivo = `jugadores/foto_${Date.now()}.jpg`;
+                const storageRef = firebase.storage().ref().child(nombreArchivo);
 
-            fotoBase64Temp = fotoData;
+                // Subimos el archivo a Firebase Storage
+                storageRef.put(blob).then(snapshot => {
+                    // Cuando se sube, pedimos la URL pública
+                    return snapshot.ref.getDownloadURL();
+                }).then(urlDescarga => {
+                    // urlDescarga es un link corto: https://firebasestorage...
+                    fotoBase64Temp = urlDescarga; 
 
-            const idEditando = document.getElementById('edit-pj-id').value;
-            if (idEditando !== "-1") {
-                const index = db.jugadores.findIndex(j => String(j.id) === String(idEditando));
-                if (index !== -1) {
-                    db.jugadores[index].foto = fotoData;
-                    persist();
-                    
-                    const equipoActual = document.getElementById('tit-equipo').innerText.trim();
-                    verPlantilla(equipoActual);
-                    alert("✅ Foto optimizada y guardada");
-                }
-            } else {
-                // Previsualización para nuevo jugador
-                const preview = document.getElementById('previsualizar-foto');
-                if (preview) {
-                    preview.src = fotoData;
-                    preview.style.display = "block";
-                }
-            }
+                    const idEditando = document.getElementById('edit-pj-id').value;
+                    if (idEditando !== "-1") {
+                        const index = db.jugadores.findIndex(j => String(j.id) === String(idEditando));
+                        if (index !== -1) {
+                            // Guardamos el LINK en la base de datos, no el texto gigante
+                            db.jugadores[index].foto = urlDescarga;
+                            persist();
+                            
+                            const equipoActual = document.getElementById('tit-equipo').innerText.trim();
+                            verPlantilla(equipoActual);
+                            alert("✅ Foto subida a la nube y actualizada");
+                        }
+                    } else {
+                        // Previsualización para nuevo jugador
+                        const preview = document.getElementById('previsualizar-foto');
+                        if (preview) {
+                            preview.src = urlDescarga;
+                            preview.style.display = "block";
+                        }
+                    }
+                }).catch(error => {
+                    console.error("Error al subir:", error);
+                    alert("Error al subir la foto. Revisa las reglas (Rules) de Storage.");
+                });
+
+            }, 'image/jpeg', 0.7); // Calidad al 70%
         };
     };
     reader.readAsDataURL(file);
@@ -4123,14 +4133,6 @@ function guardarConfiguracionGeneral() {
     
     alert("✅ Cambios guardados. Ahora sí son permanentes.");
 }
-function toastNotificacion(msg) {
-    const toast = document.createElement('div');
-    toast.innerHTML = msg;
-    toast.style = `position:fixed; top:20px; right:20px; background:#0f172a; color:white; padding:16px 24px; border-radius:12px; z-index:9999; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5); font-family:sans-serif; border-left:5px solid #22c55e; min-width:250px; animation: slideIn 0.5s ease-out;`;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = '0.5s'; setTimeout(()=>toast.remove(), 500); }, 4000);
-}
-
 </script>
 <link rel="manifest" href="/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -4148,27 +4150,18 @@ function toastNotificacion(msg) {
 
     <script>
       // Verificamos que Firebase esté listo antes de escuchar
-      let ultimaActualizacion = Date.now(); // Para evitar que salte la alerta al cargar la app
-
-if (typeof database !== 'undefined') {
-    database.ref('liga_datos').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            // Si la app ya cargó y recibimos datos nuevos...
-            if (db && Date.now() - ultimaActualizacion > 5000) {
-                 toastNotificacion("🔄 ¡Tablas y resultados actualizados en tiempo real!");
-            }
-            
-            db = data; 
-            if (typeof renderTabla === 'function') renderTabla();
-            if (typeof renderGoleadores === 'function') renderGoleadores();
-            if (typeof actualizarBanner === 'function') actualizarBanner();
-            
-            ultimaActualizacion = Date.now();
-            console.log("🔄 ¡Vista actualizada con datos de la nube!");
-        }
-    });
-}
+      if (typeof database !== 'undefined') {
+          database.ref('liga_datos').on('value', (snapshot) => {
+              const data = snapshot.val();
+              if (data) {
+                  db = data; 
+                  if (typeof renderTabla === 'function') renderTabla();
+                  if (typeof renderGoleadores === 'function') renderGoleadores();
+                  if (typeof actualizarBanner === 'function') actualizarBanner();
+                  console.log("🔄 ¡Vista actualizada con datos de la nube!");
+              }
+          });
+      }
     </script>
 
 </body>
