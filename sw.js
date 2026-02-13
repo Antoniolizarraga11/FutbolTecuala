@@ -14,7 +14,7 @@ self.addEventListener('install', e => {
   );
 });
 
-// 2. ACTIVACIÓN: Borra los cachés viejos (como 'liga-v1')
+// 2. ACTIVACIÓN: Borra los cachés viejos y toma el control de inmediato
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys => {
@@ -26,6 +26,11 @@ self.addEventListener('activate', e => {
           }
         })
       );
+    }).then(() => {
+      // ESTA LÍNEA ES LA CLAVE:
+      // Obliga a que la página actual empiece a ser controlada por este nuevo SW 
+      // de forma inmediata, lo que dispara el 'controllerchange' en el index.html
+      return self.clients.claim();
     })
   );
 });

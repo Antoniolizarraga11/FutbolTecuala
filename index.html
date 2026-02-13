@@ -1256,32 +1256,36 @@ body.role-editor .editor-only {
 
   console.log("🔥 Firebase y Storage conectados con Cache Busting");
 
- // Registro del Service Worker con detección de actualización
+// Registro del Service Worker con detección de actualización
   if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     
-    // 1. Registramos el SW (aquí es mejor sin el ?v= si el SW ya gestiona el caché)
+    // 1. Registro estándar
     navigator.serviceWorker.register('./sw.js')
       .then(reg => {
         console.log("✅ SW registrado");
 
-        // 2. Detectar si hay una actualización esperando
+        // 2. Forzar verificación de actualización cada vez que se abre la app
+        reg.update(); 
+
         reg.onupdatefound = () => {
           const installingWorker = reg.installing;
           installingWorker.onstatechange = () => {
             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // Avisamos a la consola, pero el refresco lo hará el controllerchange
-              console.log("📥 Nueva versión descargada. Aplicando...");
+              console.log("📥 Nueva versión descargada. El cambio será automático.");
             }
           };
         };
       })
       .catch(err => console.log("❌ Error SW", err));
 
-    // 3. LA CLAVE: Recargar automáticamente cuando el nuevo SW tome el control
+    // 3. El motor de refresco automático
     let refrescando = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+      // Evitamos recargas infinitas
       if (refrescando) return;
       refrescando = true;
+      
+      console.log("🔄 ¡Aplicando nueva versión ahora mismo!");
       window.location.reload();
     });
   }
