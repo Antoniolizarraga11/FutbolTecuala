@@ -414,6 +414,10 @@
     text-transform: uppercase;
     font-size: 12px;
 }
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
 </style>
 
 </head>
@@ -441,13 +445,10 @@
 </nav>
 
 <div class="container">
-    
 <div id="sec-inicio" class="seccion visible">
-    
     <div style="position: relative; width: 100%; height: 350px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
         <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop" 
-             style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6);">
-        
+             style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6);">      
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
             <h1 id="banner-titulo" style="color: white; font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); font-style: italic;">
                 ...
@@ -459,12 +460,10 @@
         </div>
     </div> <h2 style="text-align: center; margin-top: 30px; font-weight: 900; color: #1e293b;">📊 RESUMEN DE TEMPORADA</h2>
     <div id="render-resumen-inicio"></div>
-
 </div>
 
 	<div id="sec-calendario" class="seccion">
-    <h2>Calendario de Juegos</h2>
-    
+    <h2>Calendario de Juegos</h2>  
     <div class="form-group no-print admin-only" style="display: none;">
         <label>Número de Vueltas:</label>
         <select id="vueltas" class="input-std">
@@ -480,12 +479,10 @@
 </div>
 
     <div id="sec-ajustes" class="seccion">
-    <h2>⚙️ Configuración del Sistema</h2>
-    
+    <h2>⚙️ Configuración del Sistema</h2>    
     <div class="form-group" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
         <h3 style="margin-top: 0;">🏆 Identidad del Torneo</h3>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Cambia los nombres que aparecen en el Banner de Inicio y en los Reportes PDF.</p>
-        
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Cambia los nombres que aparecen en el Banner de Inicio y en los Reportes PDF.</p>        
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div>
                 <label style="display:block; font-size: 11px; font-weight: bold; color: #475569; margin-bottom: 5px;">NOMBRE DEL TORNEO:</label>
@@ -550,10 +547,10 @@
     
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 id="tit-equipo" style="margin:0; color: var(--primary); font-weight: 900; text-transform: uppercase; letter-spacing: 1px;"></h3>
-        <button onclick="document.getElementById('panel-plantilla').style.display='none'" 
-                style="background:#f87171; color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">
-            CERRAR PLANTILLA ×
-        </button>
+        <button onclick="cerrarPlantilla()" 
+        style="background:#f87171; color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">
+    CERRAR PLANTILLA ×
+</button>
     </div>
     
     <div class="form-group editor-only" style="background: #f8fafc; border: 2px solid var(--accent); padding: 20px; border-radius: 15px; margin-bottom: 30px;">
@@ -618,7 +615,36 @@
 
     <div id="diseno-goleadores-pro"></div>
 </div>
-        <div id="sec-disciplina" class="seccion"><h2>Disciplina</h2><div class="form-group no-print"><select id="orden-disc" onchange="renderTodo()" class="input-std" style="width:200px"><option value="roja">Ordenar por Rojas</option><option value="ama">Ordenar por Amarillas</option></select></div><table><thead><tr><th style="text-align:left">Jugador</th><th>Equipo</th><th>🟨</th><th>🟥</th></tr></thead><tbody id="body-disciplina"></tbody></table></div>
+<div id="sec-disciplina" class="seccion">
+    <h2>Disciplina</h2>
+    
+    <div id="panel-admin-disciplina" class="no-print" style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:20px;">
+        <h4 style="margin:0 0 10px 0; font-size:14px; color:#475569;">⚖️ ADMINISTRAR SANCIONES</h4>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="busqueda-sancion" placeholder="Buscar jugador..." class="input-std" onkeyup="buscarParaSancion()">
+        </div>
+        <div id="lista-busqueda-sancion" style="margin-top:10px; max-height:150px; overflow-y:auto; background:white; border-radius:6px;"></div>
+    </div>
+
+    <div class="form-group no-print">
+        <select id="orden-disc" onchange="renderTodo()" class="input-std" style="width:200px">
+            <option value="roja">Ordenar por Rojas</option>
+            <option value="ama">Ordenar por Amarillas</option>
+        </select>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">Jugador</th>
+                <th>Equipo</th>
+                <th>🟨</th>
+                <th>🟥</th>
+                <th class="no-print">Sanción</th> </tr>
+        </thead>
+        <tbody id="body-disciplina"></tbody>
+    </table>
+</div>
 
 <div id="sec-buscador" class="seccion">
     <h2>Buscador de Jugadores</h2>
@@ -1210,7 +1236,7 @@ body.role-editor .editor-only {
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
 <script>
-  // 2. Tu configuración (la que me pasaste)
+
   const firebaseConfig = {
     apiKey: "AIzaSyArH_E5ieh0293mDKrNrW5kOnzYK1-9oU4",
     authDomain: "futboltecuala-7dc52.firebaseapp.com",
@@ -1221,36 +1247,29 @@ body.role-editor .editor-only {
     appId: "1:1027361474936:web:c29d598512d210595da08d"
   };
 
-  // 3. Inicializamos Firebase para que esté disponible en todo tu código
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-const storage = firebase.storage(); // <--- AGREGA ESTA LÍNEA
+const storage = firebase.storage();
 
 console.log("🔥 Firebase y Storage conectados a Futbol Tecuala");
 </script>
 <script>
-// 1. Inicialización de la base de datos (La única fuente de verdad)
+
 let db = JSON.parse(localStorage.getItem('LIGA_PRO_FINAL')) || { 
     equipos: [], 
     jugadores: [], 
     calendario: [], 
     playoffs: {},
-    nombreTemporada: "ESTADÍSTICAS OFICIALES 2026",
-    nombreTorneoActual: "COPA CHAMPIONS 2026" 
+    nombreTemporada: "...",
+    nombreTorneoActual: "..." 
 };
 
-// 2. Variables de estado de la App
 let equipoActual = "";
 let proximoSlot = 1;
 let fotoBase64Temp = ""; 
 let modoAdmin = false; 
 
-// 3. Función para guardar (Local + Firebase)
 const persist = () => {
-    // Primero actualizamos los nombres en el objeto db antes de guardar
-    // (Asegúrate de que tus inputs de edición actualicen db.nombreTorneoActual)
-    
-    // Guardar en memoria local
     localStorage.setItem('LIGA_PRO_FINAL', JSON.stringify(db));
 
     // Guardar en la nube (Firebase)
@@ -1280,10 +1299,8 @@ function loginAdmin() {
     const input = prompt("Internal Access Code");
     if (!input) return;
 
-    // Convertimos lo que el usuario escribió a Base64
     const hashedInput = btoa(input);
 
-    // Definimos las llaves ocultas
     const keyEditor = "Y2FyZ2E5ODc="; 
     const keyAdmin = "ZGlvczExOTA=";
 
@@ -1305,17 +1322,11 @@ function loginAdmin() {
         alert("Código de sistema no reconocido.");
         return;
     }
-
-    // Actualizamos la interfaz para mostrar/ocultar botones
     aplicarRestricciones();
     renderTodo();
 }
 
-function actualizarInterfazAdmin() {
-    // REGLA DE ORO: No toques .style.display manualmente aquí.
-    // El CSS ocultará el form-registro-equipo automáticamente
-    // porque el Editor NO tiene la clase .role-admin en el body.
-    
+    function actualizarInterfazAdmin() {
     renderEquipos(); 
 }
 function aplicarRestricciones() {
@@ -1344,26 +1355,21 @@ function aplicarRestricciones() {
         }
     }
 
-    // 3. Control de botones de navegación (Ajustes y Calendario Admin)
-    const botonesNav = document.querySelectorAll('.nav-link');
-    
+    const botonesNav = document.querySelectorAll('.nav-link');  
     botonesNav.forEach(btn => {
         const texto = btn.innerText.toUpperCase();
         
-        // El botón AJUSTES solo para ADMIN
         if (texto.includes('AJUSTES')) {
             btn.style.display = (rolActual === 'admin') ? "inline-block" : "none";
         }
     });
 
-    // 4. Asegurar que el panel de generación de calendario solo sea para ADMIN
     const panelGenerador = document.querySelector('#sec-calendario .admin-only');
     if (panelGenerador) {
         panelGenerador.style.display = (rolActual === 'admin') ? "block" : "none";
     }
 }
-    // --- FUNCIONES DE RESPALDO ---
-   // --- RESPALDOS ---
+
 function exportarDatos() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
     const downloadAnchorNode = document.createElement('a');
@@ -1385,12 +1391,10 @@ function importarDatos(input) {
 }
 
    function navegar(idSeccion, boton) {
-    // 1. Gestión de visibilidad (Ocultar todas, mostrar una)
     document.querySelectorAll('.seccion').forEach(s => s.classList.remove('visible'));
     const seccionActiva = document.getElementById(idSeccion);
     if(seccionActiva) seccionActiva.classList.add('visible');
 
-    // 2. Gestión de Botones (Clase Active)
     document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
     if(boton) {
         boton.classList.add('active');
@@ -1400,30 +1404,28 @@ function importarDatos(input) {
         if(btnNav) btnNav.classList.add('active');
     }
 
-    // --- RENDERIZADO BAJO DEMANDA ---
     switch(idSeccion) {
         case 'sec-inicio':
+	    equipoActual = null;
             actualizarBanner(); 
             renderResumenInicio(); 
             renderTodo(); 
-            break;
-        
-        // --- NUEVO CASO AGREGADO AQUÍ ---
+            break;      
         case 'sec-ajustes':
-            // Rellenamos los inputs con los valores actuales al entrar
             const inputTorneo = document.getElementById('cfg-nombre-torneo');
             const inputTemp = document.getElementById('cfg-nombre-temporada');
-            
-            // CAMBIO AQUÍ: Usamos db.nombreTorneoActual en lugar de nombreTorneoActual solo
-            if(inputTorneo) inputTorneo.value = db.nombreTorneoActual; 
-            
+            if(inputTorneo) inputTorneo.value = db.nombreTorneoActual;           
             if(inputTemp) inputTemp.value = db.nombreTemporada;
             break;
-        // --------------------------------
-
         case 'sec-equipos':
             renderEquipos(); 
-            if (equipoActual !== null) verPlantilla(equipoActual);
+            // Solo abre la plantilla si realmente hay un equipoActual
+            if (equipoActual) {
+                verPlantilla(equipoActual);
+            } else {
+                const panel = document.getElementById('panel-plantilla');
+                if(panel) panel.style.display = 'none';
+            }
             break;
         case 'sec-calendario':
             renderCalendario();
@@ -1445,10 +1447,9 @@ function importarDatos(input) {
         default:
             renderTodo();
     }
-
-    // 3. Aplicar seguridad (Ocultar botones de Admin si es Usuario)
     aplicarRestricciones(); 
 }
+
 function guardarEquipo() {
     if (rolActual !== 'admin') {
         return alert("⛔ Permiso insuficiente.");
@@ -1466,7 +1467,6 @@ function guardarEquipo() {
             return alert("⚠️ Error: Ya existe un equipo llamado " + nombre);
         }
 
-        // NUEVO EQUIPO
         db.equipos.push({
             id: Date.now(),
             nombre: nombre,
@@ -1474,17 +1474,13 @@ function guardarEquipo() {
             pj:0, g:0, e:0, p:0, gf:0, gc:0, pts:0 
         });
 
-        // --- LINEAS CLAVE PARA EL PRIMER JUGADOR ---
-        equipoActual = nombre; // Definimos que este es el equipo activo ahora
-        document.getElementById('tit-equipo').innerText = nombre; // Actualizamos el título visualmente
-        // -------------------------------------------
-
+        equipoActual = nombre;
+        document.getElementById('tit-equipo').innerText = nombre;
     } else {
         const idx = parseInt(idEditando);
         if (existe && db.equipos[idx].nombre !== nombre) {
             return alert("⚠️ Error: No puedes usar ese nombre porque ya pertenece a otro equipo.");
         }
-
         let antiguoNombre = db.equipos[idx].nombre;
         db.equipos[idx].nombre = nombre;
 
@@ -1504,24 +1500,17 @@ function guardarEquipo() {
     cancelarEdicionEquipo(); 
     renderTodo();
 
-    // OPCIONAL: Abrir la plantilla del equipo recién creado automáticamente
-    // verPlantilla(nombre); 
-
     alert("✅ Equipo guardado correctamente. Ya puedes añadir jugadores.");
 }
 function actualizarVinculosEquipo(viejo, nuevo) {
-    // Normalizamos para comparar sin errores de espacios o mayúsculas
     const v = viejo.trim().toUpperCase();
     const n = nuevo.trim().toUpperCase();
-
-    // 1. Actualizar Jugadores
     db.jugadores.forEach(j => {
         if (j.equipo.trim().toUpperCase() === v) {
             j.equipo = n;
         }
     });
 
-    // 2. Actualizar Calendario (Partidos e Incidencias)
     db.calendario.forEach(semana => {
         semana.partidos.forEach(p => {
             // Local y Visitante
@@ -1538,7 +1527,6 @@ function actualizarVinculosEquipo(viejo, nuevo) {
         });
     });
 
-    // 3. Actualizar variable global y título en pantalla si la plantilla está abierta
     if (typeof equipoActual !== 'undefined' && equipoActual.trim().toUpperCase() === v) {
         equipoActual = n;
         const tit = document.getElementById('tit-equipo');
@@ -1548,8 +1536,8 @@ function actualizarVinculosEquipo(viejo, nuevo) {
     persist(); 
     console.log(`✅ Integridad total: ${v} ahora es ${n}`);
 }
+
 function borrarEquipo(index) {
-    // 1. Verificación de seguridad (Admin)
     if (typeof rolActual !== 'undefined' && rolActual !== "admin") {
         return alert("⚠️ Solo el Administrador puede borrar equipos.");
     }
@@ -1557,30 +1545,23 @@ function borrarEquipo(index) {
     const equipo = db.equipos[index];
     if (!equipo) return;
 
-    // 2. Comprobar si el equipo tiene jugadores (Integridad de datos)
     const tieneJugadores = db.jugadores.some(j => j.equipo === equipo.nombre);
     if (tieneJugadores) {
         alert(`No puedes borrar "${equipo.nombre}" porque tiene jugadores asignados. \n\nElimina primero a los jugadores de la plantilla.`);
         return;
     }
 
-    // 3. Confirmación y ejecución
     if (confirm(`¿Estás seguro de que deseas eliminar permanentemente al equipo: ${equipo.nombre}?`)) {
         
-        db.equipos.splice(index, 1); // Elimina el equipo del array
-
-        persist(); // Guarda los cambios en LocalStorage
-        renderEquipos(); // Refresca la cuadrícula de equipos
-        
-        // Si tienes la función renderTodo (que actualiza la tabla), llámala
+        db.equipos.splice(index, 1);
+        persist();
+        renderEquipos();
         if (typeof renderTodo === 'function') renderTodo(); 
-        
         alert("Equipo eliminado con éxito.");
     }
 }
 
 function editarEq(i) {
-    // Solo el rol admin puede cargar el formulario de edición
     if (rolActual !== 'admin') {
         return alert("⛔ Acceso denegado. Solo administradores pueden modificar equipos.");
     }
@@ -1591,7 +1572,6 @@ function editarEq(i) {
 
 function verPlantilla(referencia) {
     if (typeof limpiarFormularioJugador === 'function') limpiarFormularioJugador();
-
     let nombreEquipo;
     if (typeof referencia === 'number') {
         nombreEquipo = db.equipos[referencia].nombre;
@@ -1599,19 +1579,15 @@ function verPlantilla(referencia) {
         nombreEquipo = referencia;
     }
 
-    // --- NORMALIZACIÓN CRÍTICA ---
-    // Forzamos mayúsculas y quitamos espacios para que la comparación sea exacta
     nombreEquipo = nombreEquipo.trim().toUpperCase();
     equipoActual = nombreEquipo; 
 
-    // Filtramos ignorando diferencias de escritura
     const plantilla = db.jugadores.filter(j => 
         (j.equipo || "").trim().toUpperCase() === nombreEquipo
     );
     
     const contenedor = document.getElementById('body-plantilla');
     
-    // Actualizamos el título visualmente
     document.getElementById('tit-equipo').innerText = nombreEquipo;
     document.getElementById('panel-plantilla').style.display = "block";
 
@@ -1654,10 +1630,10 @@ function verPlantilla(referencia) {
             </div>`;
         }).join('');
     }
-
     aplicarRestricciones();
     document.getElementById('panel-plantilla').scrollIntoView({ behavior: 'smooth' });
 }
+
 function guardarJugador() {
     if (!modoAdmin) return alert("Acción bloqueada: Permisos requeridos.");
 
@@ -1665,26 +1641,22 @@ function guardarJugador() {
     const curp = document.getElementById('pj-curp').value.trim().toUpperCase();
     const idEditando = document.getElementById('edit-pj-id').value;
     const nombreEquipoDestino = (equipoActual || "").trim().toUpperCase(); 
-    // VALIDACIÓN DE EMERGENCIA
     if (!nombreEquipoDestino) {
         return alert("❌ ERROR: No hay un equipo seleccionado. \nPor favor, selecciona un equipo de la lista o crea uno antes de añadir jugadores.");
     }
-
     if (!nombre || !curp) return alert("Por favor, ingresa Nombre y CURP.");
 
-    // 1. Validación de duplicados (Añadimos toUpperCase por seguridad)
     const duplicado = db.jugadores.find(j => j.curp === curp && String(j.id) !== String(idEditando));
     if (duplicado) return alert(`¡ERROR! El CURP ${curp} ya existe en el equipo: ${duplicado.equipo}`);
-
-    // 2. Lógica de GUARDADO
     if (idEditando === "-1") {
         db.jugadores.push({ 
             id: Date.now(), 
             nombre: nombre, 
             curp: curp, 
-            equipo: nombreEquipoDestino, // <--- Ahora es 100% seguro
+            equipo: nombreEquipoDestino,
             pj: 0, goles: 0, ama: 0, roja: 0, 
-            foto: fotoBase64Temp || "" 
+            foto: fotoBase64Temp || "",
+	    fechaRegistro: new Date().toLocaleDateString() 
         });
     } else {
         const j = db.jugadores.find(x => String(x.id) === String(idEditando));
@@ -1695,84 +1667,57 @@ function guardarJugador() {
             if (fotoBase64Temp) j.foto = fotoBase64Temp;
         }
     }
-
-    // 3. Ordenar, Persistir y Limpiar (Tu código actual está bien)
     db.jugadores.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    persist(); 
-    
+    persist();   
     fotoBase64Temp = "";
     const inputFoto = document.getElementById('pj-foto-file') || document.getElementById('foto-archivo');
     if(inputFoto) inputFoto.value = "";
-
-    alert("✅ ¡Jugador guardado y lista ordenada!");
-    
+    alert("✅ ¡Jugador guardado y lista ordenada!");  
     limpiarFormularioJugador();
-
-    // 6. REFRESCO SEGURO
     if (nombreEquipoDestino) {
-        // Aseguramos que el título visual coincida con el dato guardado
         document.getElementById('tit-equipo').innerText = nombreEquipoDestino;
         verPlantilla(nombreEquipoDestino); 
-    }
-    
+    }  
     if (typeof renderTodo === 'function') renderTodo();
-
     document.getElementById('body-plantilla').scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
 function editarPj(id) {
-    // Usamos String() para asegurar que la búsqueda funcione sin importar el origen del ID
     const j = db.jugadores.find(x => String(x.id) === String(id));
     if (!j) return;
-
     document.getElementById('pj-nombre').value = j.nombre;
     document.getElementById('pj-curp').value = j.curp || "";
-    document.getElementById('edit-pj-id').value = j.id; // Guardamos el ID original
-
-    // MOSTRAR FOTO ACTUAL
+    document.getElementById('edit-pj-id').value = j.id;
     const preview = document.getElementById('previsualizar-foto');
     if (j.foto) {
         preview.src = j.foto;
         preview.style.display = "inline-block";
-        // IMPORTANTE: Reseteamos la variable temporal para que no se guarde 
-        // la foto vieja como si fuera nueva a menos que el usuario la cambie.
         fotoBase64Temp = ""; 
     } else {
         preview.src = "";
         preview.style.display = "none";
     }
-    
-    // Opcional: Hacer scroll automático hacia el formulario para que el usuario vea que se cargó
     document.getElementById('pj-nombre').focus();
 }
 
-    	// --- LÓGICA DE CALENDARIO CON ALTERNANCIA ---
-
-	function generarCalendario() {
+function generarCalendario() {
     if (rolActual !== 'admin') {
         alert("⛔ Solo el Administrador principal puede regenerar el calendario.");
         return;
-    }
-    
+    }  
     if (!confirm("⚠️ ¿Estás seguro? Se borrarán todos los resultados actuales.")) return;	
-
         if (db.equipos.length < 2) return alert("Mínimo 2 equipos");
-        
         const numVueltas = parseInt(document.getElementById('vueltas').value);
-        let eqs = db.equipos.map(e => e.nombre);
-        
-        if (eqs.length % 2 !== 0) eqs.push("DESCANSO");
-        
+        let eqs = db.equipos.map(e => e.nombre);        
+        if (eqs.length % 2 !== 0) eqs.push("DESCANSO");        
         db.calendario = [];
         let n = eqs.length;
         let jornadasPrimeraVuelta = [];
-
         for (let i = 0; i < n - 1; i++) {
             let jor = { num: i + 1, partidos: [] };
             for (let j = 0; j < n / 2; j++) {
                 let local = eqs[j];
                 let visitante = eqs[n - 1 - j];
-                
                 if (local !== "DESCANSO" && visitante !== "DESCANSO") {
                     // ALTERNANCIA L/V: Si la jornada es par, invertimos el orden
                     if (i % 2 === 1) {
@@ -1780,7 +1725,6 @@ function editarPj(id) {
                         local = visitante;
                         visitante = temp;
                     }
-
                     jor.partidos.push({
                         id: Math.random(),
                         l: local,
@@ -1794,9 +1738,7 @@ function editarPj(id) {
             jornadasPrimeraVuelta.push(jor);
             eqs.splice(1, 0, eqs.pop()); 
         }
-
         db.calendario = [...jornadasPrimeraVuelta];
-
         if (numVueltas === 2) {
             let totalIda = jornadasPrimeraVuelta.length;
             jornadasPrimeraVuelta.forEach((jorIda, idx) => {
@@ -1814,45 +1756,35 @@ function editarPj(id) {
                 db.calendario.push(jorVuelta);
             });
         }
-
         persist();
         renderTodo();
         alert("CALENDARIO GENERADO");
 	    }
 
-// --- LÓGICA DE CALENDARIO CON ALTERNANCIA ---
 function generarCalendario() {
     if (rolActual !== 'admin') {
         alert("⛔ Solo el Administrador principal puede regenerar el calendario.");
         return;
-    }
-    
+    }  
     if (!confirm("⚠️ ¿Estás seguro? Se borrarán todos los resultados actuales.")) return;	
-
-    if (db.equipos.length < 2) return alert("Mínimo 2 equipos");
-    
+    if (db.equipos.length < 2) return alert("Mínimo 2 equipos");    
     const numVueltas = parseInt(document.getElementById('vueltas').value);
-    let eqs = db.equipos.map(e => e.nombre);
-    
-    if (eqs.length % 2 !== 0) eqs.push("DESCANSO");
-    
+    let eqs = db.equipos.map(e => e.nombre);    
+    if (eqs.length % 2 !== 0) eqs.push("DESCANSO");    
     db.calendario = [];
     let n = eqs.length;
     let jornadasPrimeraVuelta = [];
-
     for (let i = 0; i < n - 1; i++) {
         let jor = { num: i + 1, partidos: [] };
         for (let j = 0; j < n / 2; j++) {
             let local = eqs[j];
-            let visitante = eqs[n - 1 - j];
-            
+            let visitante = eqs[n - 1 - j];            
             if (local !== "DESCANSO" && visitante !== "DESCANSO") {
                 if (i % 2 === 1) {
                     let temp = local;
                     local = visitante;
                     visitante = temp;
                 }
-
                 jor.partidos.push({
                     id: Math.random(),
                     l: local,
@@ -1866,9 +1798,7 @@ function generarCalendario() {
         jornadasPrimeraVuelta.push(jor);
         eqs.splice(1, 0, eqs.pop()); 
     }
-
     db.calendario = [...jornadasPrimeraVuelta];
-
     if (numVueltas === 2) {
         let totalIda = jornadasPrimeraVuelta.length;
         jornadasPrimeraVuelta.forEach((jorIda, idx) => {
@@ -1886,7 +1816,6 @@ function generarCalendario() {
             db.calendario.push(jorVuelta);
         });
     }
-
     persist();
     renderTodo();
     alert("CALENDARIO GENERADO");
@@ -1904,10 +1833,7 @@ function renderCalendario() {
         </div>`;
         return;
     }
-
-    // Definimos quién tiene permiso de edición (Admin y Editor)
     const tienePermiso = (rolActual === 'admin' || rolActual === 'editor');
-
     let html = "";
     db.calendario.forEach(jornada => {
         html += `
@@ -1915,12 +1841,9 @@ function renderCalendario() {
             <div style="background:var(--primary); color:white; padding:15px; font-weight:900; text-align:center; letter-spacing:2px; text-transform:uppercase; font-size:14px;">
                 JORNADA ${jornada.num}
             </div>`;
-        
-        jornada.partidos.forEach(p => {
-            let botonAccion = "";
-            
+         jornada.partidos.forEach(p => {
+            let botonAccion = "";          
             if (p.jugado) {
-                // PARTIDO FINALIZADO
                 botonAccion = `
                     <div style="font-size:32px; font-weight:900; color:#1e293b; line-height:1;">${p.score}</div>
                     <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
@@ -1931,7 +1854,6 @@ function renderCalendario() {
                         ` : ''}
                     </div>`;
             } else {
-                // PARTIDO PENDIENTE
                 botonAccion = `
                     <div style="font-weight:900; color:#cbd5e1; font-size:20px; letter-spacing:2px;">VS</div>
                     <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
@@ -1941,10 +1863,8 @@ function renderCalendario() {
                         ` : '<span style="color:#94a3b8; font-size:10px; font-weight:bold;">PENDIENTE</span>'}
                     </div>`;
             }
-
             const eqL = db.equipos.find(e => e.nombre === p.l) || {};
             const eqV = db.equipos.find(e => e.nombre === p.v) || {};
-
             html += `
                 <div class="partido-row" style="display:flex; align-items:center; justify-content:space-between; padding:25px 15px; border-bottom:1px solid #f1f5f9;">
                     <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px;">
@@ -1953,7 +1873,6 @@ function renderCalendario() {
      alt="Logo">
                         <span style="font-size:14px; font-weight:800; text-align:center;">${p.l}</span>
                     </div>
-
                     <div style="flex:0.6; text-align:center; display:flex; flex-direction:column; align-items:center;">
                         ${botonAccion}
                     </div>
@@ -1970,26 +1889,23 @@ function renderCalendario() {
     });
     contenedor.innerHTML = html;
 }
+
 function prepararCarga(id) {
     let p; 
     db.calendario.forEach(j => { 
         let x = j.partidos.find(part => part.id === id); 
         if(x) p = x; 
     });
-
     if (p.jugado) {
         alert("Este partido ya fue finalizado y no puede ser editado.");
         navegar('sec-calendario');
         return;
     }
-
     const eqLocal = db.equipos.find(e => e.nombre === p.l);
     const eqVisita = db.equipos.find(e => e.nombre === p.v);
     const jl = db.jugadores.filter(j => j.equipo === p.l).sort((a,b)=>a.nombre.localeCompare(b.nombre));
-    const jv = db.jugadores.filter(j => j.equipo === p.v).sort((a,b)=>a.nombre.localeCompare(b.nombre));
-    
-    navegar('sec-partido', document.querySelectorAll('.nav-link')[2]);
-    
+    const jv = db.jugadores.filter(j => j.equipo === p.v).sort((a,b)=>a.nombre.localeCompare(b.nombre));  
+    navegar('sec-partido', document.querySelectorAll('.nav-link')[2]);    
 document.getElementById('area-carga').innerHTML = `
     <div style="text-align:center; background: var(--primary); color:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
         <div style="display:flex; justify-content:space-around; align-items:center;">
@@ -2059,11 +1975,8 @@ document.getElementById('area-carga').innerHTML = `
 
 function statInput(j, lado, esAutogol = false) {
     const displayTarjetas = esAutogol ? 'none' : 'flex';
-    const bgFila = esAutogol ? 'background: #fff1f2;' : 'background: white;';
-    
-    // Los jugadores normales inician con opacidad baja y sin eventos de clic
+    const bgFila = esAutogol ? 'background: #fff1f2;' : 'background: white;';   
     const estiloInicial = esAutogol ? '' : 'opacity: 0.5; pointer-events: none;';
-
     return `
     <div class="stat-input-row" 
          id="row-${j.id}" 
@@ -2073,8 +1986,7 @@ function statInput(j, lado, esAutogol = false) {
          data-lado="${lado}"
          data-es-ag="${esAutogol}"
          data-g="0" data-a="0" data-r="0" data-da="0"
-         style="display:flex; align-items:center; justify-content:space-between; padding:5px; margin-bottom:5px; border-radius:6px; border:1px solid #eee; transition: all 0.3s; ${bgFila}">
-        
+         style="display:flex; align-items:center; justify-content:space-between; padding:5px; margin-bottom:5px; border-radius:6px; border:1px solid #eee; transition: all 0.3s; ${bgFila}">       
         <div style="display:flex; align-items:center; gap:5px; pointer-events: auto;">
             <input type="checkbox" class="disp" 
                    ${esAutogol ? 'style="display:none"' : ''} 
@@ -2103,28 +2015,20 @@ function accionarStat(id, tipo) {
     const btnA = document.getElementById(`btn-a-${id}`);
     const btnR = document.getElementById(`btn-r-${id}`);
     const btnG = document.getElementById(`btn-g-${id}`);
-
-    // Detectar estado actual
     const tieneRojaDirecta = parseInt(row.dataset.r) === 1;
     const tieneDobleA = row.dataset.da === "1";
     const expulsado = tieneRojaDirecta || tieneDobleA;
-
-    // BLOQUEO DE GOLES
     if (tipo === 'g') {
-        if (expulsado) return; 
-        
+        if (expulsado) return;        
         let goles = parseInt(row.dataset.g) + 1;
         row.dataset.g = goles;
         btnG.querySelector('.val').innerText = goles;
         btnG.style.background = "#dcfce7";
     }
 
-    // LÓGICA DE AMARILLAS (CORREGIDA)
     if (tipo === 'a') {
         if (tieneRojaDirecta) return;
-
         let amarillasActuales = parseInt(row.dataset.a);
-
         if (amarillasActuales === 0) {
             // Primera Amarilla: Normal
             row.dataset.a = 1;
@@ -2132,20 +2036,15 @@ function accionarStat(id, tipo) {
             btnA.style.background = "#fef08a"; 
             btnA.innerHTML = "🟨";
         } 
-        else if (amarillasActuales === 1) {
-            // SEGUNDA AMARILLA -> SE CONVIERTE EN ROJA
-            // Ponemos 'a' en 0 para que no sume amarillas al acumulado del torneo
+        else if (amarillasActuales === 1) {            
             row.dataset.a = 0; 
-            row.dataset.da = 1; // Marcamos que fue por doble amarilla
-            row.dataset.r = 1;  // Marcamos que tiene roja para el guardado
-            
+            row.dataset.da = 1;
+            row.dataset.r = 1;            
             btnA.innerHTML = "🟨🟥";
             btnA.style.background = "#fee2e2";
-            // Sincronizamos el botón de roja directa por si acaso
             btnR.style.background = "#fecaca"; 
         } 
         else {
-            // Reset total
             row.dataset.a = 0;
             row.dataset.da = 0;
             row.dataset.r = 0;
@@ -2154,15 +2053,12 @@ function accionarStat(id, tipo) {
             btnR.style.background = "white";
         }
     }
-
-    // LÓGICA DE ROJA DIRECTA
     if (tipo === 'r') {
         let roja = parseInt(row.dataset.r);
         if (roja === 0) {
             row.dataset.r = 1;
             btnR.style.background = "#fecaca";
         } else {
-            // Si quitamos la roja, también quitamos el estado de Doble Amarilla
             row.dataset.r = 0;
             row.dataset.da = 0;
             row.dataset.a = 0;
@@ -2171,20 +2067,16 @@ function accionarStat(id, tipo) {
             btnA.style.background = "white";
         }
     }
-
     actualizarMarcadorVivo();
 }
-
 
 function actualizarMarcadorVivo() {
     let golesL = 0, golesV = 0;
     let htmlL = "", htmlV = "";
-
     document.querySelectorAll('.stat-input-row').forEach(row => {
         const checkJugo = row.querySelector('.disp');
-        const esAG = row.dataset.esAg === "true";
-        
-        // Si no es autogol y el checkbox NO está marcado, ignoramos esta fila
+        const esAG = row.dataset.esAg === "true";       
+
         if (!esAG && checkJugo && !checkJugo.checked) {
             return; 
         }
@@ -2196,12 +2088,9 @@ function actualizarMarcadorVivo() {
         const nombre = row.dataset.nombre;
         const lado = row.dataset.lado;
 
-        // Sumar goles al marcador global
         if (lado === 'L') golesL += g; else golesV += g;
-
-        let icons = "";
+        let icons = "";      
         
-        // ⚽ LÓGICA DE GOLES
         if (g > 0) {
             if (esAG) {
                 icons += ` <b style="color: #e11d48;">(AG) ⚽x${g}</b>`;
@@ -2210,9 +2099,7 @@ function actualizarMarcadorVivo() {
             }
         }
         
-        // 🟨/🟥 LÓGICA DE TARJETAS (CORREGIDA)
         if (da) {
-            // Si es Doble Amarilla, solo mostramos el combo y omitimos la R sola
            icons += `
         <div class="doble-tarjeta-container" title="Expulsión por Doble Amarilla">
             <div class="card-mini card-yellow"></div>
@@ -2220,12 +2107,10 @@ function actualizarMarcadorVivo() {
         </div>
     `;
 } else {
-    // Tarjetas normales si no es Doble Amarilla
     if (a > 0) icons += ` <span style="color:#ffeb3b; font-size:16px;">🟨</span>`;
     if (r > 0) icons += ` <span style="color:#f44336; font-size:16px;">🟥</span>`;
 }
 
-        // Mostrar fila si hubo actividad
         if (g > 0 || a > 0 || r > 0 || da) {
             const estiloNombre = esAG ? 'style="color: #e11d48; font-weight: bold;"' : '';
             const linea = `<div style="margin-bottom:2px;">• <span ${estiloNombre}>${nombre}</span>${icons}</div>`;
@@ -2234,11 +2119,9 @@ function actualizarMarcadorVivo() {
         }
     });
 
-    // Actualizar la interfaz
     document.getElementById('live-gl').innerText = golesL;
     document.getElementById('live-gv').innerText = golesV;
     
-    // Mantener los encabezados de LOCAL/VISITANTE si quieres, o solo el HTML
     const labelL = `<small style="color:#64748b; display:block; margin-bottom:5px;">LOCAL</small>`;
     const labelV = `<small style="color:#64748b; display:block; margin-bottom:5px;">VISITANTE</small>`;
 
@@ -2246,23 +2129,14 @@ function actualizarMarcadorVivo() {
     document.getElementById('incidencias-V').innerHTML = htmlV ? labelV + htmlV : labelV + "Sin incidencias";
 }
    function guardarPartido(idPartido) {
-    // 0. BLOQUEO DE SEGURIDAD
     const btnGuardar = event.target; 
     if (btnGuardar && btnGuardar.tagName === 'BUTTON') {
         btnGuardar.disabled = true;
         btnGuardar.innerText = "PROCESANDO...";
     }
 
-    // --- NUEVA CAPTURA DE DATOS TÉCNICOS ---
     const estadioVal = document.getElementById('input-estadio').value.trim();
     const arbitroVal = document.getElementById('input-arbitro').value.trim();
-
-    // Validación opcional: Si quieres obligar a llenar estos campos, quita el comentario:
-    // if(!estadioVal || !arbitroVal) { 
-    //    alert("Por favor, ingresa el Estadio y el Árbitro."); 
-    //    btnGuardar.disabled = false; btnGuardar.innerText = "✅ FINALIZAR Y GUARDAR PARTIDO";
-    //    return; 
-    // }
 
     let gl = parseInt(document.getElementById('live-gl').innerText);
     let gv = parseInt(document.getElementById('live-gv').innerText);
@@ -2270,20 +2144,15 @@ function actualizarMarcadorVivo() {
     const detalleL = document.getElementById('incidencias-L').innerHTML;
     const detalleV = document.getElementById('incidencias-V').innerHTML;
 
-    // 1. ACTUALIZAR ESTADO DEL PARTIDO Y REPORTE
     let partidoObj;
     db.calendario.forEach(j => {
         let p = j.partidos.find(x => x.id === idPartido);
         if(p) {
             if(p.jugado) return alert("Este partido ya fue registrado anteriormente.");
-            
             p.score = `${gl} - ${gv}`;
             p.jugado = true;
-            
-            // --- ASIGNACIÓN DE DATOS TÉCNICOS AL PARTIDO ---
             p.estadio = estadioVal || "Sede Principal";
             p.arbitro = arbitroVal || "Central Designado";
-            
             p.reporteHtml = { local: detalleL, visita: detalleV };
             partidoObj = p;
         }
@@ -2291,10 +2160,8 @@ function actualizarMarcadorVivo() {
 
     if(!partidoObj) return;
 
-    // 2. ACTUALIZAR TABLA DE POSICIONES (EQUIPOS)
     const eqL = db.equipos.find(e => e.nombre === partidoObj.l);
     const eqV = db.equipos.find(e => e.nombre === partidoObj.v);
-
     eqL.pj++; eqV.pj++;
     eqL.gf += gl; eqL.gc += gv;
     eqV.gf += gv; eqV.gc += gl;
@@ -2303,11 +2170,11 @@ function actualizarMarcadorVivo() {
     else if(gv > gl) { eqV.g++; eqV.pts += 3; eqL.p++; }
     else { eqL.e++; eqV.e++; eqL.pts += 1; eqV.pts += 1; }
 
-    // Variables temporales para modificar los reportes antes de guardar
     let htmlReporteL = detalleL;
     let htmlReporteV = detalleV;
+    let idsParticipantes = [];
 
-    // 3. ACTUALIZAR JUGADORES
+    // 3. ACTUALIZAR JUGADORES QUE SÍ JUGARON
     document.querySelectorAll('.stat-input-row').forEach(row => {
         const esAG = row.dataset.esAg === "true";
         if (esAG) return; 
@@ -2316,49 +2183,69 @@ function actualizarMarcadorVivo() {
         if (checkJugo && !checkJugo.checked) return;
 
         const jid = parseInt(row.dataset.jid);
+        const golesJ = parseInt(row.dataset.g) || 0;
+        const amaJ = parseInt(row.dataset.a) || 0;
+        const rojaJ = (row.dataset.da === "1") ? 1 : (parseInt(row.dataset.r) || 0);
+        
+        idsParticipantes.push({ id: jid, g: golesJ, a: amaJ, r: rojaJ });
+
         const j = db.jugadores.find(x => x.id === jid);
         
         if(j) {
             j.pj = (j.pj || 0) + 1;
-            j.goles = (j.goles || 0) + (parseInt(row.dataset.g) || 0);
+            j.goles = (j.goles || 0) + golesJ;
             
             const da = row.dataset.da === "1"; 
             if(da) {
                 j.roja = (j.roja || 0) + 1;
-                const itemRoja = `
-                    <div class="incidencia-item" style="margin-top:5px; padding:2px 5px; border-left:3px solid #ef4444; background:#fff5f5;">
-                        <span style="color:#ef4444;">🟥</span> <b>${j.nombre}</b> 
-                        <small style="color:#64748b; display:block; margin-left:20px;">Expulsión por Doble Amarilla</small>
-                    </div>`;
-                
-                if (j.equipo === partidoObj.l) { htmlReporteL += itemRoja; } 
-                else { htmlReporteV += itemRoja; }
+                // Si quieres que la Doble Amarilla de automáticamente 1 partido:
+                j.sancionPendiente = (j.sancionPendiente || 0) + 1;
+
+                const itemRoja = `<div class="incidencia-item" style="margin-top:5px; padding:2px 5px; border-left:3px solid #ef4444; background:#fff5f5;">
+                    <span style="color:#ef4444;">🟥</span> <b>${j.nombre}</b> <small>Doble Amarilla</small></div>`;
+                if (j.equipo === partidoObj.l) { htmlReporteL += itemRoja; } else { htmlReporteV += itemRoja; }
             } else {
-                j.ama = (j.ama || 0) + (parseInt(row.dataset.a) || 0);
-                j.roja = (j.roja || 0) + (parseInt(row.dataset.r) || 0);
+                j.ama = (j.ama || 0) + amaJ;
+                j.roja = (j.roja || 0) + rojaJ;
+                // Si recibió roja directa, podrías preguntar aquí o dejarlo para el panel de disciplina
+                if(rojaJ > 0) j.sancionPendiente = (j.sancionPendiente || 0) + 1;
             }
         }
     });
 
-    // ACTUALIZAMOS EL OBJETO PARTIDO CON EL HTML MODIFICADO
-    partidoObj.reporteHtml = { local: htmlReporteL, visita: htmlReporteV };
+    // ======================================================
+    // NUEVO: LÓGICA DE LIMPIEZA DE SANCIONES (CUMPLIMIENTO)
+    // ======================================================
+    db.jugadores.forEach(j => {
+        // Solo revisamos a los jugadores de los equipos que acaban de jugar
+        if (j.equipo === partidoObj.l || j.equipo === partidoObj.v) {
+            // Si el jugador tenía sanción pendiente
+            if ((j.sancionPendiente || 0) > 0) {
+                // Verificamos si NO está en la lista de los que jugaron hoy
+                const jugoHoy = idsParticipantes.some(p => p.id === j.id);
+                if (!jugoHoy) {
+                    j.sancionPendiente -= 1; // Cumplió un partido de castigo
+                }
+            }
+        }
+    });
+    // ======================================================
 
-    // 4. PERSISTENCIA Y LIMPIEZA
+    partidoObj.reporteHtml = { local: htmlReporteL, visita: htmlReporteV };
+    partidoObj.participantes = idsParticipantes;
+
     persist();
     renderTodo();
     
     const areaCarga = document.getElementById('area-carga');
-    if(areaCarga) areaCarga.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">✅ Partido guardado. Selecciona otro juego del calendario.</p>`;
+    if(areaCarga) areaCarga.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">✅ Partido guardado correctamente.</p>`;
 
-    alert("Partido finalizado y estadísticas actualizadas.");
-    
-    const btnNavCalendario = document.querySelector('button[onclick*="sec-calendario"]');
-    navegar('sec-calendario', btnNavCalendario);
-    
+    alert("Partido finalizado. Los jugadores suspendidos que no participaron han cumplido 1 fecha de sanción.");
+    navegar('sec-calendario');
     if(typeof renderCalendario === 'function') renderCalendario();
 }
 
-    function verReporte(idPartido) {
+function verReporte(idPartido) {
     let partido;
     let jornadaNum = 0;
     
@@ -2489,7 +2376,7 @@ function renderTodo() {
 
     if (typeof aplicarRestricciones === 'function') aplicarRestricciones();
 }
-// 1. FUNCIONES DE ACTUALIZACIÓN Y RENDERIZADO
+
 function actualizarGoles(idx, campo, valor) {
     db.playoffs.llaves[idx][campo] = parseInt(valor) || 0;
     persist();
@@ -2726,7 +2613,9 @@ function prepararImpresionGoleadores() {
         estilo.remove();
         contenedor.innerHTML = contenidoOriginal;
     }, 500);
-}function buscarJugador() {
+}
+
+function buscarJugador() {
     const input = document.getElementById('input-busqueda');
     const contenedor = document.getElementById('resultados-busqueda');
     
@@ -2762,20 +2651,20 @@ function prepararImpresionGoleadores() {
         const fotoPj = j.foto ? j.foto : `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=60&background=random&color=fff`;
 
         return `
-        <div style="background:white; padding:15px; border-radius:12px; margin-bottom:12px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+        <div onclick="verExpediente('${j.id}')" 
+             style="background:white; padding:15px; border-radius:12px; margin-bottom:12px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); cursor:pointer;">
             
             <div style="background:${posicion === 1 ? '#fbbf24' : (posicion <= 3 ? '#94a3b8' : '#64748b')}; color:white; width:35px; height:35px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; flex-shrink:0;">
                 #${posicion}
             </div>
             
             <img src="${logoEquipo}" 
-     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=EQ&size=40&background=f1f5f9&color=64748b';" 
-     style="width:40px; height:40px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
+                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=EQ&size=40&background=f1f5f9&color=64748b';" 
+                 style="width:40px; height:40px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
 
             <div style="flex:1;">
                 <div style="font-weight:bold; color:#1e293b; font-size:14px; text-transform:uppercase;">${j.nombre}</div>
-                <div style="color:var(--accent); font-weight:bold; font-size:11px; margin-bottom:4px;">${j.equipo}</div>
-                
+                <div style="color:#3b82f6; font-weight:bold; font-size:11px; margin-bottom:4px;">${j.equipo}</div>              
                 <div style="display:flex; gap:5px;">
                     <span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:10px; color:#475569;">🏟️ ${j.pj}</span>
                     <span style="background:#dcfce7; padding:2px 6px; border-radius:4px; font-size:10px; color:#166534; font-weight:bold;">⚽ ${j.goles}</span>
@@ -2783,7 +2672,6 @@ function prepararImpresionGoleadores() {
                     <span style="background:#fee2e2; padding:2px 6px; border-radius:4px; font-size:10px; color:#991b1b;">🟥 ${j.roja}</span>
                 </div>
             </div>
-
             <div style="flex-shrink:0;">
                 <img src="${fotoPj}" 
                      style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -2791,6 +2679,59 @@ function prepararImpresionGoleadores() {
 
         </div>`;
     }).join('');
+}
+
+function verExpediente(idJugador) {
+    const j = db.jugadores.find(x => String(x.id) === String(idJugador));
+    if (!j) return;
+
+    let historialHTML = "";
+    
+    // Buscamos en el calendario (donde guardas los partidos según tu código)
+    db.calendario.forEach((jornada, index) => {
+        const numJ = index + 1;
+        jornada.partidos.forEach(p => {
+            if (p.jugado && p.participantes) {
+                // Buscamos al jugador en la lista de participantes de este partido
+                const dato = p.participantes.find(p => String(p.id) === String(idJugador));
+                
+                if (dato) {
+                    const rival = (p.l === j.equipo) ? p.v : p.l;
+                    let detalles = [];
+                    if (dato.g > 0) detalles.push(`⚽ ${dato.g} Gol${dato.g > 1 ? 'es' : ''}`);
+                    if (dato.a > 0) detalles.push(`🟨 Amarilla`);
+                    if (dato.r > 0) detalles.push(`🟥 Roja`);
+                    
+                    const txt = detalles.length > 0 ? detalles.join(", ") : "Sin incidencias";
+
+                    historialHTML += `
+                        <div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
+                            <span><b>J${numJ}</b> vs ${rival}</span>
+                            <span style="font-size:11px; color:#3b82f6; font-weight:bold;">${txt}</span>
+                        </div>`;
+                }
+            }
+        });
+    });
+
+    // --- RENDERIZAR MODAL (Igual que antes) ---
+    const overlay = document.createElement('div');
+    overlay.id = "modal-expediente";
+    overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(5px);";
+    overlay.innerHTML = `
+        <div style="background:white; width:90%; max-width:350px; border-radius:15px; overflow:hidden; position:relative;">
+            <div style="padding:20px; text-align:center; background:#f8fafc;">
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="position:absolute; top:10px; right:10px; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer;">✕</button>
+                <img src="${j.foto || 'https://ui-avatars.com/api/?name='+j.nombre}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6;">
+                <h3 style="margin:5px 0;">${j.nombre}</h3>
+                <small style="color:#64748b;">${j.equipo}</small><br>
+                <small style="color:#94a3b8;">📅 Registrado: ${j.fechaRegistro || 'Temp. Actual'}</small>
+            </div>
+            <div style="max-height:250px; overflow-y:auto; padding:10px;">
+                ${historialHTML || '<p style="text-align:center; padding:20px; color:#94a3b8;">No hay historial de partidos jugados.</p>'}
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
 }
   
 function calcularRating(j) {
@@ -2803,19 +2744,24 @@ function calcularRating(j) {
     let puntosPJ = Math.min(j.pj * 5, 30);
     
     // Penalización por disciplina
-    let penalizacion = (j.ama * 2) + (j.roja * 10);
+    // Añadimos sancionPendiente: cada partido que deba resta 5 puntos extra de rating
+    let penalizacion = (j.ama * 2) + (j.roja * 10) + ((j.sancionPendiente || 0) * 5);
     
     let total = puntosGoles + puntosPJ - penalizacion;
     
     // Ajustar entre 0 y 100
     return Math.max(0, Math.min(100, Math.round(total)));
-	}
+}
 
 
 function obtenerJugadoresRankeados() {
     // 1. Clonamos y calculamos puntos para cada uno
     let lista = db.jugadores.map(j => {
-        const puntos = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10);
+        // Incluimos sancionPendiente en la resta (ej: -15 puntos por cada partido de deuda)
+        const penalizacionSancion = (j.sancionPendiente || 0) * 15;
+        
+        const puntos = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10) - penalizacionSancion;
+        
         return { ...j, puntos };
     });
 
@@ -2824,7 +2770,7 @@ function obtenerJugadoresRankeados() {
 
     // 3. Asignamos la posición real (el índice + 1)
     return lista.map((j, index) => ({ ...j, posicion: index + 1 }));
-	}
+}
 
 function reiniciarTodo() {
     // SOLO el Admin puede borrar todo
@@ -3197,10 +3143,7 @@ function renderCardComparador(j, prom, colorBase, esGanador, puesto, titulo, num
     </div>`;
 }
 
-// ... aquí terminan tus otras funciones (como guardarEquipo, generarCalendario, etc.) ...
-
-    // PASO 3: FUNCIÓN DEL BUSCADOR
-    function renderMiCalendario() {
+function renderMiCalendario() {
         const contenedor = document.getElementById('render-mi-calendario');
         const filtro = document.getElementById('busqueda-usuario').value.toLowerCase();
         
@@ -3210,12 +3153,10 @@ function renderCardComparador(j, prom, colorBase, esGanador, puesto, titulo, num
         }
 
         let html = "";
-        // Recorremos el calendario oficial
         db.calendario.forEach(jornada => {
             const partidosEncontrados = jornada.partidos.filter(p => 
                 p.l.toLowerCase().includes(filtro) || p.v.toLowerCase().includes(filtro)
             );
-
             if (partidosEncontrados.length > 0) {
                 html += `
                     <div style="margin-bottom:15px; border:1px solid #eee; border-radius:8px; overflow:hidden;">
@@ -3256,7 +3197,6 @@ function resolverDefault(idPartido) {
         return;
     }
 
-    // 2. Pedir el motivo
     const motivo = prompt("Escribe el motivo del Default (ej. El equipo no se presentó):") || "No se presentaron";
 
     const gL = (opcion === "1") ? 3 : 0;
@@ -3620,7 +3560,7 @@ function init() {
                 calendario: [],
                 playoffs: {},
                 nombreTemporada: "Cargando",
-                nombreTorneoActual: "..." // <-- IMPORTANTE: Agregar esto aquí
+                nombreTorneoActual: "..."
             };
         }
     } catch (e) {
@@ -4079,28 +4019,34 @@ function imprimirTabla() {
         headerImpresion.remove(); // Quitamos el encabezado para que no se vea en la web
     }, 500);
 }
+
 function renderDisciplina() {
     const bodyDisc = document.getElementById('body-disciplina');
     const selectOrden = document.getElementById('orden-disc');
     if (!bodyDisc) return;
 
-    // Leemos el criterio del selector (ama o roja). 
-    // Si el selector no existe aún, usamos 'roja' por defecto.
     const criterio = selectOrden ? selectOrden.value : 'roja';
 
+    // 1. Filtrar jugadores
     const d = [...db.jugadores]
-        .filter(j => (j.ama || 0) > 0 || (j.roja || 0) > 0)
+        .filter(j => (j.ama || 0) > 0 || (j.roja || 0) > 0 || (j.sancionPendiente || 0) > 0)
         .sort((a, b) => (b[criterio] || 0) - (a[criterio] || 0));
 
+    // 2. Renderizar tabla
     bodyDisc.innerHTML = d.length > 0 ? d.map(j => {
         const eq = db.equipos.find(e => e.nombre === j.equipo);
+        const sancion = j.sancionPendiente || 0;
+
+        const statusSancion = sancion > 0 
+            ? `<div style="color:#ef4444; font-weight:bold; font-size:11px; background:#fee2e2; padding:4px; border-radius:6px; border:1px solid #fecaca;">🚫 DEBE ${sancion}</div>` 
+            : `<div style="color:#10b981; font-size:11px;">✅ LIMPIO</div>`;
+
         return `
         <tr>
             <td style="text-align:left">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=35&background=random&color=fff`}" 
-     style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:1px solid #ddd;"
-     alt="Foto">
+                         style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:1px solid #ddd;" alt="Foto">
                     <b style="font-size:14px;">${j.nombre}</b>
                 </div>
             </td>
@@ -4112,9 +4058,27 @@ function renderDisciplina() {
             </td>
             <td>${j.ama > 0 ? `<div class="card-ui ama">${j.ama}</div>` : '-'}</td>
             <td>${j.roja > 0 ? `<div class="card-ui roja">${j.roja}</div>` : '-'}</td>
+            <td>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+                    ${statusSancion}
+                    ${modoAdmin ? `
+                        <button onclick="ajustarSancionManual(${j.id})" 
+                                style="font-size:9px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 5px; cursor:pointer;">
+                            ⚙️ EDITAR
+                        </button>` : ''}
+                </div>
+            </td>
         </tr>`;
-    }).join('') : `<tr><td colspan="4" style="padding:30px; color:#94a3b8;">No hay sanciones.</td></tr>`;
+    }).join('') : `<tr><td colspan="5" style="padding:30px; color:#94a3b8;">No hay sanciones.</td></tr>`;
+
+    // --- CORRECCIÓN AQUÍ: USAMOS EL ID DIRECTO ---
+    const panelAdminSanciones = document.getElementById('panel-admin-disciplina');
+    if (panelAdminSanciones) {
+        // Si modoAdmin es true -> block, si es false -> none
+        panelAdminSanciones.style.display = modoAdmin ? 'block' : 'none';
+    }
 }
+
 function guardarConfiguracionGeneral() {
     const nuevoTorneo = document.getElementById('cfg-nombre-torneo').value.trim();
     const nuevaTemp = document.getElementById('cfg-nombre-temporada').value.trim();
@@ -4133,6 +4097,228 @@ function guardarConfiguracionGeneral() {
     
     alert("✅ Cambios guardados. Ahora sí son permanentes.");
 }
+
+function mostrarExpedienteJugador(idJugador) {
+    const j = db.jugadores.find(x => String(x.id) === String(idJugador));
+    if (!j) return;
+
+    // 1. Filtrar las incidencias de este jugador en todos los partidos
+    let historialHtml = "";
+    
+    // Suponiendo que tienes db.jornadas o db.partidosHistorial
+    if (db.jornadas) {
+        db.jornadas.forEach((jornada, index) => {
+            const numJornada = index + 1;
+            
+            // Buscamos si el jugador participó en algún partido de esta jornada
+            jornada.partidos.forEach(partido => {
+                const esLocal = partido.equipoLocal === j.equipo;
+                const esVisitante = partido.equipoVisitante === j.equipo;
+
+                if (esLocal || esVisitante) {
+                    const rival = esLocal ? partido.equipoVisitante : partido.equipoLocal;
+                    
+                    // Buscamos si tiene incidencias grabadas en este partido
+                    // Esto depende de cómo guardas los goles/tarjetas en tus partidos
+                    const susGoles = partido.detallesGoles ? partido.detallesGoles.filter(g => g.idJugador == j.id).length : 0;
+                    const suAmarilla = partido.detallesAmarillas ? partido.detallesAmarillas.some(a => a.idJugador == j.id) : false;
+                    const suRoja = partido.detallesRojas ? partido.detallesRojas.some(r => r.idJugador == j.id) : false;
+
+                    // Si jugó (está en la lista de convocados de ese partido)
+                    if (partido.jugadoresPresentes && partido.jugadoresPresentes.includes(j.id)) {
+                        let incidencias = [];
+                        if (susGoles > 0) incidencias.push(`⚽ GOL x${susGoles}`);
+                        if (suAmarilla) incidencias.push(`🟨 Amarilla`);
+                        if (suRoja) incidencias.push(`🟥 Roja`);
+                        
+                        const textoIncidencias = incidencias.length > 0 ? incidencias.join(", ") : "Sin incidencias";
+                        
+                        historialHtml += `
+                            <div style="padding: 8px; border-bottom: 1px solid #eee;">
+                                <strong>J${numJornada} vs ${rival}:</strong> ${textoIncidencias}
+                            </div>`;
+                    }
+                }
+            });
+        });
+    }
+
+    // 2. Mostrar el resultado (puedes usar un modal o un div de detalles)
+    const contenedor = document.getElementById('detalle-busqueda-jugador');
+    contenedor.innerHTML = `
+        <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <button onclick="cerrarDetalle()" style="float:right">X</button>
+            <h4>${j.nombre}</h4>
+            <p style="font-size: 0.8em; color: gray;">Registrado el: ${j.fechaRegistro || 'Antes de 2026'}</p>
+            <p><strong>Partidos Jugados:</strong> ${j.pj}</p>
+            <div style="margin-top: 10px; background: #f9f9f9; border-radius: 4px;">
+                ${historialHtml || '<p style="padding:10px;">No se encontraron partidos jugados.</p>'}
+            </div>
+        </div>
+    `;
+}
+
+function verDetalleJugador(idJugador) {
+    const jugador = db.jugadores.find(j => j.id == idJugador);
+    const historial = [];
+
+    // Recorremos todas las jornadas y partidos
+    db.jornadas.forEach(jornada => {
+        jornada.partidos.forEach(partido => {
+            // Buscamos si el jugador tuvo incidencias en este partido
+            // Nota: Aquí asumo que guardas las incidencias vinculadas al ID del jugador
+            const incidencia = partido.incidencias.find(inc => inc.jugadorId == idJugador);
+            
+            if (incidencia) {
+                historial.push({
+                    numJornada: jornada.numero,
+                    rival: partido.equipoLocal === jugador.equipo ? partido.equipoVisitante : partido.equipoLocal,
+                    detalle: incidencia.texto // Ejemplo: "GOLx2, AMARILLA"
+                });
+            } else if (partido.jugadoresJugaron.includes(idJugador)) {
+                // Si jugó pero no tuvo goles ni tarjetas
+                historial.push({
+                    numJornada: jornada.numero,
+                    rival: partido.equipoLocal === jugador.equipo ? partido.equipoVisitante : partido.equipoLocal,
+                    detalle: "SIN INCIDENCIA"
+                });
+            }
+        });
+    });
+
+    mostrarModalDetalle(jugador, historial);
+}
+
+function mostrarModalDetalle(jugador, historial) {
+    let htmlHistorial = historial.map(h => `
+        <div style="border-left: 2px solid #3b82f6; margin-bottom: 10px; padding-left: 10px;">
+            <strong style="color: #1e293b;">J${h.numJornada} vs ${h.rival}</strong><br>
+            <span style="font-size: 0.9em; color: #64748b;">${h.detalle}</span>
+        </div>
+    `).join('') || '<p>Sin partidos registrados aún.</p>';
+
+    // Insertar en tu contenedor de búsqueda
+    document.getElementById('resultados-busqueda').innerHTML = `
+        <div class="card">
+            <h3>${jugador.nombre}</h3>
+            <p><small>Registrado el: ${jugador.fechaRegistro || 'N/A'}</small></p>
+            <hr>
+            <h4>Actividad en el Torneo:</h4>
+            ${htmlHistorial}
+        </div>
+    `;
+}
+
+function ajustarSancionManual(idJugador) {
+    const j = db.jugadores.find(x => x.id === idJugador);
+    if (!j) return;
+
+    const actual = j.sancionPendiente || 0;
+    const nuevo = prompt(`Sanción para ${j.nombre}:\n\nPartidos pendientes actuales: ${actual}\n(Escribe 0 para habilitar)`, actual);
+
+    if (nuevo !== null) {
+        const valor = parseInt(nuevo);
+        if (isNaN(valor) || valor < 0) return alert("❌ Por favor ingresa un número válido.");
+        
+        j.sancionPendiente = valor;
+        persist();
+        renderTodo(); // Esto refresca la tabla al instante
+        alert("✅ Sanción actualizada.");
+    }
+}
+
+function buscarParaSancion() {
+    const input = document.getElementById('busqueda-sancion');
+    const lista = document.getElementById('lista-busqueda-sancion');
+    if (!input || !lista) return;
+
+    const texto = input.value.toLowerCase().trim();
+    if (texto.length < 2) { lista.innerHTML = ""; return; }
+
+    const encontrados = db.jugadores.filter(j => 
+        j.nombre.toLowerCase().includes(texto) || 
+        j.equipo.toLowerCase().includes(texto)
+    );
+    
+    lista.innerHTML = encontrados.map(j => {
+        const peds = j.sancionPendiente || 0;
+        
+        // Creamos los botones SOLO si es admin
+        const controlesAdmin = modoAdmin ? `
+    <div style="display:flex; gap:5px;">
+        <button onclick="aplicarSancionRapida(${j.id}, 1)" 
+                style="background:#fee2e2; color:#b91c1c; border:1px solid #fecaca; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
+            +1 Part.
+        </button>
+        <button onclick="aplicarSancionRapida(${j.id}, 0)" 
+                style="background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
+            Habilitar
+        </button>
+    </div>
+` : '';
+        return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #f1f5f9; background: white;">
+            <div style="line-height:1.2;">
+                <b style="font-size:13px; color:#1e293b;">${j.nombre}</b><br>
+                <small style="color:#64748b;">${j.equipo} ${peds > 0 ? `| <b style="color:#ef4444;">Debe: ${peds}</b>` : ''}</small>
+            </div>
+            ${controlesAdmin}
+        </div>`;
+    }).join('');
+}
+
+function aplicarSancionRapida(idJugador, cantidad) {
+    // 1. BLOQUEO DE SEGURIDAD: Si no es admin, no hace nada
+    if (!modoAdmin) {
+        alert("❌ Acción denegada: No tienes permisos de administrador.");
+        return;
+    }
+
+    const j = db.jugadores.find(x => x.id === idJugador);
+    if (!j) return;
+
+    // 2. APLICAR LÓGICA DE SANCIÓN
+    if (cantidad === 0) {
+        j.sancionPendiente = 0;
+        alert(`✅ ${j.nombre} ha sido habilitado.`);
+    } else {
+        // Sumamos la cantidad (normalmente +1) a lo que ya deba
+        j.sancionPendiente = (j.sancionPendiente || 0) + cantidad;
+        alert(`⚠️ ${j.nombre} ahora debe ${j.sancionPendiente} partido(s).`);
+    }
+
+    // 3. PERSISTENCIA Y LIMPIEZA
+    persist(); 
+    
+    const inputBusqueda = document.getElementById('busqueda-sancion');
+    const listaResultados = document.getElementById('lista-busqueda-sancion');
+    
+    if(inputBusqueda) inputBusqueda.value = "";
+    if(listaResultados) listaResultados.innerHTML = "";
+    
+    // 4. REFRESCAR VISTA
+    if (typeof renderTodo === 'function') {
+        renderTodo(); 
+    } else if (typeof renderDisciplina === 'function') {
+        renderDisciplina();
+    }
+}
+
+function cerrarPlantilla() {
+    // 1. Borramos la memoria
+    equipoActual = null;
+    
+    // 2. Ocultamos el panel
+    const panel = document.getElementById('panel-plantilla');
+    if (panel) panel.style.display = "none";
+    
+    // 3. Limpiamos los textos para que no parpadeen al abrir otro equipo
+    const tit = document.getElementById('tit-equipo');
+    const body = document.getElementById('body-plantilla');
+    if (tit) tit.innerText = "";
+    if (body) body.innerHTML = "";
+}
+
 </script>
 <link rel="manifest" href="/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
