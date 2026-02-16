@@ -52,7 +52,6 @@
         display: none !important; 
     } 
 
-    /* La clase .print-active se la daremos por JS a la sección que queramos imprimir */
     .only-print, .seccion.print-active { 
         display: block !important; 
     } 
@@ -418,6 +417,11 @@
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 </style>
 
 </head>
@@ -431,6 +435,7 @@
 
 <nav>
     <button class="nav-link active" onclick="navegar('sec-inicio', this)">🏠 INICIO</button>
+    <button class="nav-link" onclick="navegar('sec-noticias', this); renderNoticias();">📰 NOTICIAS</button>
     <button class="nav-link" onclick="navegar('sec-calendario', this)">📅 CALENDARIO</button>
     <button class="nav-link" onclick="navegar('sec-equipos', this)">🛡️ EQUIPOS</button>
     <button class="nav-link" onclick="navegar('sec-partido', this)">⚽ PARTIDO</button>
@@ -461,6 +466,11 @@
     </div> <h2 style="text-align: center; margin-top: 30px; font-weight: 900; color: #1e293b;">📊 RESUMEN DE TEMPORADA</h2>
     <div id="render-resumen-inicio"></div>
 </div>
+
+<section id="sec-noticias" class="seccion" style="display:none;">
+    <h2 style="font-size: 24px; font-weight: 900; color: #1e293b; padding: 20px 10px;">📰 NOTICIAS</h2>
+    <div id="contenedor-noticias" style="padding: 10px;"></div>
+</section>
 
 	<div id="sec-calendario" class="seccion">
     <h2>Calendario de Juegos</h2>  
@@ -506,6 +516,33 @@
             <button onclick="exportarDatos()" class="btn-backup" style="background: #e2e8f0; border: 1px solid #cbd5e1;">📤 EXPORTAR RESPALDO</button>
             <button onclick="document.getElementById('import-file-main').click()" class="btn-backup" style="background: #e2e8f0; border: 1px solid #cbd5e1;">📥 IMPORTAR RESPALDO</button>
             <input type="file" id="import-file-main" style="display:none" accept=".json" onchange="importarDatos(this)">
+        </div>
+    </div>
+
+<div class="form-group" style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+        <h3 style="margin-top: 0; color: #0369a1;">🗞️ Publicar Noticia XL</h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Completa los campos para lanzar una novedad a la pestaña de Noticias.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="noticia-titulo" placeholder="TÍTULO IMPACTANTE" 
+                   style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; font-weight: 900;">
+            
+            <textarea id="noticia-desc" placeholder="Escribe el contenido de la noticia aquí..." 
+                      style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; height: 100px; resize: none; font-family: sans-serif;"></textarea>
+            
+            <label style="display: block; margin-bottom: 5px; font-weight: 800; color: #64748b; font-size: 12px;">FOTO DE LA NOTICIA</label>
+<input type="file" id="noticia-img-file" accept="image/*" 
+       style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 15px; background: white;">
+            
+            <button onclick="guardarNoticia()" 
+                    style="background: #0369a1; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 5px;">
+                🚀 PUBLICAR AHORA
+            </button>
+            
+            <button onclick="if(confirm('¿Borrar todas las noticias?')){ db.noticias=[]; localStorage.setItem('LIGA_PRO_FINAL', JSON.stringify(db)); renderNoticias(); alert('Noticias borradas'); }" 
+                    style="background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; text-decoration: underline;">
+                Limpiar historial de noticias
+            </button>
         </div>
     </div>
 
@@ -637,7 +674,6 @@
         <thead>
             <tr>
                 <th style="text-align:left">Jugador</th>
-                <th>Equipo</th>
                 <th>🟨</th>
                 <th>🟥</th>
                 <th class="no-print">Sanción</th> </tr>
@@ -679,8 +715,6 @@
     <div id="render-playoffs" style="margin-top: 30px;">
         </div>
 </div>
-<div id="sec-disciplina" class="seccion" style="display:none;">
-    </div>
 <div id="sec-comparador" class="seccion" style="display:none; padding:10px; max-width: 900px; margin: 0 auto;">
     
     <div style="text-align:center; margin-bottom:15px;">
@@ -1211,6 +1245,88 @@ body.role-editor .editor-only {
 #sec-disciplina td:last-child {
     border-radius: 0 10px 10px 0;
 }
+nav {
+    display: flex;
+    overflow-x: auto; /* Permite deslizar a los lados si no caben */
+    white-space: nowrap; /* Evita que los botones se bajen a la siguiente línea */
+    gap: 10px;
+    padding: 10px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.nav-link {
+    flex-shrink: 0; /* Evita que los botones se aplasten */
+    padding: 8px 15px;
+    border: none;
+    background: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.nav-link.active {
+    color: #2563eb; /* O el color que uses para resaltar */
+    border-bottom: 2px solid #2563eb;
+}
+nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 12px 10px;
+    background: #f8fafc; /* Un gris muy sutil para el contenedor */
+    border-bottom: 2px solid #e2e8f0;
+    scrollbar-width: none; /* Oculta scroll en Firefox */
+}
+
+nav::-webkit-scrollbar { display: none; } /* Oculta scroll en Chrome/Safari */
+
+.nav-link {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    border-radius: 12px; /* Bordes redondeados tipo cápsula */
+    border: 1px solid #e2e8f0; /* Borde suave */
+    background: white; /* Fondo blanco sólido para resaltar */
+    color: #475569;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sombra suave para dar profundidad */
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Cuando el botón está activo (seleccionado) */
+.nav-link.active {
+    background: #1e293b; /* Fondo oscuro */
+    color: white; /* Texto blanco */
+    border-color: #1e293b;
+    box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+    transform: translateY(-2px); /* Efecto de elevación */
+}
+#progreso-barra {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    transition: width 0.2s ease-in-out;
+}
+#progreso-container {
+    width: 100%;
+    height: 12px;
+    background-color: #e2e8f0;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none; /* Se activa por JS */
+}
+
+#progreso-barra {
+    width: 0%;
+    height: 100%;
+    background-color: #2563eb;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
 </style>
 
 <div id="sec-mi-calendario" class="seccion">
@@ -1232,11 +1348,11 @@ body.role-editor .editor-only {
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.2"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.2"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.2"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.3"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.3"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.3"></script>
 
-<script src="app.js?v=1.2"></script>
+<script src="app.js?v=1.3"></script>
 
 <script>
   // Configuración de Firebase
@@ -1299,6 +1415,7 @@ let db = JSON.parse(localStorage.getItem('LIGA_PRO_FINAL')) || {
     jugadores: [], 
     calendario: [], 
     playoffs: {},
+    noticias: [],
     nombreTemporada: "...",
     nombreTorneoActual: "..." 
 };
@@ -1311,15 +1428,23 @@ let modoAdmin = false;
 const persist = () => {
     localStorage.setItem('LIGA_PRO_FINAL', JSON.stringify(db));
 
-    // Guardar en la nube (Firebase)
     database.ref('liga_datos').set(db)
         .then(() => {
             console.log("☁️ Sincronizado en la nube");
-            // Al guardar con éxito, refrescamos el banner localmente
+            
+            // ACTUALIZACIÓN CRÍTICA:
+            // Forzamos el renderizado total para que obtenerForma se ejecute con datos nuevos
+            if (typeof renderTodo === 'function') {
+                renderTodo(); 
+            } else if (typeof renderTabla === 'function') {
+                renderTabla();
+            }
+
             if (typeof actualizarBanner === 'function') actualizarBanner();
         })
         .catch(err => console.error("❌ Error de Firebase:", err));
 };
+
 function procesarLogoEquipo(event) {
     const file = event.target.files[0];
     if (file) {
@@ -1381,15 +1506,15 @@ function aplicarRestricciones() {
         
         if (btnLogin) {
             btnLogin.innerText = "Cerrar Sesión";
-            btnLogin.onclick = logout; // <-- CAMBIO CLAVE: Ahora el botón cierra sesión
-            btnLogin.style.background = "var(--danger)"; // Opcional: ponerlo rojo
+            btnLogin.onclick = logout;
+            btnLogin.style.background = "var(--danger)"; 
         }
     } 
     else {
         if (status) status.innerText = "MODO: 👤 USUARIO (Solo Lectura)";
         if (btnLogin) {
             btnLogin.innerText = "Acceso Admin";
-            btnLogin.onclick = loginAdmin; // <-- CAMBIO CLAVE: Vuelve a ser para loguearse
+            btnLogin.onclick = loginAdmin;
             btnLogin.style.background = "var(--accent)";
         }
     }
@@ -1627,13 +1752,16 @@ function verPlantilla(referencia) {
     
     const contenedor = document.getElementById('body-plantilla');
     
-    document.getElementById('tit-equipo').innerText = nombreEquipo;
+    // --- CAMBIO AQUÍ: Agregamos el conteo al título ---
+    document.getElementById('tit-equipo').innerHTML = `
+        ${nombreEquipo} <span style="color: #64748b; font-size: 0.8em; font-weight: 600;">(${plantilla.length})</span>
+    `;
+    
     document.getElementById('panel-plantilla').style.display = "block";
 
     if (plantilla.length === 0) {
-        contenedor.innerHTML = `<div style="grid-column: 1/-1; padding:40px; color:#94a3b8; text-align:center;">No hay jugadores registrados en ${nombreEquipo}.</div>`;
+        contenedor.innerHTML = `<div style="grid-column: 1/-1; padding:40px; color:#94a3b8; text-align:center; font-size: 18px;">No hay jugadores registrados en ${nombreEquipo}.</div>`;
     } else {
-        // ... (Tu lógica de MVP y renderizado de cartas se mantiene igual abajo)
         const rankingInterno = [...plantilla].sort((a, b) => {
             if ((b.goles || 0) !== (a.goles || 0)) return (b.goles || 0) - (a.goles || 0);
             if ((a.pj || 0) !== (b.pj || 0)) return (a.pj || 0) - (b.pj || 0);
@@ -1644,26 +1772,26 @@ function verPlantilla(referencia) {
         
         contenedor.innerHTML = plantilla.map(j => {
             const fotoUrl = j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=200&background=random&color=fff`;
-	    const nombreJugador = j.nombre || "Jugador";
-            const claseNombreCorto = j.nombre.length > 15 ? 'style="font-size: 10px;"' : '';
+            // Aplicamos el tamaño XL al nombre dentro de la card
+            const estiloNombre = j.nombre.length > 15 ? 'style="font-size: 12px; font-weight: 900;"' : 'style="font-size: 15px; font-weight: 900;"';
             const esMvp = (j.id === idMvp) ? 'card-mvp' : '';
 
             return `
-            <div class="simple-card ${esMvp}">
+            <div class="simple-card ${esMvp}" style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <div class="sc-admin-tools editor-only">
-                    <button onclick="editarPj(${j.id})">✏️</button>
-                    <button onclick="eliminarPj(${j.id}, '${nombreEquipo}')">🗑️</button>
+                    <button onclick="editarPj(${j.id})" style="font-size: 14px;">✏️</button>
+                    <button onclick="eliminarPj(${j.id}, '${nombreEquipo}')" style="font-size: 14px;">🗑️</button>
                 </div>
-                <div class="sc-img-container">
-                    <img src="${fotoUrl}">
+                <div class="sc-img-container" style="height: 160px;">
+                    <img src="${fotoUrl}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <div class="sc-info">
-                    <div class="sc-name" ${claseNombreCorto}>${j.nombre}</div>
-                    <div class="sc-stats-grid">
-                        <div class="sc-stat-item"><span>⚽</span> ${j.goles || 0}</div>
-                        <div class="sc-stat-item"><span>🏟️</span> ${j.pj || 0}</div>
-                        <div class="sc-stat-item" style="background:#fff9db;"><span>🟨</span> ${j.ama || 0}</div>
-                        <div class="sc-stat-item" style="background:#fff5f5;"><span>🟥</span> ${j.roja || 0}</div>
+                <div class="sc-info" style="padding: 12px;">
+                    <div class="sc-name" ${estiloNombre} style="text-transform: uppercase; color: #1e293b; margin-bottom: 8px;">${j.nombre}</div>
+                    <div class="sc-stats-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
+                        <div class="sc-stat-item" style="font-size: 13px; font-weight: 700; background: #f1f5f9; padding: 4px; border-radius: 6px;"><span>⚽</span> ${j.goles || 0}</div>
+                        <div class="sc-stat-item" style="font-size: 13px; font-weight: 700; background: #f1f5f9; padding: 4px; border-radius: 6px;"><span>🏟️</span> ${j.pj || 0}</div>
+                        <div class="sc-stat-item" style="font-size: 13px; font-weight: 700; background: #fff9db; padding: 4px; border-radius: 6px; border: 1px solid #fde047;"><span>🟨</span> ${j.ama || 0}</div>
+                        <div class="sc-stat-item" style="font-size: 13px; font-weight: 700; background: #fff5f5; padding: 4px; border-radius: 6px; border: 1px solid #fecaca;"><span>🟥</span> ${j.roja || 0}</div>
                     </div>
                 </div>
             </div>`;
@@ -2167,8 +2295,9 @@ function actualizarMarcadorVivo() {
     document.getElementById('incidencias-L').innerHTML = htmlL ? labelL + htmlL : labelL + "Sin incidencias";
     document.getElementById('incidencias-V').innerHTML = htmlV ? labelV + htmlV : labelV + "Sin incidencias";
 }
-   function guardarPartido(idPartido) {
-    const btnGuardar = event.target; 
+
+function guardarPartido(idPartido, e) { // 1. Añadimos 'e' para manejar el evento correctamente
+    const btnGuardar = e ? e.target : null; // 2. Usamos el evento pasado por argumento
     if (btnGuardar && btnGuardar.tagName === 'BUTTON') {
         btnGuardar.disabled = true;
         btnGuardar.innerText = "PROCESANDO...";
@@ -2177,8 +2306,8 @@ function actualizarMarcadorVivo() {
     const estadioVal = document.getElementById('input-estadio').value.trim();
     const arbitroVal = document.getElementById('input-arbitro').value.trim();
 
-    let gl = parseInt(document.getElementById('live-gl').innerText);
-    let gv = parseInt(document.getElementById('live-gv').innerText);
+    let gl = parseInt(document.getElementById('live-gl').innerText) || 0;
+    let gv = parseInt(document.getElementById('live-gv').innerText) || 0;
     
     const detalleL = document.getElementById('incidencias-L').innerHTML;
     const detalleV = document.getElementById('incidencias-V').innerHTML;
@@ -2189,6 +2318,8 @@ function actualizarMarcadorVivo() {
         if(p) {
             if(p.jugado) return alert("Este partido ya fue registrado anteriormente.");
             p.score = `${gl} - ${gv}`;
+            p.l_goles = gl; // Esto ayuda a la función obtenerForma
+            p.v_goles = gv; // Esto ayuda a la función obtenerForma
             p.jugado = true;
             p.estadio = estadioVal || "Sede Principal";
             p.arbitro = arbitroVal || "Central Designado";
@@ -2201,13 +2332,16 @@ function actualizarMarcadorVivo() {
 
     const eqL = db.equipos.find(e => e.nombre === partidoObj.l);
     const eqV = db.equipos.find(e => e.nombre === partidoObj.v);
-    eqL.pj++; eqV.pj++;
-    eqL.gf += gl; eqL.gc += gv;
-    eqV.gf += gv; eqV.gc += gl;
+    
+    if(eqL && eqV) {
+        eqL.pj++; eqV.pj++;
+        eqL.gf += gl; eqL.gc += gv;
+        eqV.gf += gv; eqV.gc += gl;
 
-    if(gl > gv) { eqL.g++; eqL.pts += 3; eqV.p++; }
-    else if(gv > gl) { eqV.g++; eqV.pts += 3; eqL.p++; }
-    else { eqL.e++; eqV.e++; eqL.pts += 1; eqV.pts += 1; }
+        if(gl > gv) { eqL.g++; eqL.pts += 3; eqV.p++; }
+        else if(gv > gl) { eqV.g++; eqV.pts += 3; eqL.p++; }
+        else { eqL.e++; eqV.e++; eqL.pts += 1; eqV.pts += 1; }
+    }
 
     let htmlReporteL = detalleL;
     let htmlReporteV = detalleV;
@@ -2237,7 +2371,6 @@ function actualizarMarcadorVivo() {
             const da = row.dataset.da === "1"; 
             if(da) {
                 j.roja = (j.roja || 0) + 1;
-                // Si quieres que la Doble Amarilla de automáticamente 1 partido:
                 j.sancionPendiente = (j.sancionPendiente || 0) + 1;
 
                 const itemRoja = `<div class="incidencia-item" style="margin-top:5px; padding:2px 5px; border-left:3px solid #ef4444; background:#fff5f5;">
@@ -2246,40 +2379,37 @@ function actualizarMarcadorVivo() {
             } else {
                 j.ama = (j.ama || 0) + amaJ;
                 j.roja = (j.roja || 0) + rojaJ;
-                // Si recibió roja directa, podrías preguntar aquí o dejarlo para el panel de disciplina
                 if(rojaJ > 0) j.sancionPendiente = (j.sancionPendiente || 0) + 1;
             }
         }
     });
 
-    // ======================================================
-    // NUEVO: LÓGICA DE LIMPIEZA DE SANCIONES (CUMPLIMIENTO)
-    // ======================================================
+    // LÓGICA DE LIMPIEZA DE SANCIONES
     db.jugadores.forEach(j => {
-        // Solo revisamos a los jugadores de los equipos que acaban de jugar
         if (j.equipo === partidoObj.l || j.equipo === partidoObj.v) {
-            // Si el jugador tenía sanción pendiente
             if ((j.sancionPendiente || 0) > 0) {
-                // Verificamos si NO está en la lista de los que jugaron hoy
                 const jugoHoy = idsParticipantes.some(p => p.id === j.id);
                 if (!jugoHoy) {
-                    j.sancionPendiente -= 1; // Cumplió un partido de castigo
+                    j.sancionPendiente -= 1;
                 }
             }
         }
     });
-    // ======================================================
 
     partidoObj.reporteHtml = { local: htmlReporteL, visita: htmlReporteV };
     partidoObj.participantes = idsParticipantes;
 
+    // PERSISTENCIA Y RENDERIZADO
     persist();
-    renderTodo();
+    
+    // IMPORTANTE: El orden de renderizado
+    if(typeof renderTodo === 'function') renderTodo();
+    if(typeof renderTabla === 'function') renderTabla(); // ESTA LÍNEA ES LA QUE DIBUJA LOS PUNTOS
     
     const areaCarga = document.getElementById('area-carga');
     if(areaCarga) areaCarga.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">✅ Partido guardado correctamente.</p>`;
 
-    alert("Partido finalizado. Los jugadores suspendidos que no participaron han cumplido 1 fecha de sanción.");
+    alert("Partido finalizado con éxito.");
     navegar('sec-calendario');
     if(typeof renderCalendario === 'function') renderCalendario();
 }
@@ -2385,33 +2515,23 @@ function verReporte(idPartido) {
         </html>
     `);
 }
+
 function renderTodo() {
-    // 1. ORDENAR DATOS BASE
+    // 1. Ordenar datos alfabéticamente para otras vistas
     db.equipos.sort((a, b) => a.nombre.localeCompare(b.nombre));
     db.jugadores.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
-    // 2. RENDERIZAR COMPONENTES
+    // 2. Ejecutar renders (Calendario, Goleadores, etc.)
+    renderResumenInicio();
+    renderNoticias();
     renderEquipos();
     renderCalendario();
     renderGoleadores();
-    
-    // IMPORTANTE: Llamamos a la función que lee el SELECTOR
-    renderDisciplina(); 
-    
+    renderDisciplina();
     if (typeof renderResumenInicio === 'function') renderResumenInicio();
 
-    // 3. TABLA DE POSICIONES
-    const t = [...db.equipos].sort((a,b) => b.pts - a.pts || (b.gf-b.gc) - (a.gf-a.gc));
-    const bodyTabla = document.getElementById('body-tabla');
-    if(bodyTabla) {
-        bodyTabla.innerHTML = t.map((e,i) => `
-            <tr>
-                <td>${i+1}</td>
-                <td style="text-align:left"><img src="${e.logo || ''}" class="img-tabla"><b>${e.nombre}</b></td>
-                <td>${e.pj}</td><td>${e.g||0}</td><td>${e.e||0}</td><td>${e.p||0}</td>
-                <td>${e.gf}</td><td>${e.gc}</td><td>${e.gf-e.gc}</td><td><b>${e.pts}</b></td>
-            </tr>`).join('');
-    }
+    // 3. LLAMADA CRÍTICA A LA TABLA
+    renderTabla(); 
 
     if (typeof aplicarRestricciones === 'function') aplicarRestricciones();
 }
@@ -2668,54 +2788,55 @@ function buscarJugador() {
     }).sort((a, b) => b.puntos - a.puntos);
 
     // 2. Lógica de Filtrado
-    let encontrados;
-    if (texto === "") {
-        encontrados = rankeados;
-    } else {
-        encontrados = rankeados.filter(j => 
+    let encontrados = texto === "" 
+        ? rankeados 
+        : rankeados.filter(j => 
             j.nombre.toLowerCase().includes(texto) || (j.curp && j.curp.toLowerCase().includes(texto))
-        );
-    }
+          );
 
     if (encontrados.length === 0) {
-        contenedor.innerHTML = "<p style='color:gray; text-align:center; padding:20px;'>Sin resultados</p>";
+        contenedor.innerHTML = "<p style='color:gray; text-align:center; padding:20px; font-size:16px;'>Sin resultados</p>";
         return;
     }
 
-    // 3. Renderizar las Tarjetas
+    // 3. Renderizar las Tarjetas (TAMAÑO XL)
     contenedor.innerHTML = encontrados.map(j => {
         const posicion = rankeados.findIndex(x => x.id === j.id) + 1;
         const datosEquipo = db.equipos.find(e => e.nombre === j.equipo);
         const logoEquipo = datosEquipo ? datosEquipo.logo : '';
-        const fotoPj = j.foto ? j.foto : `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=60&background=random&color=fff`;
+        const fotoPj = j.foto ? j.foto : `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=100&background=random&color=fff`;
 
         return `
         <div onclick="verExpediente('${j.id}')" 
-             style="background:white; padding:15px; border-radius:12px; margin-bottom:12px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); cursor:pointer;">
+             style="background:white; padding:18px; border-radius:16px; margin-bottom:15px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:15px; box-shadow:0 6px 12px -2px rgba(0,0,0,0.08); cursor:pointer; transition: transform 0.2s;">
             
-            <div style="background:${posicion === 1 ? '#fbbf24' : (posicion <= 3 ? '#94a3b8' : '#64748b')}; color:white; width:35px; height:35px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; flex-shrink:0;">
-                #${posicion}
+            <div style="background:${posicion === 1 ? '#fbbf24' : (posicion <= 3 ? '#94a3b8' : '#64748b')}; color:white; width:45px; height:45px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; flex-shrink:0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                ${posicion}
             </div>
             
             <img src="${logoEquipo}" 
-                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=EQ&size=40&background=f1f5f9&color=64748b';" 
-                 style="width:40px; height:40px; object-fit:contain; border-radius:6px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
+                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=EQ&size=50&background=f1f5f9&color=64748b';" 
+                 style="width:50px; height:50px; object-fit:contain; border-radius:8px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
 
             <div style="flex:1;">
-                <div style="font-weight:bold; color:#1e293b; font-size:14px; text-transform:uppercase;">${j.nombre}</div>
-                <div style="color:#3b82f6; font-weight:bold; font-size:11px; margin-bottom:4px;">${j.equipo}</div>              
-                <div style="display:flex; gap:5px;">
-                    <span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:10px; color:#475569;">🏟️ ${j.pj}</span>
-                    <span style="background:#dcfce7; padding:2px 6px; border-radius:4px; font-size:10px; color:#166534; font-weight:bold;">⚽ ${j.goles}</span>
-                    <span style="background:#fef9c3; padding:2px 6px; border-radius:4px; font-size:10px; color:#854d0e;">🟨 ${j.ama}</span>
-                    <span style="background:#fee2e2; padding:2px 6px; border-radius:4px; font-size:10px; color:#991b1b;">🟥 ${j.roja}</span>
+                <div style="font-weight:900; color:#0f172a; font-size:17px; text-transform:uppercase; line-height:1.2; letter-spacing:-0.3px;">
+                    ${j.nombre}
+                </div>
+                <div style="color:#3b82f6; font-weight:700; font-size:13px; margin: 4px 0 8px 0;">
+                    ${j.equipo}
+                </div>              
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <span style="background:#f1f5f9; padding:4px 10px; border-radius:6px; font-size:12px; color:#475569; font-weight:600;">🏟️ ${j.pj} PJ</span>
+                    <span style="background:#dcfce7; padding:4px 10px; border-radius:6px; font-size:12px; color:#166534; font-weight:800;">⚽ ${j.goles} G</span>
+                    <span style="background:#fef9c3; padding:4px 10px; border-radius:6px; font-size:12px; color:#854d0e; font-weight:600;">🟨 ${j.ama}</span>
+                    <span style="background:#fee2e2; padding:4px 10px; border-radius:6px; font-size:12px; color:#991b1b; font-weight:600;">🟥 ${j.roja}</span>
                 </div>
             </div>
+
             <div style="flex-shrink:0;">
                 <img src="${fotoPj}" 
-                     style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                     style="width:70px; height:70px; border-radius:50%; object-fit:cover; border:3px solid #3b82f6; box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);">
             </div>
-
         </div>`;
     }).join('');
 }
@@ -2726,50 +2847,90 @@ function verExpediente(idJugador) {
 
     let historialHTML = "";
     
-    // Buscamos en el calendario (donde guardas los partidos según tu código)
     db.calendario.forEach((jornada, index) => {
         const numJ = index + 1;
+        const fechaJornada = jornada.fecha || ""; 
+
         jornada.partidos.forEach(p => {
             if (p.jugado && p.participantes) {
-                // Buscamos al jugador en la lista de participantes de este partido
                 const dato = p.participantes.find(p => String(p.id) === String(idJugador));
                 
                 if (dato) {
                     const rival = (p.l === j.equipo) ? p.v : p.l;
                     let detalles = [];
-                    if (dato.g > 0) detalles.push(`⚽ ${dato.g} Gol${dato.g > 1 ? 'es' : ''}`);
-                    if (dato.a > 0) detalles.push(`🟨 Amarilla`);
-                    if (dato.r > 0) detalles.push(`🟥 Roja`);
+                    // Usamos emojis directos para el historial
+                    if (dato.g > 0) detalles.push(`⚽ ${dato.g}`);
+                    if (dato.a > 0) detalles.push(`🟨`);
+                    if (dato.r > 0) detalles.push(`🟥`);
                     
-                    const txt = detalles.length > 0 ? detalles.join(", ") : "Sin incidencias";
+                    const txt = detalles.length > 0 ? detalles.join(" ") : "✔️";
 
                     historialHTML += `
-                        <div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
-                            <span><b>J${numJ}</b> vs ${rival}</span>
-                            <span style="font-size:11px; color:#3b82f6; font-weight:bold;">${txt}</span>
+                        <div style="padding:15px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; flex-direction:column;">
+                                <span style="font-size:16px; color:#1e293b; font-weight:700;">
+                                    <span style="color:#3b82f6;">J${numJ}</span> vs ${rival}
+                                </span>
+                                <span style="font-size:11px; color:#94a3b8; font-weight:600; margin-top:2px;">
+                                    📅 ${p.fecha || fechaJornada || 'Finalizado'}
+                                </span>
+                            </div>
+                            <span style="font-size:18px;">${txt}</span>
                         </div>`;
                 }
             }
         });
     });
 
-    // --- RENDERIZAR MODAL (Igual que antes) ---
     const overlay = document.createElement('div');
     overlay.id = "modal-expediente";
-    overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(5px);";
+    overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(8px); padding:20px;";
+    
     overlay.innerHTML = `
-        <div style="background:white; width:90%; max-width:350px; border-radius:15px; overflow:hidden; position:relative;">
-            <div style="padding:20px; text-align:center; background:#f8fafc;">
-                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="position:absolute; top:10px; right:10px; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer;">✕</button>
-                <img src="${j.foto || 'https://ui-avatars.com/api/?name='+j.nombre}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6;">
-                <h3 style="margin:5px 0;">${j.nombre}</h3>
-                <small style="color:#64748b;">${j.equipo}</small><br>
-                <small style="color:#94a3b8;">📅 Registrado: ${j.fechaRegistro || 'Temp. Actual'}</small>
+        <div style="background:white; width:100%; max-width:400px; border-radius:28px; overflow:hidden; position:relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            
+            <div style="padding:30px 20px; text-align:center; background: linear-gradient(to bottom, #f8fafc, #ffffff); border-bottom: 2px solid #f1f5f9;">
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                        style="position:absolute; top:15px; right:15px; border:none; background:#f1f5f9; color:#475569; border-radius:50%; width:35px; height:35px; cursor:pointer; font-weight:bold; font-size:18px;">✕</button>
+                
+                <img src="${j.foto || 'https://ui-avatars.com/api/?name='+encodeURIComponent(j.nombre)+'&size=120'}" 
+                     style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:4px solid #3b82f6; box-shadow: 0 8px 16px rgba(59, 130, 246, 0.2); margin-bottom:15px;">
+                
+                <h2 style="margin:0; color:#0f172a; font-size:22px; text-transform:uppercase; letter-spacing:-0.5px; font-weight:900;">${j.nombre}</h2>
+                <div style="color:#3b82f6; font-weight:800; font-size:15px; margin-top:5px; text-transform:uppercase;">${j.equipo}</div>
+                
+                <div style="margin-top:25px; display:flex; justify-content:center; gap:12px;">
+                     <div style="background:#f1f5f9; padding:10px; border-radius:12px; min-width:65px;">
+                        <div style="font-size:20px; font-weight:900;">${j.pj || 0}</div>
+                        <small style="color:#64748b; font-size:11px; font-weight:800;">🏟️</small>
+                     </div>
+                     <div style="background:#dcfce7; padding:10px; border-radius:12px; min-width:65px;">
+                        <div style="font-size:20px; font-weight:900; color:#166534;">${j.goles || 0}</div>
+                        <small style="color:#166534; font-size:11px; font-weight:800;">⚽</small>
+                     </div>
+                     <div style="background:#fef9c3; padding:10px; border-radius:12px; min-width:65px;">
+                        <div style="font-size:20px; font-weight:900; color:#854d0e;">${j.ama || 0}</div>
+                        <small style="color:#854d0e; font-size:11px; font-weight:800;">🟨</small>
+                     </div>
+                     <div style="background:#fee2e2; padding:10px; border-radius:12px; min-width:65px;">
+                        <div style="font-size:20px; font-weight:900; color:#991b1b;">${j.roja || 0}</div>
+                        <small style="color:#991b1b; font-size:11px; font-weight:800;">🟥</small>
+                     </div>
+                </div>
             </div>
-            <div style="max-height:250px; overflow-y:auto; padding:10px;">
-                ${historialHTML || '<p style="text-align:center; padding:20px; color:#94a3b8;">No hay historial de partidos jugados.</p>'}
+
+            <div style="padding:10px 5px;">
+                <div style="padding:10px 15px; font-size:13px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Historial de Partidos</div>
+                <div style="max-height:300px; overflow-y:auto;">
+                    ${historialHTML || '<p style="text-align:center; padding:30px; color:#94a3b8; font-size:15px;">Sin actividad reciente.</p>'}
+                </div>
+            </div>
+
+            <div style="padding:15px; background:#f8fafc; text-align:center; border-top:1px solid #f1f5f9;">
+                <small style="color:#94a3b8; font-weight:700; font-size:12px;">REGISTRO: ${j.fechaRegistro || 'N/A'}</small>
             </div>
         </div>`;
+    
     document.body.appendChild(overlay);
 }
   
@@ -3863,113 +4024,185 @@ function logout() {
 function renderTabla() {
     const contenedorTabla = document.getElementById('body-tabla');
     if (!contenedorTabla) return; 
-
-    const t = [...db.equipos].sort((a,b) => b.pts - a.pts || (b.gf-b.gc) - (a.gf-a.gc));
     
-    contenedorTabla.innerHTML = t.map((e, i) => {
+    // Ordenamos: 1º Puntos, 2º Diferencia de Goles, 3º Goles a Favor
+    const t = [...db.equipos].sort((a,b) => 
+        (b.pts || 0) - (a.pts || 0) || 
+        ((b.gf||0)-(b.gc||0)) - ((a.gf||0)-(a.gc||0)) || 
+        (b.gf||0) - (a.gf||0)
+    );
+        contenedorTabla.innerHTML = t.map((e, i) => {
         const dg = (e.gf || 0) - (e.gc || 0);
-        const background = i % 2 === 0 ? '#ffffff' : '#f8fafc'; // Efecto cebra
-        
-        // Color para la Diferencia de Goles (Verde si es +, Rojo si es -)
         const dgColor = dg > 0 ? '#16a34a' : dg < 0 ? '#dc2626' : '#64748b';
 
+        let background = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+        let borderLeft = "none";
+        if (i === 0) {
+            background = "#fffbeb"; 
+            borderLeft = "5px solid #f59e0b"; 
+        }
+
         return `
-        <tr style="background: ${background}; border-bottom: 1px solid #edf2f7; transition: 0.2s;">
-            <td style="padding: 15px 10px; font-weight: 800; color: #64748b; text-align: center; width: 40px;">
+        <tr style="background: ${background}; border-bottom: 1px solid #edf2f7; border-left: ${borderLeft}; transition: all 0.3s;">
+            <td style="padding: 15px 5px; font-weight: 900; color: ${i === 0 ? '#b45309' : '#64748b'}; text-align: center; width: 40px; font-size: 16px;">
                 ${i + 1}
             </td>
             
-            <td style="text-align: left; padding: 10px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 8px; border: 1px solid #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        ${e.logo ? `<img src="${e.logo}" style="width: 35px; height: 35px; object-fit: contain;">` : '<span style="font-size: 20px;">🛡️</span>'} 
+		<td style="text-align: left; padding: 10px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: 			center; background: white; border-radius: 10px; border: 1px solid #e2e8f0; flex-shrink: 0; 			box-shadow: 0 2px 4px rgba(0,0,0,0.05);"> 
+		${e.logo ? `<img src="${e.logo}" style="width: 40px; height: 40px; object-fit: contain;">` : '<span style="font-size: 20px;">🛡️</span>'} 
                     </div>
-                    <b style="font-size: 15px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">${e.nombre}</b>
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                        <b style="font-size: 16px; color: #0f172a; text-transform: uppercase; line-height: 1.1;">
+                            ${e.nombre}
+                        </b>
+                        <div style="display: flex; align-items: center; gap: 4px; min-height: 14px;">
+                            ${obtenerForma(e.nombre)}
+                        </div>
+                    </div>
                 </div>
             </td>
-
-            <td style="text-align: center; font-weight: 600; color: #475569;">${e.pj || 0}</td>
-            <td style="text-align: center; font-weight: 600; color: #475569;">${e.g || 0}</td>
-            <td style="text-align: center; font-weight: 600; color: #475569;">${e.e || 0}</td>
-            <td style="text-align: center; font-weight: 600; color: #475569;">${e.p || 0}</td>
-            
-            <td style="text-align: center; color: #94a3b8; font-size: 13px;">${e.gf || 0}</td>
-            <td style="text-align: center; color: #94a3b8; font-size: 13px;">${e.gc || 0}</td>
-            
-            <td style="text-align: center; font-weight: 800; color: ${dgColor};">
-                ${dg > 0 ? '+' : ''}${dg}
-            </td>
-
+            <td style="text-align: center; font-weight: 800;">${e.pj || 0}</td>
+            <td style="text-align: center; font-weight: 800;">${e.g || 0}</td>
+            <td style="text-align: center; font-weight: 800;">${e.e || 0}</td>
+            <td style="text-align: center; font-weight: 800;">${e.p || 0}</td>
+            <td style="text-align: center; font-weight: 800;">${e.gf || 0}</td>
+            <td style="text-align: center; font-weight: 800;">${e.gc || 0}</td>
+            <td style="text-align: center; font-weight: 800; color: ${dgColor};">${dg > 0 ? '+' : ''}${dg}</td>      
             <td style="text-align: center; padding: 10px;">
-                <div style="background: #1e293b; color: white; padding: 6px 12px; border-radius: 8px; display: inline-block; min-width: 35px; font-weight: 900; font-size: 16px;">
+
+                <div style="background: ${i === 0 ? '#f59e0b' : '#1e293b'}; color: white; padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 900; font-size: 16px;">
                     ${e.pts || 0}
                 </div>
             </td>
         </tr>`;
     }).join('');
 }
-// USA "function" en lugar de "const" para que estén disponibles en todo el archivo
-function cardPj(titulo, pj, valor, sub, color, icono, destino) {
-    if(!pj) return "";
-    const foto = pj.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(pj.nombre)}&size=100&background=random&color=fff`;
-    const eqObj = db.equipos.find(e => e.nombre === pj.equipo);
-    const logoEq = (eqObj && eqObj.logo) 
-    ? eqObj.logo 
-    : `https://ui-avatars.com/api/?name=${encodeURIComponent(eqObj?.nombre || 'EQ')}&size=40&background=f1f5f9&color=64748b`;
+
+function cardPj(titulo, j, valor, sub, color, icono, destino) {
+    if(!j) return "";
+    const foto = j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=200&background=random&color=fff`;
     
     return `
-    <div class="card-resumen" onclick="navegar('${destino}')" style="border-top: 5px solid ${color}; cursor: pointer;">
-        <small>${icono} ${titulo}</small>
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px;">
-            <div style="position: relative;">
-                <img src="${foto}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid ${color};">
-                <img src="${logoEq}" style="position: absolute; bottom: -5px; right: -5px; width: 22px; height: 22px; border-radius: 50%; background: white; border: 1px solid #eee; padding: 2px;">
+    <div class="card-resumen" onclick="navegar('${destino}')" 
+         style="border-top: 6px solid ${color}; cursor: pointer; display: flex; flex-direction: column; align-items: center; padding: 20px; text-align: center;">
+        
+        <small style="font-weight: 900; text-transform: uppercase; color: #64748b; margin-bottom: 15px; font-size: 14px; letter-spacing: 1px;">
+    ${icono} ${titulo}
+</small>
+
+        <div style="width: 130px; height: 130px; border-radius: 50%; overflow: hidden; margin-bottom: 15px; border: 4px solid #f1f5f9; box-shadow: 0 8px 15px rgba(0,0,0,0.1);">
+            <img src="${foto}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+        <div>
+            <div class="val" style="font-size: 18px; font-weight: 900; color: #1e293b; text-transform: uppercase; line-height: 1.2;">
+                ${j.nombre}
             </div>
-            <div>
-                <div class="val">${pj.nombre}</div>
-                <div style="font-size: 11px; font-weight: bold; color: ${color};">${pj.equipo || 'SIN EQUIPO'}</div>
-                <p style="font-size: 12px; margin-top: 2px;"><b>${valor}</b> ${sub}</p>
-            </div>
+            <div style="font-size: 11px; font-weight: 700; color: #3b82f6; margin-top: 2px;">${j.equipo}</div>
+            <p style="margin-top: 10px; font-size: 15px;">
+                <b style="font-size: 22px; color: ${color};">${valor}</b> ${sub}
+            </p>
         </div>
     </div>`;
 }
 
 function cardEq(titulo, eq, valor, sub, color, icono, destino) {
     if(!eq) return "";
-    const logo = eq.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'EQ')}&size=100&background=0284c7&color=fff`;
+    const logo = eq.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(eq.nombre || 'EQ')}&size=200&background=0284c7&color=fff`;
+    
     return `
-    <div class="card-resumen" onclick="navegar('${destino}')" style="border-top: 5px solid ${color}; cursor: pointer;">
-        <small>${icono} ${titulo}</small>
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px;">
-            <img src="${logo}" style="width: 50px; height: 50px; object-fit: contain;">
-            <div>
-                <div class="val">${eq.nombre}</div>
-                <p><b>${valor}</b> ${sub}</p>
+    <div class="card-resumen" onclick="navegar('${destino}')" 
+         style="border-top: 6px solid ${color}; cursor: pointer; display: flex; flex-direction: column; align-items: center; padding: 20px; text-align: center;">
+        
+        <small style="font-weight: 900; text-transform: uppercase; color: #64748b; margin-bottom: 15px; font-size: 14px; letter-spacing: 1px;">
+    ${icono} ${titulo}
+</small>
+        
+        <img src="${logo}" style="width: 110px; height: 110px; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">
+        
+        <div>
+            <div class="val" style="font-size: 18px; font-weight: 900; color: #1e293b; text-transform: uppercase; line-height: 1.2;">
+                ${eq.nombre}
             </div>
+            <p style="margin-top: 8px; font-size: 15px;">
+                <b style="font-size: 22px; color: ${color};">${valor}</b> ${sub}
+            </p>
         </div>
     </div>`;
 }
+
 function renderResumenInicio() {
     const contenedor = document.getElementById('render-resumen-inicio');
     if (!contenedor || !db.equipos || db.equipos.length === 0) return;
 
-    // Cálculos de equipos con seguridad
+    // --- 1. CÁLCULOS TOTALES DE TEMPORADA ---
+    const totalEquipos = db.equipos.length;
+    const totalJugadores = db.jugadores.length;
+    let totalGoles = 0, totalAma = 0, totalRoja = 0;
+
+    db.jugadores.forEach(j => {
+        totalGoles += (j.goles || 0);
+        totalAma += (j.ama || 0);
+        totalRoja += (j.roja || 0);
+    });
+
+    // --- 2. CÁLCULOS DE LÍDERES (Tu lógica actual) ---
     const lider = [...db.equipos].sort((a, b) => (b.pts||0) - (a.pts||0))[0];
     const mejorOf = [...db.equipos].sort((a, b) => (b.gf||0) - (a.gf||0))[0];
     const mejorDef = [...db.equipos].filter(e => (e.pj||0) > 0).sort((a, b) => (a.gc||0) - (b.gc||0))[0] || lider;
-
-    // Cálculos de jugadores
     const jValidos = db.jugadores.filter(j => j && j.nombre);
-    
-    // Generamos el HTML base de los equipos
+
+   // --- 3. GENERAR HTML ---
+    // Bloque de Totales XL con Navegación por Simulación de Clic
     let htmlContent = `
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; padding: 10px; margin-bottom: 20px;">
+        
+        <div onclick="document.querySelector('[onclick*=\\'sec-equipos\\']')?.click();" 
+             style="cursor:pointer; background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #e2e8f0;">
+            <div style="font-size:20px;">🛡️</div>
+            <div style="font-size:22px; font-weight:900; color:#1e293b;">${totalEquipos}</div>
+            <div style="font-size:10px; font-weight:800; color:#64748b; text-transform:uppercase;">Equipos</div>
+        </div>
+
+        <div onclick="document.querySelector('[onclick*=\\'sec-jugadores\\']')?.click();" 
+             style="cursor:pointer; background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #e2e8f0;">
+            <div style="font-size:20px;">🏃</div>
+            <div style="font-size:22px; font-weight:900; color:#1e293b;">${totalJugadores}</div>
+            <div style="font-size:10px; font-weight:800; color:#64748b; text-transform:uppercase;">Jugadores</div>
+        </div>
+
+        <div onclick="document.querySelector('[onclick*=\\'sec-goleadores\\']')?.click();" 
+             style="cursor:pointer; background:#dcfce7; padding:15px; border-radius:15px; text-align:center; border:1px solid #bbf7d0;">
+            <div style="font-size:20px;">⚽</div>
+            <div style="font-size:22px; font-weight:900; color:#166534;">${totalGoles}</div>
+            <div style="font-size:10px; font-weight:800; color:#166534; text-transform:uppercase;">Goles</div>
+        </div>
+
+        <div onclick="document.querySelector('[onclick*=\\'sec-disciplina\\']')?.click();" 
+             style="cursor:pointer; background:#fef9c3; padding:15px; border-radius:15px; text-align:center; border:1px solid #fef08a;">
+            <div style="font-size:20px;">🟨</div>
+            <div style="font-size:22px; font-weight:900; color:#854d0e;">${totalAma}</div>
+            <div style="font-size:10px; font-weight:800; color:#854d0e; text-transform:uppercase;">Amarillas</div>
+        </div>
+
+        <div onclick="document.querySelector('[onclick*=\\'sec-disciplina\\']')?.click();" 
+             style="cursor:pointer; background:#fee2e2; padding:15px; border-radius:15px; text-align:center; border:1px solid #fecaca;">
+            <div style="font-size:20px;">🟥</div>
+            <div style="font-size:22px; font-weight:900; color:#991b1b;">${totalRoja}</div>
+            <div style="font-size:10px; font-weight:800; color:#991b1b; text-transform:uppercase;">Rojas</div>
+        </div>
+    </div>
+
+    <h3 style="padding: 0 10px; text-align:center; color: #64748b; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">⭐ Destacados ⭐</h3>
+
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; padding: 10px;">
         ${cardEq("LÍDER GENERAL", lider, lider.pts || 0, "Puntos", "#f59e0b", "🏆", "sec-tabla")}
         ${cardEq("MEJOR OFENSIVA", mejorOf, mejorOf.gf || 0, "Goles", "#3b82f6", "🔥", "sec-tabla")}
-        ${cardEq("MEJOR DEFENSIVA", mejorDef, mejorDef.gc || 0, "Goles Rec.", "#10b981", "🛡️", "sec-tabla")}`;
-
-    // Solo si hay jugadores añadimos sus tarjetas
-    if (jValidos.length > 0) {
+        ${cardEq("MEJOR DEFENSIVA", mejorDef, mejorDef.gc || 0, "Goles Rec.", "#10b981", "🛡️", "sec-tabla")}`;   
+	
+	if (jValidos.length > 0) {
         const goleador = [...jValidos].sort((a, b) => (b.goles||0) - (a.goles||0))[0];
         const mvp = [...jValidos].sort((a, b) => {
             const scA = ((a.goles||0)*10) - ((a.ama||0)*2) - ((a.roja||0)*5);
@@ -3978,23 +4211,26 @@ function renderResumenInicio() {
         })[0];
         const masAma = [...jValidos].sort((a, b) => (b.ama||0) - (a.ama||0))[0];
         const masRoja = [...jValidos].sort((a, b) => (b.roja||0) - (a.roja||0))[0];
+	
+	htmlContent += `	
+	
+	<div class="card-mvp-container">
+            ${cardPj("MVP DE LA LIGA", mvp, ((mvp.goles||0)*10 - (mvp.ama||0)*2 - (mvp.roja||0)*5), "Pts 		Rendimiento", "#ffd700", "💎", "sec-goleadores")}
+        </div>        
 
-        htmlContent += `
-        <div class="card-mvp-container">
-            ${cardPj("MVP DE LA LIGA", mvp, ((mvp.goles||0)*10 - (mvp.ama||0)*2 - (mvp.roja||0)*5), "Pts Rendimiento", "#ffd700", "💎", "sec-goleadores")}
-        </div>
-        ${cardPj("LÍDER DE GOLEO", goleador, goleador.goles||0, "Goles", "#f43f5e", "⚽", "sec-goleadores")}
+	${cardPj("LÍDER DE GOLEO", goleador, goleador.goles||0, "Goles", "#f43f5e", "⚽", "sec-goleadores")}
         ${cardPj("MÁS AMARILLAS", masAma, masAma.ama||0, "Tarjetas", "#eab308", "🟨", "sec-disciplina")}
         ${cardPj("MÁS ROJAS", masRoja, masRoja.roja||0, "Tarjetas", "#ef4444", "🟥", "sec-disciplina")}`;
+			
     }
 
     htmlContent += `</div>`;
     contenedor.innerHTML = htmlContent;
 
-    // Clase especial para el MVP
     const cardMvp = contenedor.querySelector('.card-mvp-container .card-resumen');
     if(cardMvp) cardMvp.classList.add('card-mvp');
 }
+
 function controlarFila(id, checkbox) {
     const contenedorControles = document.getElementById(`controles-${id}`);
     const fila = document.getElementById(`row-${id}`);
@@ -4066,54 +4302,60 @@ function renderDisciplina() {
 
     const criterio = selectOrden ? selectOrden.value : 'roja';
 
-    // 1. Filtrar jugadores
+    // 1. Filtrar jugadores (Mantenemos tu lógica)
     const d = [...db.jugadores]
         .filter(j => (j.ama || 0) > 0 || (j.roja || 0) > 0 || (j.sancionPendiente || 0) > 0)
         .sort((a, b) => (b[criterio] || 0) - (a[criterio] || 0));
 
-    // 2. Renderizar tabla
+    // 2. Renderizar tabla con tamaños aumentados
     bodyDisc.innerHTML = d.length > 0 ? d.map(j => {
         const eq = db.equipos.find(e => e.nombre === j.equipo);
         const sancion = j.sancionPendiente || 0;
 
+        // Status de sanción más grande y llamativo
         const statusSancion = sancion > 0 
-            ? `<div style="color:#ef4444; font-weight:bold; font-size:11px; background:#fee2e2; padding:4px; border-radius:6px; border:1px solid #fecaca;">🚫 DEBE ${sancion}</div>` 
-            : `<div style="color:#10b981; font-size:11px;">✅ LIMPIO</div>`;
+            ? `<div style="color:#ef4444; font-weight:900; font-size:13px; background:#fee2e2; padding:8px 12px; border-radius:10px; border:2px solid #fecaca; display:inline-block;">🚫 DEBE ${sancion}</div>` 
+            : `<div style="color:#10b981; font-weight:800; font-size:13px; background:#d1fae5; padding:6px 10px; border-radius:8px;">✅ LIMPIO</div>`;
 
         return `
-        <tr>
-            <td style="text-align:left">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=35&background=random&color=fff`}" 
-                         style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:1px solid #ddd;" alt="Foto">
-                    <b style="font-size:14px;">${j.nombre}</b>
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 15px 10px; text-align:left">
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=55&background=random&color=fff`}" 
+                         style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" alt="Foto">
+                    <div>
+                        <b style="font-size:16px; color:#0f172a; text-transform:uppercase; display:block;">${j.nombre}</b>
+                        <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+                            <img src="${eq?.logo || ''}" style="width:24px; height:24px; object-fit:contain;">
+                            <span style="font-size:13px; color:#64748b; font-weight:600;">${j.equipo}</span>
+                        </div>
+                    </div>
                 </div>
             </td>
-            <td style="text-align:left">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <img src="${eq?.logo || ''}" style="width:20px; height:20px; object-fit:contain;">
-                    <span style="font-size:12px; color:#64748b;">${j.equipo}</span>
-                </div>
+
+            <td style="text-align:center;">
+                ${j.ama > 0 ? `<div style="background:#fef9c3; color:#854d0e; width:40px; height:50px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:20px; border:2px solid #fde047; margin:0 auto;">${j.ama}</div>` : '<span style="color:#cbd5e1">-</span>'}
             </td>
-            <td>${j.ama > 0 ? `<div class="card-ui ama">${j.ama}</div>` : '-'}</td>
-            <td>${j.roja > 0 ? `<div class="card-ui roja">${j.roja}</div>` : '-'}</td>
-            <td>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+            <td style="text-align:center;">
+                ${j.roja > 0 ? `<div style="background:#fee2e2; color:#991b1b; width:40px; height:50px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:20px; border:2px solid #fecaca; margin:0 auto;">${j.roja}</div>` : '<span style="color:#cbd5e1">-</span>'}
+            </td>
+
+            <td style="padding: 10px; text-align:center;">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
                     ${statusSancion}
                     ${modoAdmin ? `
                         <button onclick="ajustarSancionManual(${j.id})" 
-                                style="font-size:9px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; padding:2px 5px; cursor:pointer;">
+                                style="font-size:12px; background:#1e293b; color:white; border:none; border-radius:8px; padding:8px 15px; cursor:pointer; font-weight:800; display:flex; align-items:center; gap:5px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                             ⚙️ EDITAR
                         </button>` : ''}
                 </div>
             </td>
         </tr>`;
-    }).join('') : `<tr><td colspan="5" style="padding:30px; color:#94a3b8;">No hay sanciones.</td></tr>`;
+    }).join('') : `<tr><td colspan="4" style="padding:50px; text-align:center; color:#94a3b8; font-size:18px;">No hay sanciones registradas.</td></tr>`;
 
-    // --- CORRECCIÓN AQUÍ: USAMOS EL ID DIRECTO ---
+    // Panel admin logic
     const panelAdminSanciones = document.getElementById('panel-admin-disciplina');
     if (panelAdminSanciones) {
-        // Si modoAdmin es true -> block, si es false -> none
         panelAdminSanciones.style.display = modoAdmin ? 'block' : 'none';
     }
 }
@@ -4358,6 +4600,325 @@ function cerrarPlantilla() {
     if (body) body.innerHTML = "";
 }
 
+function obtenerForma(nombreEquipo) {
+    if (!nombreEquipo || !db.calendario) return '';
+    
+    let partidosDelEquipo = [];
+    const nombreBusqueda = nombreEquipo.trim().toLowerCase();
+
+    db.calendario.forEach(jornada => {
+        if (jornada.partidos) {
+            jornada.partidos.forEach(p => {
+                if (p.jugado && p.score) {
+                    const local = (p.l || "").trim().toLowerCase();
+                    const visita = (p.v || "").trim().toLowerCase();
+                    if (local === nombreBusqueda || visita === nombreBusqueda) {
+                        partidosDelEquipo.push(p);
+                    }
+                }
+            });
+        }
+    });
+
+    partidosDelEquipo = partidosDelEquipo.filter(p => p.jugado && p.score);
+    
+    // Tomamos los últimos 5
+    const ultimos5 = partidosDelEquipo.slice(-5);
+    if (ultimos5.length === 0) return '';
+
+    return ultimos5.map(p => {
+        let gL, gV;
+        if (p.l_goles !== undefined && p.v_goles !== undefined) {
+            gL = parseInt(p.l_goles);
+            gV = parseInt(p.v_goles);
+        } else {
+            const partes = p.score.split('-').map(n => parseInt(n.trim()));
+            gL = partes[0];
+            gV = partes[1];
+        }
+        
+        if (isNaN(gL) || isNaN(gV)) return '<span style="height:10px; width:10px; background:#e2e8f0; border-radius:50%; display:inline-block; margin-right:4px;"></span>';
+
+        const esLocal = (p.l || "").trim().toLowerCase() === nombreBusqueda;
+        
+        // --- NUEVA LÓGICA PARA EL RIVAL ---
+        const rival = esLocal ? p.v : p.l;
+        const textoCondicion = esLocal ? "(L)" : "(V)";
+        // ----------------------------------
+
+        let color = "#94a3b8"; // Empate
+        if (esLocal) {
+            if (gL > gV) color = "#16a34a";
+            else if (gL < gV) color = "#dc2626";
+        } else {
+            if (gV > gL) color = "#16a34a";
+            else if (gV < gL) color = "#dc2626";
+        }
+
+        // Actualizamos el title para que muestre: "vs RIVAL (L/V) | MARCADOR"
+        return `<span title="vs ${rival} ${textoCondicion} | ${p.score}" style="height: 10px; width: 10px; background-color: ${color}; border-radius: 50%; display: inline-block !important; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); cursor: help; margin-right: 4px;"></span>`;
+    }).join('');
+}
+
+function renderNoticias() {
+    const contenedor = document.getElementById('contenedor-noticias');
+    if (!contenedor) return;
+
+    if (!db.noticias || db.noticias.length === 0) {
+        contenedor.innerHTML = `<div style="text-align:center; padding:50px; color:#94a3b8; font-weight:800;">🗞️ NO HAY NOTICIAS PUBLICADAS.</div>`;
+        return;
+    }
+
+// 2. Dibujar
+contenedor.innerHTML = db.noticias.map(n => `
+    <div onclick="abrirNoticiaCompleta(${n.id})" 
+         style="display: flex; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; margin-bottom: 20px; min-height: 180px; height: 180px; align-items: stretch; cursor: pointer; transition: transform 0.2s;">
+        
+        <div style="flex: 1; padding: 15px 20px; display: flex; flex-direction: column; justify-content: center; min-width: 0;">
+            <small style="color: #3b82f6; font-weight: 800; font-size: 11px; text-transform: uppercase;">
+                📅 ${n.fecha}
+            </small>
+            
+            <h3 style="font-size: 17px; font-weight: 900; color: #1e293b; margin: 4px 0; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-transform: uppercase;">
+                ${n.titulo}
+            </h3>
+            
+            <p style="color: #475569; font-size: 13px; margin: 5px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
+                ${n.descripcion}
+            </p>
+
+            <span style="color: #3b82f6; font-size: 11px; font-weight: 800; margin-top: 5px;">VER MÁS...</span>
+
+            ${modoAdmin ? `
+                <button onclick="event.stopPropagation(); eliminarNoticia(${n.id})" 
+                        style="align-self: flex-start; margin-top: 10px; background: #fee2e2; color: #ef4444; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                    🗑️ Borrar
+                </button>` : ''}
+        </div>
+
+        <div style="width: 140px; min-width: 140px; position: relative; background: #f1f5f9;">
+    <img src="${n.imagen || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000'}" 
+         style="width: 100%; height: 100%; object-fit: cover;" 
+         onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000'">
+    
+    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(90deg, white, transparent 15%);"></div>
+</div>
+    </div>
+`).join('');
+}
+
+function mostrarFormularioNoticia() {
+    const BANNER_LIGA = "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop"; 
+
+    return `
+    <div style="background: #f8fafc; padding: 20px; border-radius: 20px; border: 2px dashed #cbd5e1; margin-bottom: 20px;">
+        <h3 style="font-weight: 900; margin-bottom: 15px;">🆕 PUBLICAR NUEVA NOTICIA</h3>
+        
+        <input type="text" id="noticia-titulo" placeholder="Título de la noticia" 
+               style="width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; font-size: 16px; font-weight: 700;">
+        
+        <textarea id="noticia-desc" placeholder="Escribe aquí el contenido..." 
+                  style="width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; font-size: 15px; height: 100px;"></textarea>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 800; color: #64748b; font-size: 12px;">FOTO DE LA NOTICIA (Opcional)</label>
+            <input type="file" id="noticia-img-file" accept="image/*" onchange="previsualizarImagen(event)"
+                   style="width: 100%; padding: 10px; background: white; border-radius: 10px; border: 1px solid #e2e8f0;">
+            
+            <div style="text-align: center; margin-top: 10px;">
+                <small style="display:block; color:#94a3b8; font-size:10px; margin-bottom:5px;">VISTA PREVIA:</small>
+                <img id="noticia-preview" src="${BANNER_LIGA}" 
+                     style="width: 100%; max-width: 250px; height: auto; border-radius: 15px; border: 2px solid #e2e8f0; background: #fff;">
+            </div>
+            
+            <div id="progreso-container" style="display:none; width: 100%; background: #e2e8f0; border-radius: 10px; height: 10px; margin-top: 15px; overflow: hidden;">
+                <div id="progreso-barra" style="width: 0%; height: 100%; background: #2563eb; transition: width 0.3s ease;"></div>
+            </div>
+            <small id="progreso-texto" style="display:none; color: #2563eb; font-weight: 800; font-size: 11px; margin-top: 5px; text-align: center;"></small>
+        </div>
+        
+        <button onclick="guardarNoticia()" 
+                style="width: 100%; background: #1e293b; color: white; padding: 15px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer;">
+            🚀 PUBLICAR AHORA
+        </button>
+    </div>
+    `;
+}
+
+function previsualizarImagen(event) {
+    const reader = new FileReader();
+    const preview = document.getElementById('noticia-preview');
+    
+    reader.onload = function() {
+        if (preview) {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+        }
+    }
+    
+    if(event.target.files[0]) {
+        reader.readAsDataURL(event.target.files[0]);
+    }
+}
+
+async function guardarNoticia() {
+    // 1. Buscamos los elementos pero usamos "let" para verificar si existen
+    const btn = document.querySelector('button[onclick="guardarNoticia()"]');
+    const pContainer = document.getElementById('progreso-container');
+    const pBarra = document.getElementById('progreso-barra');
+    const pTexto = document.getElementById('progreso-texto');
+
+    // Usamos el signo "?" para que si el elemento no existe, no lance error
+    const t = document.getElementById('noticia-titulo')?.value.trim();
+    const d = document.getElementById('noticia-desc')?.value.trim();
+    const fileInput = document.getElementById('noticia-img-file');
+
+    if (!t || !d) return alert("⚠️ Pon un título y descripción");
+
+    // 2. CAMBIO CLAVE: Solo aplicamos estilo si el elemento NO es null
+    if (btn) { 
+        btn.innerText = "⏳ PROCESANDO..."; 
+        btn.disabled = true; 
+    }
+    if (pContainer) pContainer.style.display = 'block';
+    if (pTexto) pTexto.style.display = 'block';
+
+    let urlImagenFinal = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000";
+
+    // 3. Lógica de Storage
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+        const archivo = fileInput.files[0];
+        const storageRef = firebase.storage().ref(`noticias/${Date.now()}_${archivo.name}`);
+        
+        try {
+            // Usamos la tarea para el progreso solo si los elementos existen
+            const tarea = storageRef.put(archivo);
+
+            tarea.on('state_changed', (snapshot) => {
+                const porcentaje = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                // Si la barra existe, la actualizamos
+                if (pBarra) pBarra.style.width = porcentaje + '%';
+                if (pTexto) pTexto.innerText = `Subiendo: ${Math.round(porcentaje)}%`;
+            });
+
+            await tarea; // Esperamos a que termine
+            urlImagenFinal = await tarea.snapshot.ref.getDownloadURL();
+        } catch (error) {
+            console.error("Error en Storage:", error);
+        }
+    }
+
+    // 4. Guardar en Realtime Database
+    const nueva = {
+        id: Date.now(),
+        titulo: t.toUpperCase(),
+        descripcion: d,
+        imagen: urlImagenFinal,
+        fecha: new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
+    };
+
+    if (!db.noticias) db.noticias = [];
+    db.noticias.unshift(nueva);
+
+    database.ref('liga_datos').set(db)
+        .then(() => {
+            alert("✅ ¡Noticia publicada!");
+            if (btn) { btn.innerText = "🚀 PUBLICAR AHORA"; btn.disabled = false; }
+            if (pContainer) pContainer.style.display = 'none';
+            
+            // Resetear campos solo si existen
+            if(document.getElementById('noticia-titulo')) document.getElementById('noticia-titulo').value = "";
+            if(document.getElementById('noticia-desc')) document.getElementById('noticia-desc').value = "";
+            if(fileInput) fileInput.value = "";
+            
+            renderNoticias();
+            navegar('sec-noticias');
+        })
+        .catch(err => {
+            if (btn) { btn.innerText = "🚀 PUBLICAR AHORA"; btn.disabled = false; }
+            alert("❌ Error: " + err);
+        });
+}
+
+function eliminarNoticia(id) {
+    if (!confirm("¿Deseas eliminar esta noticia para todos?")) return;
+    
+    // 1. Buscamos la noticia antes de borrarla para obtener la URL de la imagen
+    const noticiaAEliminar = db.noticias.find(n => n.id === id);
+    
+    // 2. Si la imagen está en Storage, podemos intentar borrarla (opcional)
+    if (noticiaAEliminar && noticiaAEliminar.imagen.includes('firebasestorage')) {
+        const imagenRef = firebase.storage().refFromURL(noticiaAEliminar.imagen);
+        imagenRef.delete().catch(err => console.log("La imagen ya no existía en Storage"));
+    }
+
+    // 3. Filtramos el array para quitar la noticia
+    db.noticias = db.noticias.filter(n => n.id !== id);
+    
+    // 4. Actualizamos Firebase para que desaparezca de todos los celulares
+    database.ref('liga_datos').set(db)
+        .then(() => {
+            console.log("🗑️ Noticia eliminada globalmente");
+            renderNoticias();
+        });
+}
+
+function abrirNoticiaCompleta(id) {
+    const n = db.noticias.find(item => item.id === id);
+    if (!n) return;
+
+    // Tu imagen de la cancha, pies y balón
+    const BANNER_LIGA = "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop"; 
+
+    const modal = document.createElement('div');
+    modal.id = 'noticia-modal-overlay';
+    modal.style = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.9); display: flex; align-items: center;
+        justify-content: center; z-index: 10000; padding: 20px; backdrop-filter: blur(8px);
+    `;
+
+    modal.innerHTML = `
+        <div style="background: white; width: 100%; max-width: 500px; border-radius: 25px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; animation: slideUp 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+            
+            <button onclick="cerrarNoticia()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 11; font-size: 18px; display: flex; align-items: center; justify-content: center;">✕</button>
+
+            <div style="width: 100%; background: #f1f5f9; text-align: center;">
+                <img src="${n.imagen || BANNER_LIGA}" 
+                     style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain;"
+                     onerror="this.src='${BANNER_LIGA}'">
+            </div>
+            
+            <div style="padding: 25px; overflow-y: auto;">
+                <small style="color: #3b82f6; font-weight: 800; text-transform: uppercase;">📅 ${n.fecha}</small>
+                <h2 style="font-size: 22px; font-weight: 900; color: #1e293b; margin: 10px 0;">${n.titulo}</h2>
+                <div style="width: 50px; height: 4px; background: #3b82f6; border-radius: 2px; margin-bottom: 20px;"></div>
+                
+                <p style="color: #475569; font-size: 16px; line-height: 1.6; white-space: pre-line; text-align: justify; padding-bottom: 20px;">
+                    ${n.descripcion}
+                </p>
+
+                ${modoAdmin ? `
+                    <div style="margin-top: 10px; border-top: 1px solid #f1f5f9; padding: 20px 0;">
+                        <button onclick="eliminarNoticia(${n.id}); cerrarNoticia();" 
+                                style="width: 100%; background: #fee2e2; color: #ef4444; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            🗑️ ELIMINAR PARA TODOS
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+
+    modal.onclick = (e) => { if(e.target === modal) cerrarNoticia(); };
+    document.body.appendChild(modal);
+}
+
+function cerrarNoticia() {
+    const modal = document.getElementById('noticia-modal-overlay');
+    if (modal) modal.remove();
+}
+
 </script>
 <link rel="manifest" href="/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -4376,17 +4937,25 @@ function cerrarPlantilla() {
     <script>
       // Verificamos que Firebase esté listo antes de escuchar
       if (typeof database !== 'undefined') {
-          database.ref('liga_datos').on('value', (snapshot) => {
-              const data = snapshot.val();
-              if (data) {
-                  db = data; 
-                  if (typeof renderTabla === 'function') renderTabla();
-                  if (typeof renderGoleadores === 'function') renderGoleadores();
-                  if (typeof actualizarBanner === 'function') actualizarBanner();
-                  console.log("🔄 ¡Vista actualizada con datos de la nube!");
-              }
-          });
-      }
+    database.ref('liga_datos').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            db = data; 
+            // Aseguramos que si no existen noticias en la nube, db.noticias sea un array vacío
+            if (!db.noticias) db.noticias = [];
+
+            if (typeof renderTabla === 'function') renderTabla();
+            if (typeof renderGoleadores === 'function') renderGoleadores();
+            if (typeof actualizarBanner === 'function') actualizarBanner();
+            
+            // AGREGAMOS ESTA LÍNEA:
+            if (typeof renderNoticias === 'function') renderNoticias();
+
+            console.log("🔄 ¡Vista y Noticias actualizadas con datos de la nube!");
+        }
+    });
+}
+
     </script>
 
 </body>
