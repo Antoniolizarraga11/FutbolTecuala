@@ -14,11 +14,9 @@
 
         .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
 
-       .seccion {display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-	}
+       .seccion {display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);	}
 
-	.seccion.visible { display: block !important;
-	}
+	.seccion.visible { display: block !important;	}
 	
         h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .form-group { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
@@ -32,8 +30,7 @@
         
         .equipo-card { 
             background: white; border: 1px solid #eee; border-radius: 10px; padding: 15px; 
-            text-align: center; cursor: pointer; transition: 0.2s; position: relative;
-        }
+            text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
         .equipo-card:hover { border-color: var(--accent); background: #f0f9ff; }
         .img-logo { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; display: block; margin: 0 auto; }
         
@@ -62,7 +59,7 @@
     th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; color: black; border: 1px solid #000; }
     td { border: 1px solid #ddd; }
 }
-/* Badge del Ranking (Ej: #1) */
+
 .fc-rank-badge {
     background: #d4af37;
     color: #000;
@@ -74,7 +71,6 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Efecto Brillo para el mejor de los dos */
 .fc-glow {
     box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
     transform: scale(1.05);
@@ -82,7 +78,6 @@
     transition: all 0.3s ease;
 }
 
-/* Ajuste del Ranking en la carta */
 .fc-rating-side {
     position: absolute;
     top: 25px;
@@ -99,21 +94,18 @@
 }
 .plantilla-grid {
     display: grid;
-    /* Esto crea columnas automáticas que no bajan de 180px */
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 25px;
     padding: 20px;
-    justify-items: center; /* Centra las cartas si sobra espacio */
+    justify-items: center; 
 }
 
-/* Estilo para cuando no hay jugadores (el mensaje de aviso) */
 .plantilla-grid p {
     grid-column: 1 / -1;
     text-align: center;
     font-style: italic;
     color: #94a3b8;
 }
-/* --- CORRECCIÓN INTEGRAL DE CARTA FC26 --- */
 
 .fc-card-inner {
     background: #111;
@@ -122,13 +114,12 @@
     clip-path: polygon(0% 12%, 50% 0%, 100% 12%, 100% 88%, 50% 100%, 0% 88%);
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Evita que la foto se salga */
+    overflow: hidden;
 }
 
-/* 1. Zona Superior (Rating y Foto) */
 .fc-card-top {
     display: flex;
-    height: 55%; /* Limitamos la altura para dejar espacio abajo */
+    height: 55%; 
     position: relative;
     padding-top: 25px;
     z-index: 1;
@@ -148,7 +139,6 @@
 .fc-pos { font-size: 9px; font-weight: bold; color: #fff; margin-top: 5px; }
 .fc-pos-val { font-size: 11px; font-weight: bold; color: #fff; }
 
-/* 2. Ajuste de la Foto (El problema principal) */
 .fc-player-img {
     width: 100px;
     height: 100px;
@@ -156,12 +146,10 @@
     position: absolute;
     right: 5px;
     bottom: 0;
-    /* Efecto de desvanecimiento inferior para que no tape los stats */
     mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
 }
 
-/* 3. Zona Inferior (Nombre y Stats) */
 .fc-card-bottom {
     background: rgba(255, 255, 255, 0.05);
     height: 45%;
@@ -186,7 +174,6 @@
     margin-bottom: 5px;
 }
 
-/* 4. Grid de Estadísticas (Alineación perfecta) */
 .fc-stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -215,17 +202,14 @@
     color: #fff; 
 }
 
-.fc-divider { display: none; } /* Quitamos el divider manual si usamos el grid */
-/* Contenedor Grid Ajustado */
+.fc-divider { display: none; } 
 .plantilla-grid {
     display: grid;
-    /* Reducimos el mínimo de 200px a 160px */
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 15px;
     padding: 15px;
 }
 
-/* La Carta Versión Pequeña */
 .simple-card {
     background: white;
     border-radius: 10px;
@@ -234,7 +218,7 @@
     overflow: hidden;
     position: relative;
     transition: transform 0.2s;
-    width: 160px; /* Tamaño más pequeño */
+    width: 160px;
 }
 
 .simple-card:hover {
@@ -242,10 +226,9 @@
     box-shadow: 0 8px 12px rgba(0,0,0,0.1);
 }
 
-/* Imagen Ajustada */
 .sc-img-container {
     width: 100%;
-    height: 140px; /* Altura reducida */
+    height: 140px; 
     background: #f8fafc;
 }
 
@@ -255,14 +238,13 @@
     object-fit: cover;
 }
 
-/* Contenedor de info con Flexbox */
 .sc-info {
     padding: 8px;
     text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Empuja todo hacia arriba */
-    gap: 6px; /* Espacio pequeño y constante entre nombre y stats */
+    justify-content: flex-start;
+    gap: 6px; 
 }
 
 .sc-name {
@@ -272,18 +254,14 @@
     text-transform: uppercase;
     line-height: 1.1;
     
-    /* Multilínea dinámica sin altura fija */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    
-    /* Esto evita que el nombre se separe de las stats */
     margin: 0; 
     padding: 0;
 }
 
-/* Reducimos un poco el margen del grid de stats para que suba más */
 .sc-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -291,7 +269,7 @@
     background: #f1f5f9;
     border-radius: 4px;
     padding: 3px;
-    margin-top: 2px; /* Espacio mínimo con el nombre */
+    margin-top: 2px;
 }
 
 .sc-stat-item {
@@ -301,11 +279,10 @@
     justify-content: center;
     gap: 4px;
     padding: 3px;
-    font-size: 11px; /* Números más pequeños */
+    font-size: 11px;
     font-weight: bold;
 }
 
-/* Iconos de Admin más discretos */
 .sc-admin-tools {
     position: absolute;
     top: 5px;
@@ -323,14 +300,13 @@
     font-size: 10px;
     cursor: pointer;
 }
-/* Clase especial para el MVP */
+
 .card-mvp {
     border: 2px solid #ffd700 !important; /* Oro */
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.6) !important;
     position: relative;
 }
 
-/* Etiqueta de "MVP" sobre la foto */
 .card-mvp::after {
     content: "⭐ MVP";
     position: absolute;
@@ -346,7 +322,6 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Efecto de brillo sutil para la carta estrella */
 .card-mvp {
     animation: shine-gold 3s infinite;
 }
@@ -356,7 +331,7 @@
     50% { filter: brightness(1.1); }
     100% { filter: brightness(1); }
 }
-/* Contenedor del icono de Doble Amarilla */
+
 .doble-tarjeta-container {
     display: inline-flex;
     position: relative;
@@ -366,7 +341,6 @@
     margin-left: 5px;
 }
 
-/* Base de ambas tarjetas */
 .card-mini {
     width: 12px;
     height: 16px;
@@ -375,22 +349,21 @@
     border: 1px solid rgba(0,0,0,0.2);
 }
 
-/* Tarjeta Amarilla (abajo) */
 .card-yellow {
     background-color: #ffeb3b;
     left: 0;
     top: 2px;
     z-index: 1;
-    transform: rotate(-10deg); /* Un poco inclinada */
+    transform: rotate(-10deg); 
 }
 
-/* Tarjeta Roja (encimada) */
+
 .card-red {
     background-color: #f44336;
     left: 6px;
     top: 0;
     z-index: 2;
-    transform: rotate(5deg); /* Inclinada hacia el otro lado */
+    transform: rotate(5deg);
     box-shadow: -1px 1px 3px rgba(0,0,0,0.3);
 }
 .name-pj strong {
@@ -427,7 +400,7 @@
 </head>
 <body>
 <div id="auth-panel" style="background:#1e293b; color:white; padding:10px; display:flex; justify-content:center; gap:15px; align-items:center; font-size:12px;">
-    <span id="status-role">MODO: 👤 USUARIO (Solo Lectura)</span>
+    <span id="status-role">MODO: 👤 USUARIO</span>
     <div id="auth-actions">
         <button onclick="loginAdmin()" id="btn-login" style="background:var(--accent); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;">Acceso Admin</button>
     </div>
@@ -452,9 +425,10 @@
 <div class="container">
 <div id="sec-inicio" class="seccion visible">
     <div style="position: relative; width: 100%; height: 350px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-        <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop" 
-             style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6);">      
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
+    <img id="imagen-banner-dinamica" 
+         src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop" 
+         style="width: 100%; height: 100%; object-fit: cover; object-position: center; filter: brightness(0.6);">         
+	    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
             <h1 id="banner-titulo" style="color: white; font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); font-style: italic;">
                 cargando...
             </h1>
@@ -471,7 +445,7 @@
     <div id="contenedor-noticias" style="padding: 10px;"></div>
 </section>
 
-	<div id="sec-calendario" class="seccion">
+<div id="sec-calendario" class="seccion">
         <div class="form-group no-print admin-only" style="display: none;">
         <label>Número de Vueltas:</label>
         <select id="vueltas" class="input-std">
@@ -500,6 +474,19 @@
                 <label style="display:block; font-size: 11px; font-weight: bold; color: #475569; margin-bottom: 5px;">TEMPORADA / ESLOGAN:</label>
                 <input type="text" id="cfg-nombre-temporada" placeholder="Ej: OFICIAL 2026" style="width:100%; padding:10px; border-radius:6px; border:1px solid #cbd5e1;">
             </div>
+<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+            <label style="display:block; font-size: 11px; font-weight: bold; color: #475569; margin-bottom: 8px;">FOTO DE PORTADA (BANNER):</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="file" id="cfg-banner-file" accept="image/*" 
+                       style="flex: 1; font-size: 12px; color: #64748b; background: white; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                
+                <button onclick="subirImagenBanner()" 
+                        style="background: #64748b; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; white-space: nowrap;">
+                    🖼️ SUBIR IMAGEN
+                </button>
+            </div>
+            <p style="font-size: 10px; color: #94a3b8; margin-top: 5px;">Sugerencia: Usa fotos horizontales (estadio, equipos o trofeos).</p>
+        </div>
         </div>
         
         <button onclick="guardarConfiguracionGeneral()" class="btn-main" style="margin-top: 15px; background: #3b82f6; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold;">
@@ -543,6 +530,33 @@
             </button>
         </div>
     </div>
+
+<div class="form-group" style="background: #ffffff; border: 2px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+    <h3 style="margin-top: 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+        Patrocinadores
+    </h3>
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+        Ej: "https://wa.me/"(lada)numerotelefono", "tel:+"(lada)numerotelefono"
+    </p>
+    
+<div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="file" id="patro-img-file" accept="image/*" 
+               style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: white;">
+        
+        <input type="text" id="patro-link" placeholder="Link (WhatsApp o Instagram)" 
+               style="flex: 2; min-width: 250px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px;">
+
+        <button onclick="subirPatrocinador()" 
+                style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">
+            ➕ AÑADIR
+        </button>
+    </div>
+
+        <div id="lista-gestion-patros" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 10px; min-height: 50px; align-items: center; justify-content: center;">
+            </div>
+    </div>
+</div>
 
     <div class="form-group admin-only" style="border: 2px solid #fee2e2; background: #fffafb; padding: 20px;">
         <h3 style="color: var(--danger); margin-top: 0;">⚠️ Zona de Peligro</h3>
@@ -689,6 +703,22 @@
     </div>
 </div>
 
+<div id="modal-traspaso" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.9); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(5px); padding:20px;">
+    <div style="background:white; width:100%; max-width:350px; padding:25px; border-radius:24px; text-align:center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);">
+        <div style="font-size:40px; margin-bottom:10px;">🔄</div>
+        <h3 id="t-nombre" style="margin:0; text-transform:uppercase; font-weight:900; color:#0f172a;">-</h3>
+        <p style="font-size:13px; color:#64748b; margin-bottom:20px;">De: <b id="t-actual" style="color:#ef4444;">-</b></p>
+        
+        <label style="display:block; margin-bottom:10px; font-weight:800; font-size:12px; color:#1e293b; text-align:left;">SELECCIONAR DESTINO:</label>
+        <select id="t-destino" class="input-std" style="width:100%; margin-bottom:25px; padding:12px; border-radius:12px; border:2px solid #f1f5f9; font-weight:bold;"></select>
+        
+        <div style="display:flex; gap:10px;">
+            <button onclick="cerrarTraspaso()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer;">CANCELAR</button>
+            <button onclick="confirmarTraspasoDirecto()" style="flex:1; background:#3b82f6; color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer;">CONFIRMAR</button>
+        </div>
+    </div>
+</div>
+
 <div id="sec-playoffs" class="seccion">
     <div style="background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
         <h2 style="color: white; border: none; margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">🏆 Fase de Eliminatorias</h2>
@@ -754,14 +784,12 @@
 </div>
 
 <style>
-    /* Animación de aparición para las cartas */
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(30px) scale(0.9); }
         to { opacity: 1; transform: translateY(0) scale(1); }
     }
     .animar-entrada { animation: fadeInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-/* Por defecto todo oculto */
-/* 1. Las secciones se controlan por la clase .visible, NO por el rol */
+
 .seccion { 
     display: none; 
 }
@@ -769,12 +797,10 @@
     display: block !important; 
 }
 
-/* 2. Los elementos internos sí se controlan por rol */
 .admin-only, .editor-only { 
     display: none !important; 
 }
 
-/* Mostrar según el rol activo en el body */
 body.role-admin .admin-only,
 body.role-admin .editor-only { 
     display: block !important; 
@@ -846,7 +872,7 @@ body.role-editor .editor-only {
     flex-direction: column;
     justify-content: center;
 }
-/* Animación de brillo para el MVP */
+
 @keyframes brilloOro {
     0% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
     50% { box-shadow: 0 0 20px #ffcc00, 0 0 30px #ffae00; }
@@ -861,7 +887,6 @@ body.role-editor .editor-only {
     overflow: hidden;
 }
 
-/* Destello de luz pasando por la tarjeta */
 .card-mvp::after {
     content: '';
     position: absolute;
@@ -882,7 +907,6 @@ body.role-editor .editor-only {
     transform: scale(0.95);
     transition: transform 0.1s;
 }
-/* DISEÑO PRO GOLEADORES */
 .contenedor-goleadores-pro {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
@@ -892,7 +916,6 @@ body.role-editor .editor-only {
     border-radius: 20px;
     font-family: 'Segoe UI', sans-serif;
 }
-
 .mvp-card {
     background: white;
     border-radius: 20px;
@@ -901,7 +924,6 @@ body.role-editor .editor-only {
     position: relative;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
-
 .mvp-photo-wrapper {
     position: relative;
     width: 220px;
@@ -927,7 +949,6 @@ body.role-editor .editor-only {
     border-radius: 50%;
     border: 5px solid #4caf50;
 }
-
 .mvp-number {
     position: absolute;
     bottom: 10px;
@@ -944,9 +965,7 @@ body.role-editor .editor-only {
     font-weight: 900;
     border: 4px solid white;
 }
-
 .mvp-info h2 { font-size: 28px; margin: 0; color: #1a1a1a; text-transform: uppercase; }
-
 .mvp-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -958,7 +977,6 @@ body.role-editor .editor-only {
 .stat-item strong { font-size: 24px; display: block; }
 .stat-item small { color: #888; font-size: 10px; }
 
-/* LISTADO DERECHA */
 .lista-goleadores { display: flex; flex-direction: column; gap: 8px; }
 
 .item-goleador {
@@ -980,11 +998,10 @@ body.role-editor .editor-only {
 .img-eq { width: 25px; height: 25px; object-fit: contain; margin: 0 15px; }
 .goles-pj { font-size: 22px; font-weight: 900; color: #4caf50; width: 40px; text-align: right; }
 
-/* AJUSTE PARA MÓVILES */
 @media (max-width: 800px) {
     .contenedor-goleadores-pro { grid-template-columns: 1fr; }
 }
-/* Estilo de Tarjetas de Disciplina */
+
 .card-ui {
     display: inline-flex;
     align-items: center;
@@ -999,12 +1016,12 @@ body.role-editor .editor-only {
 }
 
 .card-ui.ama {
-    background: #facc15; /* Amarillo intenso */
+    background: #facc15; 
     border: 1px solid #eab308;
 }
 
 .card-ui.roja {
-    background: #ef4444; /* Rojo intenso */
+    background: #ef4444; 
     border: 1px solid #dc2626;
     color: white;
 }
@@ -1019,7 +1036,7 @@ body.role-editor .editor-only {
     color: white;
 }
 
-/* DISEÑO DE LA CARTA */
+
 .fc-card {
     width: 200px;
     height: 280px;
@@ -1045,7 +1062,7 @@ body.role-editor .editor-only {
     position: absolute;
     top: 35px;
     left: 15px;
-    width: 35px; /* LOGO PEQUEÑO Y CONTROLADO */
+    width: 35px; 
     height: 35px;
     object-fit: contain;
     z-index: 5;
@@ -1074,7 +1091,7 @@ body.role-editor .editor-only {
 .fc-name { font-weight: 900; font-size: 16px; text-transform: uppercase; color: #d4af37; }
 .fc-team-name { font-size: 10px; opacity: 0.8; }
 
-/* PANEL CENTRAL */
+
 .fc-stats-panel { flex: 1; padding: 0 20px; }
 .vs-badge { 
     background: #d4af37; color: black; font-weight: 900; width: 50px; 
@@ -1114,7 +1131,7 @@ body.role-editor .editor-only {
 }
 
 .fc-team-badge-small {
-    width: 25px; /* LOGO MUY PEQUEÑO Y ELEGANTE */
+    width: 25px;
     height: 25px;
     object-fit: contain;
 }
@@ -1134,12 +1151,12 @@ body.role-editor .editor-only {
 .empty-theme {
     background: rgba(255,255,255,0.05) !important;
     border: 2px dashed rgba(255,255,255,0.1);
-    clip-path: none !important; /* Quita el corte de carta para el slot vacío */
+    clip-path: none !important; 
 }
-/* Estilo para el número de Ranking Grande */
+
 .fc-overall {
     font-family: 'Arial Black', sans-serif;
-    font-size: 42px; /* Más grande para que destaque */
+    font-size: 42px;
     font-weight: 900;
     color: #f1f5f9;
     line-height: 0.8;
@@ -1156,7 +1173,6 @@ body.role-editor .editor-only {
     margin-bottom: 8px;
 }
 
-/* El logo del equipo ahora va justo debajo del texto RANK */
 .fc-team-badge-small {
     width: 28px;
     height: 28px;
@@ -1185,7 +1201,7 @@ body.role-editor .editor-only {
 
 .fc-overall {
     font-family: 'Arial Black', sans-serif;
-    font-size: 46px; /* Tamaño impactante */
+    font-size: 46px; 
     font-weight: 900;
     color: #f8fafc;
     line-height: 0.8;
@@ -1256,8 +1272,8 @@ body.role-editor .editor-only {
 }
 nav {
     display: flex;
-    overflow-x: auto; /* Permite deslizar a los lados si no caben */
-    white-space: nowrap; /* Evita que los botones se bajen a la siguiente línea */
+    overflow-x: auto;
+    white-space: nowrap; 
     gap: 10px;
     padding: 10px;
     background: #fff;
@@ -1265,7 +1281,7 @@ nav {
 }
 
 .nav-link {
-    flex-shrink: 0; /* Evita que los botones se aplasten */
+    flex-shrink: 0; 
     padding: 8px 15px;
     border: none;
     background: none;
@@ -1274,7 +1290,7 @@ nav {
 }
 
 .nav-link.active {
-    color: #2563eb; /* O el color que uses para resaltar */
+    color: #2563eb; 
     border-bottom: 2px solid #2563eb;
 }
 nav {
@@ -1282,37 +1298,36 @@ nav {
     overflow-x: auto;
     gap: 8px;
     padding: 12px 10px;
-    background: #f8fafc; /* Un gris muy sutil para el contenedor */
+    background: #f8fafc;
     border-bottom: 2px solid #e2e8f0;
-    scrollbar-width: none; /* Oculta scroll en Firefox */
+    scrollbar-width: none; 
 }
 
-nav::-webkit-scrollbar { display: none; } /* Oculta scroll en Chrome/Safari */
+nav::-webkit-scrollbar { display: none; } 
 
 .nav-link {
     flex-shrink: 0;
     padding: 10px 18px;
-    border-radius: 12px; /* Bordes redondeados tipo cápsula */
-    border: 1px solid #e2e8f0; /* Borde suave */
-    background: white; /* Fondo blanco sólido para resaltar */
+    border-radius: 12px; 
+    border: 1px solid #e2e8f0; 
+    background: white; 
     color: #475569;
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sombra suave para dar profundidad */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* Cuando el botón está activo (seleccionado) */
 .nav-link.active {
-    background: #1e293b; /* Fondo oscuro */
-    color: white; /* Texto blanco */
+    background: #1e293b; 
+    color: white;
     border-color: #1e293b;
     box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
-    transform: translateY(-2px); /* Efecto de elevación */
+    transform: translateY(-2px);
 }
 #progreso-barra {
     background: linear-gradient(90deg, #3b82f6, #60a5fa);
@@ -1325,7 +1340,7 @@ nav::-webkit-scrollbar { display: none; } /* Oculta scroll en Chrome/Safari */
     background-color: #e2e8f0;
     border-radius: 10px;
     margin: 15px 0;
-    display: none; /* Se activa por JS */
+    display: none;
 }
 
 #progreso-barra {
@@ -1357,11 +1372,11 @@ nav::-webkit-scrollbar { display: none; } /* Oculta scroll en Chrome/Safari */
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.4"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.4"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.4"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.5"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.5"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.5"></script>
 
-<script src="app.js?v=1.4"></script>
+<script src="app.js?v=1.5"></script>
 
 <script>
   // Configuración de Firebase
@@ -1425,6 +1440,8 @@ let db = JSON.parse(localStorage.getItem('LIGA_PRO_FINAL')) || {
     calendario: [], 
     playoffs: {},
     noticias: [],
+    patrocinadores: {},
+    configuraciones: { urlBanner: "" },
     nombreTemporada: "cargando...",
     nombreTorneoActual: "cargando..." 
 };
@@ -1460,48 +1477,81 @@ function procesarLogoEquipo(event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            fotoBase64Temp = e.target.result; // Llenamos la variable global
+            fotoBase64Temp = e.target.result; 
             console.log("Imagen cargada en memoria");
         };
         reader.readAsDataURL(file);
     }
 }
 
-let rolActual = "usuario"; // "usuario", "editor", "admin"
-
+let rolActual = "usuario";
+ 
 function loginAdmin() {
-    const input = prompt("Internal Access Code");
+    const input = prompt("Access");
     if (!input) return;
 
     const hashedInput = btoa(input);
-
     const keyEditor = "Y2FyZ2E5ODc="; 
     const keyAdmin = "ZGlvczExOTA=";
 
     if (hashedInput === keyAdmin) {
         rolActual = 'admin';
         modoAdmin = true;
-        document.body.classList.add('role-admin');
-        document.body.classList.remove('role-editor');
-        alert("Acceso total concedido (ADMIN).");
+        sessionStorage.setItem('session_rol', 'admin'); 
     } 
     else if (hashedInput === keyEditor) {
         rolActual = 'editor';
-        modoAdmin = false; // El editor no es admin total, pero puede editar
-        document.body.classList.add('role-editor');
-        document.body.classList.remove('role-admin');
-        alert("Acceso de edición concedido (EDITOR).");
+        modoAdmin = false; 
+        sessionStorage.setItem('session_rol', 'editor');
     } 
     else {
         alert("Código de sistema no reconocido.");
         return;
     }
-    aplicarRestricciones();
-    renderTodo();
+
+    actualizarInterfazPorRol();
+    alert("Acceso concedido como " + rolActual.toUpperCase());
 }
 
-    function actualizarInterfazAdmin() {
+function actualizarInterfazAdmin() {
     renderEquipos(); 
+}
+
+async function subirImagenBanner() {
+    const fileInput = document.getElementById('cfg-banner-file');
+    const file = fileInput.files[0];
+    
+    if (!file) return alert("Selecciona una imagen primero.");
+
+    try {
+        const btn = event.target;
+        btn.innerText = "⏳ SUBIENDO...";
+        btn.disabled = true;
+
+        const storageRef = firebase.storage().ref(`configuracion/banner_principal`);
+        const snapshot = await storageRef.put(file);
+        const url = await snapshot.ref.getDownloadURL();
+
+        // 1. Aseguramos que el objeto configuracion exista en db
+        if (!db.configuracion) db.configuracion = {};
+
+        // 2. Guardamos la URL en nuestra variable local
+        db.configuracion.urlBanner = url;
+
+        // 3. ¡IMPORTANTE! Llamamos a persist() para que guarde en Firebase 
+        // y ejecute actualizarBanner() automáticamente
+        persist();
+
+        btn.innerText = "🖼️ SUBIR IMAGEN";
+        btn.disabled = false;
+        fileInput.value = "";
+        
+        alert("✅ ¡Banner actualizado con éxito!");
+    } catch (e) {
+        console.error(e);
+        alert("Error al subir");
+        btn.disabled = false;
+    }
 }
 
 function aplicarRestricciones() {
@@ -1530,17 +1580,14 @@ function aplicarRestricciones() {
         }
     }
 
-    // --- LÓGICA DE PESTAÑAS DEL MENÚ ---
     const botonesNav = document.querySelectorAll('.nav-link');  
     botonesNav.forEach(btn => {
         const texto = btn.innerText.toUpperCase();
         
-        // Ocultar AJUSTES si no es Admin
-        if (texto.includes('AJUSTES')) {
+            if (texto.includes('AJUSTES')) {
             btn.style.display = (rolActual === 'admin') ? "inline-block" : "none";
         }
 
-        // NUEVO: Ocultar PARTIDO si no es Admin ni Editor
         if (texto.includes('PARTIDO')) {
             btn.style.display = (rolActual === 'admin' || rolActual === 'editor') ? "inline-block" : "none";
         }
@@ -1695,11 +1742,9 @@ function actualizarVinculosEquipo(viejo, nuevo) {
 
     db.calendario.forEach(semana => {
         semana.partidos.forEach(p => {
-            // Local y Visitante
             if (p.l.trim().toUpperCase() === v) p.l = n;
             if (p.v.trim().toUpperCase() === v) p.v = n;
-            
-            // Incidencias
+          
             if (p.inc && Array.isArray(p.inc)) {
                 p.inc.forEach(incidencia => {
                     if (incidencia.equipo && incidencia.equipo.trim().toUpperCase() === v) incidencia.equipo = n;
@@ -1712,7 +1757,7 @@ function actualizarVinculosEquipo(viejo, nuevo) {
     if (typeof equipoActual !== 'undefined' && equipoActual.trim().toUpperCase() === v) {
         equipoActual = n;
         const tit = document.getElementById('tit-equipo');
-        if (tit) tit.innerText = n; // Actualiza el título visualmente si está abierto
+        if (tit) tit.innerText = n;
     }
 
     persist(); 
@@ -1770,7 +1815,6 @@ function verPlantilla(referencia) {
     
     const contenedor = document.getElementById('body-plantilla');
     
-    // --- CAMBIO AQUÍ: Agregamos el conteo al título ---
     document.getElementById('tit-equipo').innerHTML = `
         ${nombreEquipo} <span style="color: #64748b; font-size: 0.8em; font-weight: 600;">(${plantilla.length})</span>
     `;
@@ -1790,7 +1834,6 @@ function verPlantilla(referencia) {
         
         contenedor.innerHTML = plantilla.map(j => {
             const fotoUrl = j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=200&background=random&color=fff`;
-            // Aplicamos el tamaño XL al nombre dentro de la card
             const estiloNombre = j.nombre.length > 15 ? 'style="font-size: 12px; font-weight: 900;"' : 'style="font-size: 15px; font-weight: 900;"';
             const esMvp = (j.id === idMvp) ? 'card-mvp' : '';
 
@@ -1848,7 +1891,6 @@ function guardarJugador() {
         if (j) {
             j.nombre = nombre; 
             j.curp = curp;
-            // Si el jugador se mueve de equipo al editar, podrías actualizar j.equipo aquí también
             if (fotoBase64Temp) j.foto = fotoBase64Temp;
         }
     }
@@ -1886,7 +1928,6 @@ function editarPj(id) {
 }
 
 function generarCalendario() {
-    // 1. Validaciones de Seguridad
     if (rolActual !== 'admin') {
         alert("⛔ Solo el Administrador principal puede regenerar el calendario.");
         return;
@@ -1894,18 +1935,15 @@ function generarCalendario() {
     if (!confirm("⚠️ ¿Estás seguro? Se borrarán todos los resultados actuales.")) return;	
     if (db.equipos.length < 2) return alert("Mínimo 2 equipos para generar un torneo.");
 
-    // 2. Preparación de Equipos
     const numVueltas = parseInt(document.getElementById('vueltas').value);
     let eqs = db.equipos.map(e => e.nombre);    
     
-    // Si los equipos son impares, añadimos un "DESCANSO"
     if (eqs.length % 2 !== 0) eqs.push("DESCANSO");    
     
     db.calendario = [];
     let n = eqs.length;
     let jornadasPrimeraVuelta = [];
 
-    // 3. Algoritmo Round Robin (Primera Vuelta)
     for (let i = 0; i < n - 1; i++) {
         let jor = { num: i + 1, partidos: [] };
         for (let j = 0; j < n / 2; j++) {
@@ -1913,7 +1951,6 @@ function generarCalendario() {
             let visitante = eqs[n - 1 - j];            
             
             if (local !== "DESCANSO" && visitante !== "DESCANSO") {
-                // Alternancia de Local/Visitante para que sea justo
                 if (i % 2 === 1) {
                     let temp = local;
                     local = visitante;
@@ -1930,12 +1967,11 @@ function generarCalendario() {
             }
         }
         jornadasPrimeraVuelta.push(jor);
-        eqs.splice(1, 0, eqs.pop()); // Rotación de equipos
+        eqs.splice(1, 0, eqs.pop()); 
     }
 
     db.calendario = [...jornadasPrimeraVuelta];
 
-    // 4. Generación de Segunda Vuelta (Inversión de localía)
     if (numVueltas === 2) {
         let totalIda = jornadasPrimeraVuelta.length;
         jornadasPrimeraVuelta.forEach((jorIda, idx) => {
@@ -1954,7 +1990,6 @@ function generarCalendario() {
         });
     }
 
-    // 5. Guardado y Actualización
     persist();
     renderTodo();
     alert("✅ CALENDARIO GENERADO CON ÉXITO");
@@ -1974,7 +2009,6 @@ function renderCalendario() {
 
     const tienePermiso = (rolActual === 'admin' || rolActual === 'editor');
 
-    // --- 1. GENERAR BOTONES DE NAVEGACIÓN (TABS) ---
     let htmlBotones = `<div style="display: flex; overflow-x: auto; gap: 8px; padding: 10px 5px; margin-bottom: 15px; -webkit-overflow-scrolling: touch; scrollbar-width: none;">`;
 
     db.calendario.forEach(jor => {
@@ -1993,10 +2027,8 @@ function renderCalendario() {
     });
     htmlBotones += `</div>`;
 
-    // --- 2. FILTRAR LA JORNADA SELECCIONADA ---
     const jornada = db.calendario.find(j => j.num === jornadaSeleccionada) || db.calendario[0];
 
-    // --- 3. DIBUJAR LA JORNADA SELECCIONADA ---
     let htmlPartidos = `
     <div style="background:#fff; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease;">
         <div style="background:var(--primary); color:white; padding:15px; font-weight:900; text-align:center; letter-spacing:2px; text-transform:uppercase; font-size:14px;">
@@ -2061,7 +2093,6 @@ function renderCalendario() {
             </div>`;
     });
 
-    // --- 4. LÓGICA DE DESCANSO ---
     const equipoDescansa = db.equipos.find(e => !equiposJugandoHoy.includes(e.nombre));
     if (equipoDescansa) {
         htmlPartidos += `
@@ -2079,7 +2110,6 @@ function renderCalendario() {
     contenedor.innerHTML = htmlBotones + htmlPartidos;
 }
 
-// Función necesaria para cambiar el estado
 function cambiarJornada(num) {
     jornadaSeleccionada = num;
     renderCalendario();
@@ -2087,7 +2117,6 @@ function cambiarJornada(num) {
 
 function prepararCarga(id) {
     let p; 
-    // Buscamos el partido
     db.calendario.forEach(j => { 
         let x = j.partidos.find(part => part.id === id); 
         if(x) p = x; 
@@ -2095,8 +2124,6 @@ function prepararCarga(id) {
 
     if (!p) return;
 
-    // --- CORRECCIÓN DE SEGURIDAD ---
-    // Si rolActual no existe, asumimos 'usuario' para que no rompa el código
     const miRol = (typeof rolActual !== 'undefined') ? rolActual : 'usuario';
     const tienePermiso = (miRol === 'admin' || miRol === 'editor');
 
@@ -2106,16 +2133,13 @@ function prepararCarga(id) {
         return;
     }
 
-    // Buscamos equipos con validación por si no existen
     const eqLocal = db.equipos.find(e => e.nombre === p.l) || { nombre: p.l, logo: '' };
     const eqVisita = db.equipos.find(e => e.nombre === p.v) || { nombre: p.v, logo: '' };
     
-    // Validamos que db.jugadores exista antes de filtrar
     const listaJugadores = db.jugadores || [];
     const jl = listaJugadores.filter(j => j.equipo === p.l).sort((a,b)=>a.nombre.localeCompare(b.nombre));
     const jv = listaJugadores.filter(j => j.equipo === p.v).sort((a,b)=>a.nombre.localeCompare(b.nombre));  
 
-    // Navegación
     const navLinks = document.querySelectorAll('.nav-link');
     const linkPartido = Array.from(navLinks).find(l => l.innerText.includes('PARTIDO')) || navLinks[2];
     
@@ -2125,7 +2149,6 @@ function prepararCarga(id) {
     
     window.scrollTo(0,0);
 
-    // Verificamos que el contenedor exista
     const areaCarga = document.getElementById('area-carga');
     if(!areaCarga) {
         console.error("No se encontró el div 'area-carga'");
@@ -2256,7 +2279,6 @@ function accionarStat(id, tipo) {
         if (tieneRojaDirecta) return;
         let amarillasActuales = parseInt(row.dataset.a);
         if (amarillasActuales === 0) {
-            // Primera Amarilla: Normal
             row.dataset.a = 1;
             row.dataset.da = 0;
             btnA.style.background = "#fef08a"; 
@@ -2344,15 +2366,13 @@ function actualizarMarcadorVivo() {
 }
 
 function guardarPartido(idPartido, e) {
-    // 1. Manejo del botón para evitar doble clic
     const btnGuardar = (e && e.target) ? e.target : null;
     if (btnGuardar && btnGuardar.tagName === 'BUTTON') {
-        if (btnGuardar.disabled) return; // Si ya se pulsó, no hacer nada
+        if (btnGuardar.disabled) return; 
         btnGuardar.disabled = true;
         btnGuardar.innerText = "PROCESANDO...";
     }
 
-    // 2. Buscar el partido y validar si ya existe
     let partidoObj = null;
     db.calendario.forEach(j => {
         let p = j.partidos.find(x => x.id === idPartido);
@@ -2369,7 +2389,6 @@ function guardarPartido(idPartido, e) {
 
     if (!partidoObj || partidoObj === "YA_JUGADO") return;
 
-    // 3. Captura de datos
     const estadioVal = document.getElementById('input-estadio').value.trim();
     const arbitroVal = document.getElementById('input-arbitro').value.trim();
     const gl = parseInt(document.getElementById('live-gl').innerText) || 0;
@@ -2377,7 +2396,6 @@ function guardarPartido(idPartido, e) {
     const detalleL = document.getElementById('incidencias-L').innerHTML;
     const detalleV = document.getElementById('incidencias-V').innerHTML;
 
-    // 4. Actualizar objeto partido
     partidoObj.score = `${gl} - ${gv}`;
     partidoObj.l_goles = gl;
     partidoObj.v_goles = gv;
@@ -2385,7 +2403,6 @@ function guardarPartido(idPartido, e) {
     partidoObj.estadio = estadioVal || "Sede Principal";
     partidoObj.arbitro = arbitroVal || "Central Designado";
 
-    // 5. Actualizar Tabla de Posiciones
     const eqL = db.equipos.find(e => e.nombre === partidoObj.l);
     const eqV = db.equipos.find(e => e.nombre === partidoObj.v);
     
@@ -2398,7 +2415,6 @@ function guardarPartido(idPartido, e) {
         else { eqL.e++; eqV.e++; eqL.pts += 1; eqV.pts += 1; }
     }
 
-    // 6. Procesar Jugadores e Incidencias
     let htmlReporteL = detalleL;
     let htmlReporteV = detalleV;
     let idsParticipantes = [];
@@ -2436,7 +2452,6 @@ function guardarPartido(idPartido, e) {
         }
     });
 
-    // 7. Limpieza de sanciones para los que NO jugaron
     db.jugadores.forEach(j => {
         if (j.equipo === partidoObj.l || j.equipo === partidoObj.v) {
             if ((j.sancionPendiente || 0) > 0) {
@@ -2449,14 +2464,11 @@ function guardarPartido(idPartido, e) {
     partidoObj.reporteHtml = { local: htmlReporteL, visita: htmlReporteV };
     partidoObj.participantes = idsParticipantes;
 
-    // 8. Guardar y Salir (con orden de prioridad)
     persist();
     
-    // Alerta y navegación inmediata
     alert("¡Partido finalizado con éxito!");
     navegar('sec-calendario');
 
-    // Renderizado en segundo plano para no trabar la UI
     setTimeout(() => {
         if (typeof renderTodo === 'function') renderTodo();
         if (typeof renderCalendario === 'function') renderCalendario();
@@ -2470,7 +2482,6 @@ function verReporte(idPartido) {
     let partido;
     let jornadaNum = 0;
     
-    // --- ESTA ES LA CLAVE: Priorizamos el nombre guardado en la DB ---
     const nombreTorneoParaReporte = db.nombreTorneoActual || nombreTorneoActual;
 
     db.calendario.forEach(j => {
@@ -2581,7 +2592,6 @@ function renderTodo() {
     renderDisciplina();
     if (typeof renderResumenInicio === 'function') renderResumenInicio();
 
-    // 3. LLAMADA CRÍTICA A LA TABLA
     renderTabla(); 
 
     if (typeof aplicarRestricciones === 'function') aplicarRestricciones();
@@ -2619,7 +2629,6 @@ function renderPlayoffs() {
                 </span>
             </div>`;
 
-    // --- BLOQUE DEL LÍDER CON LOGO ---
     if (p.exentos && p.exentos.length > 0) {
         p.exentos.forEach(nombreLider => {
             const eqLider = db.equipos.find(e => e.nombre === nombreLider) || {};
@@ -2637,7 +2646,6 @@ function renderPlayoffs() {
 
     html += `<div style="display:grid; gap:25px;">`;
 
-    // --- RENDER DE LAS LLAVES ---
     p.llaves.forEach((llave, i) => {
         const esIdaVuelta = (p.tipoDuelo === 2);
         const totalSup = esIdaVuelta ? (Number(llave.gIdaSup) + Number(llave.gVtaSup)) : Number(llave.gIdaSup);
@@ -2708,7 +2716,7 @@ function renderPlayoffs() {
             </div>`;
     });
 
-    html += `</div>`; // Cierra el grid de las llaves
+    html += `</div>`; 
 
     if ((rolActual === 'admin' || rolActual === 'editor')) {
         let textoBoton = p.faseActual === 2 ? "🏆 FINALIZAR TORNEO" : "➡️ AVANZAR SIGUIENTE FASE";
@@ -2743,7 +2751,6 @@ function generarCrucesPlayoffs() {
     if (!selector) return alert("No se encontró el selector de formato.");
 
     const cantidadABuscar = parseInt(selector.value);
-    // Ahora leemos dinámicamente si es 1 (Único) o 2 (Ida y Vuelta)
     const tipoDuelo = parseInt(document.getElementById('p-tipo-duelo')?.value || 2);
     
     const clasificados = [...db.equipos]
@@ -2762,29 +2769,24 @@ function generarCrucesPlayoffs() {
         exentos: [] 
     };
 
-    // --- LÓGICA DE EXENTOS (Para 7 equipos el 1° descansa, para 6 descansan 1° y 2°) ---
     const exentosCount = cantidadABuscar === 6 ? 2 : (cantidadABuscar % 2 !== 0 ? 1 : 0);
     for (let i = 0; i < exentosCount; i++) {
         const exento = clasificados.shift();
         db.playoffs.exentos.push(exento.nombre);
     }
 
-    // --- GENERAR LLAVES CON LOCALÍA INTELIGENTE ---
     const restantes = clasificados.length;
     for (let i = 0; i < restantes / 2; i++) {
         const mejor = clasificados[i];
         const peor = clasificados[restantes - 1 - i];
 
         if (tipoDuelo === 1) {
-            // PARTIDO ÚNICO: El MEJOR clasificado juega de LOCAL (inf)
             db.playoffs.llaves.push({
                 inf: mejor.nombre, 
                 sup: peor.nombre,
                 gIdaInf: 0, gIdaSup: 0, gVtaSup: 0, gVtaInf: 0
             });
         } else {
-            // IDA Y VUELTA: El PEOR clasificado empieza de LOCAL (inf)
-            // Así el MEJOR (sup) cierra la llave en su casa en el partido de vuelta.
             db.playoffs.llaves.push({
                 inf: peor.nombre,
                 sup: mejor.nombre,
@@ -2808,12 +2810,9 @@ function avanzarFase() {
 
     const esLaFinal = (p.faseActual === 2);
 
-    // 1. Obtener ganadores de las llaves actuales
     let ganadores = p.llaves.map(ll => {
         const esIdaVuelta = (p.tipoDuelo === 2);
         
-        // CORRECCIÓN DE VARIABLES: Aseguramos que sumamos los goles del equipo correcto
-        // En tu render, gIdaInf es el primer input y gIdaSup el segundo.
         const totalInf = esIdaVuelta ? (Number(ll.gIdaInf) + Number(ll.gVtaInf)) : Number(ll.gIdaInf);
         const totalSup = esIdaVuelta ? (Number(ll.gIdaSup) + Number(ll.gVtaSup)) : Number(ll.gIdaSup);
 
@@ -2822,7 +2821,6 @@ function avanzarFase() {
                 let m = prompt(`EMPATE EN LA FINAL (${totalSup}-${totalInf}). Escriba el nombre del CAMPEÓN:`, ll.sup);
                 return m || ll.sup; // Si cancela, por defecto el superior
             } else {
-                // Ventaja deportiva: el que esté más cerca del índice 0 en la tabla original
                 return ordenTabla.indexOf(ll.sup) < ordenTabla.indexOf(ll.inf) ? ll.sup : ll.inf;
             }
         }
@@ -2838,24 +2836,20 @@ function avanzarFase() {
         return;
     }
 
-    // --- BLOQUE CLAVE: INTEGRAR AL LÍDER EXENTO ---
     if (p.exentos && p.exentos.length > 0) {
         ganadores.push(...p.exentos);
-        // Re-ordenamos para que el 1º juegue contra el peor clasificado de los que pasaron
         ganadores.sort((a, b) => ordenTabla.indexOf(a) - ordenTabla.indexOf(b));
         p.exentos = []; 
     }
 
-    // 2. Definir nueva fase
     const nuevaCantidad = ganadores.length;
     p.faseActual = nuevaCantidad;
     
     let nuevasLlaves = [];
-    // Emparejamiento 1vs4, 2vs3 (Espejo)
     for (let i = 0; i < nuevaCantidad / 2; i++) {
         nuevasLlaves.push({
-            sup: ganadores[i], // El mejor sembrado
-            inf: ganadores[nuevaCantidad - 1 - i], // El peor sembrado
+            sup: ganadores[i], 
+            inf: ganadores[nuevaCantidad - 1 - i], 
             gIdaInf: 0, gIdaSup: 0, gVtaSup: 0, gVtaInf: 0
         });
     }
@@ -2871,25 +2865,18 @@ function avanzarFase() {
 }
 
 function actualizarGoles(index, campo, valor) {
-    // 1. Verificación de seguridad (Solo admin/editor)
     if (rolActual !== 'admin' && rolActual !== 'editor') return;
 
-    // 2. Actualizar el dato en el objeto global
     db.playoffs.llaves[index][campo] = Number(valor);
 
-    // 3. Persistir en la base de datos
     persist();
 
-    // 4. Actualizar SOLO el marcador Global visualmente (sin redibujar todo)
-    // Esto evita que el input pierda el foco mientras escribes
     const llave = db.playoffs.llaves[index];
     const esIdaVuelta = (db.playoffs.tipoDuelo === 2);
     
     const totalSup = esIdaVuelta ? (Number(llave.gIdaSup) + Number(llave.gVtaSup)) : Number(llave.gIdaSup);
     const totalInf = esIdaVuelta ? (Number(llave.gIdaInf) + Number(llave.gVtaInf)) : Number(llave.gIdaInf);
 
-    // Buscamos el contenedor del global de esta llave específica para actualizarlo
-    // Nota: Para que esto funcione, necesitamos que el div del global tenga un ID único
     const globalElement = document.getElementById(`global-${index}`);
     if (globalElement) {
         globalElement.innerHTML = `${totalInf} <span style="color:#475569; font-size:18px; margin: 0 5px;">VS</span> ${totalSup}`;
@@ -2921,7 +2908,6 @@ function prepararImpresionGoleadores() {
         return alert("Error: No hay datos de goleadores en pantalla.");
     }
 
-    // --- TRIPLE SEGURIDAD PARA EL NOMBRE ---
     let nombreFinal = "TORNEO SIN NOMBRE";
     
     if (typeof db !== 'undefined' && db.nombreTorneoActual) {
@@ -2929,13 +2915,11 @@ function prepararImpresionGoleadores() {
     } else if (typeof nombreTorneoActual !== 'undefined' && nombreTorneoActual) {
         nombreFinal = nombreTorneoActual;
     } else {
-        // Intenta leerlo directamente del banner azul de la app si existe
         const banner = document.querySelector('.header-banner h1, #header h1');
         if(banner) nombreFinal = banner.innerText;
     }
 
     const nombreTemp = (typeof db !== 'undefined' && db.nombreTemporada) ? db.nombreTemporada : "2026";
-    // ---------------------------------------
 
     const contenidoOriginal = contenedor.innerHTML;
 
@@ -3001,13 +2985,11 @@ function buscarJugador() {
     if (!input || !contenedor) return;
     const texto = input.value.toLowerCase().trim();
 
-    // 1. Calcular Ranking Dinámico
     let rankeados = db.jugadores.map(j => {
         const pts = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10);
         return { ...j, puntos: pts };
     }).sort((a, b) => b.puntos - a.puntos);
 
-    // 2. Lógica de Filtrado
     let encontrados = texto === "" 
         ? rankeados 
         : rankeados.filter(j => 
@@ -3019,7 +3001,6 @@ function buscarJugador() {
         return;
     }
 
-    // 3. Renderizar las Tarjetas (TAMAÑO XL)
     contenedor.innerHTML = encontrados.map(j => {
         const posicion = rankeados.findIndex(x => x.id === j.id) + 1;
         const datosEquipo = db.equipos.find(e => e.nombre === j.equipo);
@@ -3149,7 +3130,18 @@ function verExpediente(idJugador) {
             <div style="padding:15px; background:#f8fafc; text-align:center; border-top:1px solid #f1f5f9;">
                 <small style="color:#94a3b8; font-weight:700; font-size:12px;">REGISTRO: ${j.fechaRegistro || 'N/A'}</small>
             </div>
-        </div>`;
+        </div>
+    
+            </div> ${modoAdmin ? `
+            <div style="padding:15px; background:#fff7ed; border-top:1px solid #ffedd5; text-align:center;">
+                <button onclick="abrirPanelTraspaso('${j.id}', '${j.nombre}', '${j.equipo}')" 
+                        style="width:100%; background:#ea580c; color:white; border:none; padding:12px; border-radius:12px; font-weight:900; cursor:pointer; font-size:14px; box-shadow:0 4px 6px -1px rgba(234, 88, 12, 0.2);">
+                    🔄 TRASPASAR JUGADOR
+                </button>
+            </div>
+            ` : ''}
+
+            </div>`; 
     
     document.body.appendChild(overlay);
 }
@@ -3157,51 +3149,38 @@ function verExpediente(idJugador) {
 function calcularRating(j) {
     if (j.pj === 0) return 0;
     
-    // Puntos base por goles (pesan un 60%)
     let puntosGoles = (j.goles / j.pj) * 70;
     
-    // Puntos por regularidad (pesan un 30%)
     let puntosPJ = Math.min(j.pj * 5, 30);
     
-    // Penalización por disciplina
-    // Añadimos sancionPendiente: cada partido que deba resta 5 puntos extra de rating
     let penalizacion = (j.ama * 2) + (j.roja * 10) + ((j.sancionPendiente || 0) * 5);
     
     let total = puntosGoles + puntosPJ - penalizacion;
     
-    // Ajustar entre 0 y 100
     return Math.max(0, Math.min(100, Math.round(total)));
 }
 
 
 function obtenerJugadoresRankeados() {
-    // 1. Clonamos y calculamos puntos para cada uno
     let lista = db.jugadores.map(j => {
-        // Incluimos sancionPendiente en la resta (ej: -15 puntos por cada partido de deuda)
-        const penalizacionSancion = (j.sancionPendiente || 0) * 15;
-        
+        const penalizacionSancion = (j.sancionPendiente || 0) * 15;      
         const puntos = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10) - penalizacionSancion;
         
         return { ...j, puntos };
     });
 
-    // 2. Ordenamos de mayor a menor puntuación
     lista.sort((a, b) => b.puntos - a.puntos);
 
-    // 3. Asignamos la posición real (el índice + 1)
     return lista.map((j, index) => ({ ...j, posicion: index + 1 }));
 }
 
 function reiniciarTodo() {
-    // SOLO el Admin puede borrar todo
     if (typeof rolActual !== 'undefined' && rolActual !== "admin") {
         return alert("⚠️ Solo el Administrador puede reiniciar la temporada.");
     }
 
-    // 1. Pedir nombre de la etapa
     let nuevoNombre = prompt("¿Cómo se llamará la nueva temporada?\n(Ej: TORNEO 2026)");
 
-    // 2. Validación de entrada
     if (nuevoNombre === null || nuevoNombre.trim() === "") {
         alert("Reinicio cancelado. Debes asignar un nombre a la temporada.");
         return;
@@ -3209,20 +3188,17 @@ function reiniciarTodo() {
 
     nuevoNombre = nuevoNombre.trim().toUpperCase();
 
-    // 3. Confirmación final - AJUSTADA para advertir borrado de equipos
     if(confirm(`⚠️ ADVERTENCIA CRÍTICA: Se iniciará la temporada: "${nuevoNombre}".\n\nESTO ELIMINARÁ TODO: Equipos, Jugadores y Partidos.\n\n¿Deseas continuar?`)) {
         
         db.nombreTemporada = nuevoNombre;
 
-        // --- ELIMINACIÓN TOTAL ---
-        db.equipos = [];    // <--- Esta es la línea que borra los equipos
-        db.jugadores = [];  // Borra jugadores
-        db.calendario = []; // Borra partidos
-        db.playoffs = {};   // Borra fases finales
+        db.equipos = [];    
+        db.jugadores = [];  
+        db.calendario = []; 
+        db.playoffs = {};   
 
         persist(); 
         
-        // Es mejor recargar para que todas las tablas se dibujen vacías desde cero
         location.reload(); 
     }
 }
@@ -3237,14 +3213,11 @@ document.addEventListener('DOMContentLoaded', () => {
     aplicarRestricciones();   
 });
 
-// ESCUCHADOR DE EVENTOS PARA LA FOTO
 document.addEventListener('change', function(e) {
-    // Verificamos que el cambio sea en el input de la foto del jugador
     if (e.target && e.target.id === 'foto-archivo') {
         const archivo = e.target.files[0];
         
         if (archivo) {
-            // Validar que sea una imagen
             if (!archivo.type.startsWith('image/')) {
                 alert("Por favor, selecciona un archivo de imagen válido.");
                 return;
@@ -3253,10 +3226,8 @@ document.addEventListener('change', function(e) {
             const reader = new FileReader();
             
             reader.onload = function(event) {
-                // Guardamos el resultado en la variable global que creaste
                 fotoBase64Temp = event.target.result;
                 
-                // Mostramos la vista previa para confirmar que se cargó bien
                 const preview = document.getElementById('previsualizar-foto');
                 if (preview) {
                     preview.src = fotoBase64Temp;
@@ -3264,7 +3235,6 @@ document.addEventListener('change', function(e) {
                 }
             };
 
-            // Leer el archivo de la PC
             reader.readAsDataURL(archivo);
         }
     }
@@ -3312,7 +3282,7 @@ function renderGoleadores() {
             <div class="mvp-stats-grid" style="display:flex; justify-content:space-around; align-items:center; background:#f8fafc; border-radius:15px; padding:20px; border:1px solid #edf2f7; margin: 0 25px;">
                 <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
                     <span style="font-size:30px; margin-bottom:5px;">⚽</span>
-                    <strong style="font-size:32px; color:#1e293b;">${mvp.goles}</strong>
+                    <strong style="font-size:32px; color:#16a34a;">${mvp.goles}</strong>
                     <small style="font-size:11px; color:#94a3b8; text-transform:uppercase; font-weight:bold;">Goles</small>
                 </div>
 
@@ -3374,13 +3344,10 @@ function prepararComparador() {
         return; 
     }
 
-    // 1. Verificamos que db y db.jugadores existan antes de ordenar
     const listaJugadores = (window.db && db.jugadores) ? db.jugadores : [];
     
-    // 2. Ordenamos
     const jugadoresOrdenados = [...listaJugadores].sort((a,b) => a.nombre.localeCompare(b.nombre));
     
-    // 3. Creamos las opciones
     let htmlOptions = '<option value="">Selecciona un jugador...</option>';
     
     if (jugadoresOrdenados.length > 0) {
@@ -3391,16 +3358,13 @@ function prepararComparador() {
         htmlOptions = '<option value="">No hay jugadores registrados</option>';
     }
     
-    // 4. Llenamos los selects
     s1.innerHTML = htmlOptions;
     s2.innerHTML = htmlOptions;
     
-    // 5. SEGURO: Verificamos la longitud de las opciones para evitar el error de 'length'
     const totalOptions = s1.options ? s1.options.length : 0;
 
     if (totalOptions > 1) {
         s1.selectedIndex = 1;
-        // Solo intentamos el índice 2 si realmente hay suficientes jugadores
         if (totalOptions > 2) {
             s2.selectedIndex = 2;
         } else {
@@ -3408,7 +3372,6 @@ function prepararComparador() {
         }
     }
     
-    // 6. Ejecutamos la comparación inicial
     if (typeof compararJugadores === 'function') {
         compararJugadores();
     }
@@ -3459,7 +3422,6 @@ function renderCabeceraCaraACara(j, color, lado, numSlot) {
     
     const eq = db.equipos.find(e => e.nombre === j.equipo);
 
-    // Calculamos el ranking en tiempo real
     const posicionReal = [...db.jugadores]
         .sort((a, b) => (b.goles || 0) - (a.goles || 0))
         .findIndex(p => String(p.id) === String(j.id)) + 1;
@@ -3496,7 +3458,6 @@ function renderContenidoCarta(j, slot) {
         .sort((a, b) => (b.goles || 0) - (a.goles || 0))
         .findIndex(p => String(p.id) === String(j.id)) + 1;
 
-    // Color dorado principal para el contorno y bloque de nombre
     const accentColor = "#f59e0b"; 
 
     return `
@@ -3576,7 +3537,6 @@ function renderFilaStat(emoji, label, v1, v2, esCastigo = false) {
     const n1 = parseFloat(v1) || 0;
     const n2 = parseFloat(v2) || 0;
 
-    // Lógica dinámica: En goles gana el mayor, en tarjetas gana el menor
     let j1Gana = esCastigo ? (n1 < n2 && n1 !== n2) : (n1 > n2);
     let j2Gana = esCastigo ? (n2 < n1 && n1 !== n2) : (n2 > n1);
     
@@ -3698,7 +3658,6 @@ function resolverDefault(idPartido) {
 
     if (!partido) return;
 
-    // 1. Pedir ganador
     const opcion = prompt(`RESOLVER POR DEFAULT (W.O.)\n\n1. Ganó Local (${partido.l})\n2. Ganó Visita (${partido.v})\n\nEscribe 1 o 2:`);
 
     if (opcion !== "1" && opcion !== "2") {
@@ -3711,11 +3670,9 @@ function resolverDefault(idPartido) {
     const gL = (opcion === "1") ? 3 : 0;
     const gV = (opcion === "2") ? 3 : 0;
 
-    // 3. Actualizar estado del partido
     partido.score = `${gL} - ${gV}`;
     partido.jugado = true;
 
-    // --- DISEÑO VISUAL PARA EL REPORTE ---
     const cajaMotivo = `
         <div style="margin-top: 15px; padding: 15px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; text-align: center;">
             <div style="color: #475569; font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">
@@ -3736,7 +3693,6 @@ function resolverDefault(idPartido) {
             `<b style='color:#ef4444; font-size:18px;'>PERDIÓ POR DEFAULT (0-3)</b>`
     };
 
-    // 4. Actualizar tabla de posiciones
     const eqL = db.equipos.find(e => e.nombre === partido.l);
     const eqV = db.equipos.find(e => e.nombre === partido.v);
 
@@ -3766,7 +3722,6 @@ function resolverProtesta(idPartido) {
         if (x) partido = x;
     });
 
-    // --- 1. LIMPIEZA DE JUGADORES (Analizando tu HTML) ---
     const tempDiv = document.createElement('div');
     const reportes = [partido.reporteHtml.local, partido.reporteHtml.visita];
     
@@ -3789,7 +3744,6 @@ function resolverProtesta(idPartido) {
         });
     });
 
-    // --- 2. REVERTIR PUNTOS DE EQUIPOS ---
     const eqL = db.equipos.find(e => e.nombre === partido.l);
     const eqV = db.equipos.find(e => e.nombre === partido.v);
     const sAnt = partido.score.split('-').map(s => parseInt(s.trim()) || 0);
@@ -3802,7 +3756,6 @@ function resolverProtesta(idPartido) {
     else if(sAnt[1] > sAnt[0]) { eqV.g--; eqV.pts -= 3; eqL.p--; }
     else { eqL.e--; eqV.e--; eqL.pts -= 1; eqV.pts -= 1; }
 
-    // --- 3. NUEVO RESULTADO Y MOTIVO (ESTILO VISUAL IMPACTANTE) ---
     const res = prompt(`¿Quién gana la protesta?\n1. ${partido.l}\n2. ${partido.v}`);
     if (res !== "1" && res !== "2") return alert("Cancelado.");
 
@@ -3813,7 +3766,6 @@ function resolverProtesta(idPartido) {
 
     partido.score = `${gL_n} - ${gV_n}`;
 
-    // Diseño visual para el reporte
     const cajaMotivo = `
         <div style="margin-top: 15px; padding: 15px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; text-align: center;">
             <div style="color: #b45309; font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">
@@ -3834,7 +3786,6 @@ function resolverProtesta(idPartido) {
             `<b style='color:#ef4444; font-size:18px;'>PERDIÓ PROTESTA (0-3)</b>` 
     };
 
-    // --- 4. SUMAR NUEVOS PUNTOS ---
     eqL.pj++; eqV.pj++;
     eqL.gf += gL_n; eqL.gc += gV_n;
     eqV.gf += gV_n; eqV.gc += gL_n;
@@ -3857,7 +3808,6 @@ function resetearPartido(idPartido) {
 
     if (!partido || !partido.jugado) return;
 
-    // 1. REVERTIR ESTADÍSTICAS DE JUGADORES (Usando el array de participantes)
     if (partido.participantes && Array.isArray(partido.participantes)) {
         partido.participantes.forEach(p => {
             const j = db.jugadores.find(x => x.id === p.id);
@@ -3867,7 +3817,6 @@ function resetearPartido(idPartido) {
                 j.ama = Math.max(0, (j.ama || 0) - (p.a || 0));
                 j.roja = Math.max(0, (j.roja || 0) - (p.r || 0));
                 
-                // IMPORTANTE: Si tuvo roja, le quitamos la sanción pendiente
                 if ((p.r || 0) > 0) {
                     j.sancionPendiente = Math.max(0, (j.sancionPendiente || 0) - 1);
                 }
@@ -3875,24 +3824,18 @@ function resetearPartido(idPartido) {
         });
     }
 
-    // 2. REVERTIR LÓGICA DE SANCIONES CUMPLIDAS
-    // Aquellos que estaban sancionados y NO jugaron este partido, recuperaron su elegibilidad.
-    // Al resetear, debemos devolverles la sanción que "limpiaron" injustamente.
     db.jugadores.forEach(j => {
         if (j.equipo === partido.l || j.equipo === partido.v) {
             const jugo = partido.participantes ? partido.participantes.some(p => p.id === j.id) : false;
-            // Si no jugó y tenía sanciones en otros partidos, se le descontó 1. Se la devolvemos.
             if (!jugo && (j.roja || 0) > 0 && j.sancionPendiente < j.roja) {
                 j.sancionPendiente++;
             }
         }
     });
 
-    // 3. REVERSIÓN DE EQUIPOS
     const eqL = db.equipos.find(e => e.nombre === partido.l);
     const eqV = db.equipos.find(e => e.nombre === partido.v);
     
-    // Usamos los goles guardados en el objeto para no fallar con el split del string
     const gl = partido.l_goles || 0;
     const gv = partido.v_goles || 0;
 
@@ -3906,13 +3849,12 @@ function resetearPartido(idPartido) {
         else { eqL.e--; eqV.e--; eqL.pts -= 1; eqV.pts -= 1; }
     }
 
-    // 4. LIMPIEZA FINAL DEL PARTIDO
     partido.score = "0 - 0";
     partido.l_goles = 0;
     partido.v_goles = 0;
     partido.jugado = false;
     partido.reporteHtml = null;
-    partido.participantes = []; // Vaciamos los participantes
+    partido.participantes = []; 
     partido.estadio = "";
     partido.arbitro = "";
 
@@ -3925,7 +3867,7 @@ function resetearPartido(idPartido) {
 function filtrarBusquedaUnica() {
     const input = document.getElementById('main-search');
     const divResultados = document.getElementById('main-results');
-    if (!input || !divResultados) return; // Validación de seguridad
+    if (!input || !divResultados) return; 
     const texto = input.value.toLowerCase().trim();
 
     if (texto.length < 1) {
@@ -3940,7 +3882,6 @@ function filtrarBusquedaUnica() {
     if (coincidencias.length === 0) {
         divResultados.innerHTML = `<div style="padding:15px; color:#94a3b8;">No se encontraron jugadores</div>`;
     } else {
-       // DENTRO DE filtrarBusquedaUnica, cambia el map por este:
 divResultados.innerHTML = coincidencias.map(j => `
     <div onmousedown="asignarAlDuelo(${j.id})" 
          style="padding:12px 15px; border-bottom:1px solid #f1f5f9; cursor:pointer; display:flex; align-items:center; gap:12px;"
@@ -3960,18 +3901,15 @@ divResultados.innerHTML = coincidencias.map(j => `
 }
 
 function asignarAlDuelo(id) {
-    // Convertimos a String para evitar errores de comparación (1 vs "1")
     const idStr = String(id);
     const s1 = document.getElementById('select-j1');
     const s2 = document.getElementById('select-j2');
 
-    // 1. Validar si el jugador ya está seleccionado
     if (idStr === s1.value || idStr === s2.value) {
         alert("¡Este jugador ya está en el duelo!");
         return;
     }
 
-    // 2. Buscar jugador en la base de datos
     const jugador = db.jugadores.find(j => String(j.id) === idStr);
     if (!jugador) {
         console.error("Jugador no encontrado con ID:", id);
@@ -3981,9 +3919,8 @@ function asignarAlDuelo(id) {
     const slot1 = document.getElementById('slot-1');
     const slot2 = document.getElementById('slot-2');
 
-    // 3. Asignación inteligente con actualización de valor
     if (proximoSlot === 1) {
-        s1.value = idStr; // Guardamos el ID en el input oculto
+        s1.value = idStr; 
         if(slot1) slot1.innerHTML = `<b style="color:#3b82f6">🔵 ${jugador.nombre}</b>`;
         proximoSlot = s2.value === "" ? 2 : 1;
     } else {
@@ -3992,11 +3929,9 @@ function asignarAlDuelo(id) {
         proximoSlot = s1.value === "" ? 1 : 2;
     }
 
-    // 4. Limpieza de resultados
     document.getElementById('main-search').value = "";
     document.getElementById('main-results').style.display = 'none';
 
-    // 5. IMPORTANTE: Llamar a compararJugadores para que dibuje las fotos
     if (typeof compararJugadores === 'function') {
         compararJugadores();
     }
@@ -4006,38 +3941,29 @@ function limpiarDuelo() {
     document.getElementById('select-j2').value = "";
     document.getElementById('render-comparativa').innerHTML = "";
     
-    // Resetear slots visuales si existen
     if(document.getElementById('slot-1')) document.getElementById('slot-1').innerHTML = "ESPERANDO JUGADOR 1...";
     if(document.getElementById('slot-2')) document.getElementById('slot-2').innerHTML = "ESPERANDO JUGADOR 2...";
     
     proximoSlot = 1;
 }
 function quitarSlot(num) {
-    // 1. Borramos el ID del input oculto
     document.getElementById(`select-j${num}`).value = "";
     
-    // 2. Si tienes etiquetas de texto externas (opcional), las limpias
     const slotLabel = document.getElementById(`slot-${num}`);
     if (slotLabel) slotLabel.innerHTML = `Slot ${num}`;
 
-    // 3. Importante: Cambiamos el turno para que la próxima búsqueda llene este slot
     proximoSlot = num;
 
-    // 4. Refrescamos la vista
     compararJugadores();
 }
 function quitarSoloUno(num) {
-    // 1. Limpiamos el ID en el input oculto
     document.getElementById('select-j' + num).value = "";
     
-    // 2. Sincronizamos la variable global para que el buscador use este slot
     proximoSlot = num; 
 
-    // 3. Limpiamos el texto de ayuda si lo usas
     const slotVisual = document.getElementById('slot-' + num);
     if(slotVisual) slotVisual.innerHTML = "ESPERANDO JUGADOR " + num + "...";
 
-    // 4. Volvemos a renderizar la comparativa
     compararJugadores();
 }
 
@@ -4048,16 +3974,18 @@ function init() {
     try {
         if (datosGuardados) {
             window.db = JSON.parse(datosGuardados);
+            // Aseguramos que existan todas las categorías, incluyendo patrocinadores
             if (!window.db.equipos) window.db.equipos = [];
             if (!window.db.jugadores) window.db.jugadores = [];
             if (!window.db.calendario) window.db.calendario = [];
-            // Agregamos esta validación por seguridad
+            if (!window.db.patrocinadores) window.db.patrocinadores = {}; // 👈 AGREGADO
             if (!window.db.nombreTorneoActual) window.db.nombreTorneoActual = "COPA CHAMPIONS 2026";
         } else {
             window.db = {
                 jugadores: [],
                 equipos: [],
                 calendario: [],
+                patrocinadores: {}, // 👈 AGREGADO
                 playoffs: {},
                 nombreTemporada: "Cargando...",
                 nombreTorneoActual: "cargando..."
@@ -4069,19 +3997,29 @@ function init() {
             jugadores: [], 
             equipos: [], 
             calendario: [], 
+            patrocinadores: {}, // 👈 AGREGADO
             nombreTemporada: "Nueva Temporada",
             nombreTorneoActual: "Torneo Nuevo" 
         };
     }
+
+    // Al final de init, ejecutamos los renders para mostrar la info inicial
+    renderNoticias();
+    renderCarruselPatrocinadores(); // 👈 IMPORTANTE llamar a la función aquí
 }
 
-// --- GESTIÓN DE TEMPORADA ---
 function actualizarBanner() {
+    const imgElemento = document.getElementById('imagen-banner-dinamica');
     const tituloBanner = document.getElementById('banner-titulo');
     const temporadaBanner = document.getElementById('banner-temporada');
 
+    // 1. Cambiar la Imagen
+    if (imgElemento && db.configuracion?.urlBanner) {
+        imgElemento.src = db.configuracion.urlBanner;
+    }
+
+    // 2. Cambiar el Título (Tu lógica de la última palabra en color acento)
     if (tituloBanner) {
-        // LEER DIRECTO DE LA DB PARA QUE SEA DINÁMICO
         const nombreParaMostrar = db.nombreTorneoActual || "Torneo";
         const palabras = nombreParaMostrar.split(" ");
         
@@ -4093,23 +4031,23 @@ function actualizarBanner() {
         }
     }
 
+    // 3. Cambiar la Temporada
     if (temporadaBanner) {
         temporadaBanner.innerText = db.nombreTemporada || "2026";
     }
 }
+
 function renderEquipos() {
     const grid = document.getElementById('grid-equipos');
     if (!grid) return;
     grid.innerHTML = ""; // Limpieza del contenedor
 
-    // Solo recorremos los equipos reales que están en la base de datos
     db.equipos.forEach((eq, index) => {
         if (!eq.nombre) return; 
 
         const card = document.createElement('div');
         card.className = "equipo-card";
         
-        // Al hacer clic en la tarjeta, vemos la plantilla del equipo
         card.onclick = () => verPlantilla(eq.nombre);
         
         const logoHTML = eq.logo 
@@ -4129,7 +4067,6 @@ function renderEquipos() {
     });
 }
 
-// Función auxiliar para no ensuciar el render
 function ejecutarRegistroEquipo(nombre) {
     const nuevo = {
         id: Date.now(),
@@ -4145,7 +4082,6 @@ function ejecutarRegistroEquipo(nombre) {
 function eliminarPj(id, nombreEquipo) {
     if (!modoAdmin) return alert("Acción bloqueada: Requiere permisos de Administrador.");
 
-    // 1. Buscar al jugador para confirmar por nombre
     const jugador = db.jugadores.find(j => String(j.id) === String(id));
     
     if (!jugador) {
@@ -4153,19 +4089,14 @@ function eliminarPj(id, nombreEquipo) {
         return;
     }
 
-    // 2. Confirmación con el usuario
     if (confirm(`¿Estás seguro de eliminar a "${jugador.nombre}" de la base de datos?\nEsta acción borrará todas sus estadísticas.`)) {
         
-        // 3. Filtrar el array (Dejar a todos menos al eliminado)
         db.jugadores = db.jugadores.filter(j => String(j.id) !== String(id));
 
-        // 4. Guardar cambios permanentemente
         persist();
 
-        // 5. Refrescar la vista actual
         verPlantilla(nombreEquipo);
         
-        // 6. Opcional: Refrescar tablas generales por si estaba en el Pichichi
         if (typeof renderTodo === 'function') renderTodo();
 
         alert("Jugador eliminado con éxito.");
@@ -4176,7 +4107,6 @@ function procesarFoto(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Indicador visual de que algo está pasando
     console.log("Iniciando subida a Storage...");
 
     const reader = new FileReader();
@@ -4185,7 +4115,6 @@ function procesarFoto(event) {
         img.src = e.target.result;
         
         img.onload = function() {
-            // --- MANTENEMOS TU COMPRESIÓN ---
             const canvas = document.createElement('canvas');
             const MAX_WIDTH = 300; // Subimos un poco a 300px (ya no pesa en la DB)
             const scaleSize = MAX_WIDTH / img.width;
@@ -4195,25 +4124,19 @@ function procesarFoto(event) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // --- CAMBIO CLAVE: Convertimos a Blob para subir el archivo ---
             canvas.toBlob((blob) => {
-                // Creamos un nombre único para el archivo
                 const nombreArchivo = `jugadores/foto_${Date.now()}.jpg`;
                 const storageRef = firebase.storage().ref().child(nombreArchivo);
 
-                // Subimos el archivo a Firebase Storage
                 storageRef.put(blob).then(snapshot => {
-                    // Cuando se sube, pedimos la URL pública
                     return snapshot.ref.getDownloadURL();
                 }).then(urlDescarga => {
-                    // urlDescarga es un link corto: https://firebasestorage...
                     fotoBase64Temp = urlDescarga; 
 
                     const idEditando = document.getElementById('edit-pj-id').value;
                     if (idEditando !== "-1") {
                         const index = db.jugadores.findIndex(j => String(j.id) === String(idEditando));
                         if (index !== -1) {
-                            // Guardamos el LINK en la base de datos, no el texto gigante
                             db.jugadores[index].foto = urlDescarga;
                             persist();
                             
@@ -4222,7 +4145,6 @@ function procesarFoto(event) {
                             alert("✅ Foto subida a la nube y actualizada");
                         }
                     } else {
-                        // Previsualización para nuevo jugador
                         const preview = document.getElementById('previsualizar-foto');
                         if (preview) {
                             preview.src = urlDescarga;
@@ -4234,11 +4156,12 @@ function procesarFoto(event) {
                     alert("Error al subir la foto. Revisa las reglas (Rules) de Storage.");
                 });
 
-            }, 'image/jpeg', 0.7); // Calidad al 70%
+            }, 'image/jpeg', 0.7);
         };
     };
     reader.readAsDataURL(file);
 }
+
 function limpiarFormularioJugador() {
     document.getElementById('pj-nombre').value = "";
     document.getElementById('pj-curp').value = "";
@@ -4250,12 +4173,10 @@ function limpiarFormularioJugador() {
 }
 
 function aplicarPermisosVisuales() {
-    // Si modoAdmin es true, mostramos todo lo que sea admin-only
     const displayStyle = modoAdmin ? 'block' : 'none';
     const displayTable = modoAdmin ? 'table-cell' : 'none';
 
     document.querySelectorAll('.admin-only').forEach(el => {
-        // Si es un elemento de tabla (TD o TH) usamos table-cell, si no block
         if (el.tagName === 'TD' || el.tagName === 'TH') {
             el.style.setProperty('display', displayTable, 'important');
         } else {
@@ -4268,15 +4189,12 @@ function prepararEdicionEquipo(index) {
     const eq = db.equipos[index];
     if (!eq) return;
 
-    // Llenamos los campos del formulario de equipos
     document.getElementById('eq-nombre').value = eq.nombre;
-    document.getElementById('edit-eq-id').value = index; // Usamos el index como referencia
+    document.getElementById('edit-eq-id').value = index;
     
-    // Cambiamos el texto del botón para que el usuario sepa que está editando
     const btn = document.querySelector('#form-registro-equipo .btn-main');
     if (btn) btn.innerText = "ACTUALIZAR EQUIPO";
 
-    // Opcional: Scroll suave hacia el formulario
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -4285,11 +4203,9 @@ function cancelarEdicionEquipo() {
     document.getElementById('edit-eq-id').value = "-1";
     document.getElementById('eq-logo-file').value = "";
     
-    // Cambiar el texto del botón principal
     const btn = document.querySelector('#form-registro-equipo .btn-main');
     if (btn) btn.innerText = "GUARDAR EQUIPO";
     
-    // OCULTAR el botón de cancelar (la X roja)
     const btnCancel = document.getElementById('btn-cancelar-eq');
     if (btnCancel) btnCancel.style.display = "none";
 
@@ -4297,45 +4213,37 @@ function cancelarEdicionEquipo() {
 }
 
 function logout() {
-    // 1. Resetear el estado de seguridad
+    sessionStorage.removeItem('session_rol'); 
+
     rolActual = 'usuario';
     modoAdmin = false;
 
-    // 2. Quitar las clases CSS del body
     document.body.classList.remove('role-admin', 'role-editor');
 
-    // 3. LIMPIEZA VISUAL
     const panelPlantilla = document.getElementById('panel-plantilla');
     if (panelPlantilla) panelPlantilla.style.display = "none";
 
-    // 4. ACTUALIZAR RESTRICCIONES (Importante hacerlo ANTES de navegar)
-    // Esto ocultará las pestañas "AJUSTES" y "PARTIDO" inmediatamente
     aplicarRestricciones();
 
-    // 5. MANDAR A INICIO 
-    // Buscamos el botón de inicio para que se marque como activo
     const btnInicio = document.querySelector('.nav-link'); 
     navegar('sec-inicio', btnInicio); 
 
-    // 6. Refrescar los componentes visuales
     renderTodo();
-    renderNoticias(); // Para que se quiten los botones de eliminar si estaban visibles
+    renderNoticias();
 
-    console.log("🚪 Sesión cerrada con éxito");
+    console.log("🚪 Sesión cerrada");
 }
 
 function renderTabla() {
     const contenedorTabla = document.getElementById('body-tabla');
     if (!contenedorTabla) return; 
     
-    // Ordenamos: 1º Puntos, 2º Diferencia de Goles, 3º Goles a Favor
     const t = [...db.equipos].sort((a,b) => 
         (b.pts || 0) - (a.pts || 0) || 
         ((b.gf||0)-(b.gc||0)) - ((a.gf||0)-(a.gc||0)) || 
         (b.gf||0) - (a.gf||0)
     );
 
-    // CORRECCIÓN: Declaramos la variable htmlGenerado y le asignamos el map
     const htmlGenerado = t.map((e, i) => {
         const dg = (e.gf || 0) - (e.gc || 0);
         const dgColor = dg > 0 ? '#16a34a' : dg < 0 ? '#dc2626' : '#64748b';
@@ -4382,10 +4290,8 @@ function renderTabla() {
         </tr>`;
     }).join('');
 
-    // Ahora sí aplicamos la variable al contenedor
     contenedorTabla.innerHTML = htmlGenerado;
 
-    // --- LÓGICA DE PLAYOFFS ---
     if (db.playoffs && db.playoffs.llaves && db.playoffs.llaves.length > 0) {
         if (typeof renderPlayoffs === 'function') renderPlayoffs();
     }
@@ -4451,7 +4357,6 @@ function renderResumenInicio() {
     const contenedor = document.getElementById('render-resumen-inicio');
     if (!contenedor || !db.equipos || db.equipos.length === 0) return;
 
-    // --- 1. CÁLCULOS TOTALES DE TEMPORADA ---
     const totalEquipos = db.equipos.length;
     const totalJugadores = db.jugadores.length;
     let totalGoles = 0, totalAma = 0, totalRoja = 0;
@@ -4462,14 +4367,11 @@ function renderResumenInicio() {
         totalRoja += (j.roja || 0);
     });
 
-    // --- 2. CÁLCULOS DE LÍDERES (Tu lógica actual) ---
     const lider = [...db.equipos].sort((a, b) => (b.pts||0) - (a.pts||0))[0];
     const mejorOf = [...db.equipos].sort((a, b) => (b.gf||0) - (a.gf||0))[0];
     const mejorDef = [...db.equipos].filter(e => (e.pj||0) > 0).sort((a, b) => (a.gc||0) - (b.gc||0))[0] || lider;
     const jValidos = db.jugadores.filter(j => j && j.nombre);
 
-   // --- 3. GENERAR HTML ---
-    // Bloque de Totales XL con Navegación por Simulación de Clic
     let htmlContent = `
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; padding: 10px; margin-bottom: 20px;">
         
@@ -4559,20 +4461,18 @@ function controlarFila(id, checkbox) {
         contenedorControles.style.pointerEvents = "none";
         fila.style.opacity = "0.7";
         fila.style.borderColor = "#eee";
-        // Opcional: Podrías resetear los goles/tarjetas del contador visual aquí
     }
     
     actualizarMarcadorVivo();
 }
+
 function imprimirTabla() {
-    // 1. Capturamos los nombres actuales de la base de datos
     const nombreTorneo = db.nombreTorneoActual || "COPA CHAMPIONS 2026";
     const nombreTemp = db.nombreTemporada || "TEMPORADA 2026";
 
-    // 2. Creamos el bloque de encabezado para el PDF
     const headerImpresion = document.createElement('div');
     headerImpresion.id = "temp-header-print";
-    headerImpresion.className = "only-print"; // Usamos la clase que ya definimos en CSS
+    headerImpresion.className = "only-print";
     headerImpresion.innerHTML = `
         <div style="text-align:center; margin-bottom:20px; border-bottom:3px solid #1e293b; padding-bottom:10px;">
             <h1 style="margin:0; font-size:28px; text-transform:uppercase; color:#1e293b;">${nombreTorneo}</h1>
@@ -4580,11 +4480,9 @@ function imprimirTabla() {
           </div>
     `;
 
-    // 3. Lo insertamos al principio de la sección de la tabla
     const secTabla = document.getElementById('sec-tabla');
     secTabla.insertBefore(headerImpresion, secTabla.firstChild);
 
-    // 4. Aplicamos los estilos de impresión que ya tenías
     const estilo = document.createElement('style');
     estilo.id = "print-style-temp";
     estilo.innerHTML = `
@@ -4601,11 +4499,10 @@ function imprimirTabla() {
     `;
     document.head.appendChild(estilo);
 
-    // 5. Mandamos a imprimir y limpiamos todo al terminar
     setTimeout(() => {
         window.print();
         estilo.remove();
-        headerImpresion.remove(); // Quitamos el encabezado para que no se vea en la web
+        headerImpresion.remove(); 
     }, 500);
 }
 
@@ -4616,17 +4513,14 @@ function renderDisciplina() {
 
     const criterio = selectOrden ? selectOrden.value : 'roja';
 
-    // 1. Filtrar jugadores (Mantenemos tu lógica)
     const d = [...db.jugadores]
         .filter(j => (j.ama || 0) > 0 || (j.roja || 0) > 0 || (j.sancionPendiente || 0) > 0)
         .sort((a, b) => (b[criterio] || 0) - (a[criterio] || 0));
 
-    // 2. Renderizar tabla con tamaños aumentados
     bodyDisc.innerHTML = d.length > 0 ? d.map(j => {
         const eq = db.equipos.find(e => e.nombre === j.equipo);
         const sancion = j.sancionPendiente || 0;
 
-        // Status de sanción más grande y llamativo
         const statusSancion = sancion > 0 
             ? `<div style="color:#ef4444; font-weight:900; font-size:13px; background:#fee2e2; padding:8px 12px; border-radius:10px; border:2px solid #fecaca; display:inline-block;">🚫 DEBE ${sancion}</div>` 
             : `<div style="color:#10b981; font-weight:800; font-size:13px; background:#d1fae5; padding:6px 10px; border-radius:8px;">✅ LIMPIO</div>`;
@@ -4667,7 +4561,6 @@ function renderDisciplina() {
         </tr>`;
     }).join('') : `<tr><td colspan="4" style="padding:50px; text-align:center; color:#94a3b8; font-size:18px;">No hay sanciones registradas.</td></tr>`;
 
-    // Panel admin logic
     const panelAdminSanciones = document.getElementById('panel-admin-disciplina');
     if (panelAdminSanciones) {
         panelAdminSanciones.style.display = modoAdmin ? 'block' : 'none';
@@ -4680,14 +4573,11 @@ function guardarConfiguracionGeneral() {
 
     if (nuevoTorneo === "" || nuevaTemp === "") return alert("Por favor, llena los campos.");
 
-    // 1. ACTUALIZAMOS EL OBJETO DB (Esta es la única fuente de verdad)
     db.nombreTorneoActual = nuevoTorneo; 
     db.nombreTemporada = nuevaTemp;
 
-    // 2. Guardamos permanentemente (Local + Firebase)
     persist();
     
-    // 3. Actualizamos el banner visualmente para nosotros mismos
     actualizarBanner();
     
     alert("✅ Cambios guardados. Ahora sí son permanentes.");
@@ -4697,15 +4587,12 @@ function mostrarExpedienteJugador(idJugador) {
     const j = db.jugadores.find(x => String(x.id) === String(idJugador));
     if (!j) return;
 
-    // 1. Filtrar las incidencias de este jugador en todos los partidos
     let historialHtml = "";
     
-    // Suponiendo que tienes db.jornadas o db.partidosHistorial
     if (db.jornadas) {
         db.jornadas.forEach((jornada, index) => {
             const numJornada = index + 1;
             
-            // Buscamos si el jugador participó en algún partido de esta jornada
             jornada.partidos.forEach(partido => {
                 const esLocal = partido.equipoLocal === j.equipo;
                 const esVisitante = partido.equipoVisitante === j.equipo;
@@ -4713,13 +4600,10 @@ function mostrarExpedienteJugador(idJugador) {
                 if (esLocal || esVisitante) {
                     const rival = esLocal ? partido.equipoVisitante : partido.equipoLocal;
                     
-                    // Buscamos si tiene incidencias grabadas en este partido
-                    // Esto depende de cómo guardas los goles/tarjetas en tus partidos
                     const susGoles = partido.detallesGoles ? partido.detallesGoles.filter(g => g.idJugador == j.id).length : 0;
                     const suAmarilla = partido.detallesAmarillas ? partido.detallesAmarillas.some(a => a.idJugador == j.id) : false;
                     const suRoja = partido.detallesRojas ? partido.detallesRojas.some(r => r.idJugador == j.id) : false;
 
-                    // Si jugó (está en la lista de convocados de ese partido)
                     if (partido.jugadoresPresentes && partido.jugadoresPresentes.includes(j.id)) {
                         let incidencias = [];
                         if (susGoles > 0) incidencias.push(`⚽ GOL x${susGoles}`);
@@ -4738,7 +4622,6 @@ function mostrarExpedienteJugador(idJugador) {
         });
     }
 
-    // 2. Mostrar el resultado (puedes usar un modal o un div de detalles)
     const contenedor = document.getElementById('detalle-busqueda-jugador');
     contenedor.innerHTML = `
         <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
@@ -4757,21 +4640,17 @@ function verDetalleJugador(idJugador) {
     const jugador = db.jugadores.find(j => j.id == idJugador);
     const historial = [];
 
-    // Recorremos todas las jornadas y partidos
     db.jornadas.forEach(jornada => {
         jornada.partidos.forEach(partido => {
-            // Buscamos si el jugador tuvo incidencias en este partido
-            // Nota: Aquí asumo que guardas las incidencias vinculadas al ID del jugador
             const incidencia = partido.incidencias.find(inc => inc.jugadorId == idJugador);
             
             if (incidencia) {
                 historial.push({
                     numJornada: jornada.numero,
                     rival: partido.equipoLocal === jugador.equipo ? partido.equipoVisitante : partido.equipoLocal,
-                    detalle: incidencia.texto // Ejemplo: "GOLx2, AMARILLA"
+                    detalle: incidencia.texto 
                 });
             } else if (partido.jugadoresJugaron.includes(idJugador)) {
-                // Si jugó pero no tuvo goles ni tarjetas
                 historial.push({
                     numJornada: jornada.numero,
                     rival: partido.equipoLocal === jugador.equipo ? partido.equipoVisitante : partido.equipoLocal,
@@ -4792,7 +4671,6 @@ function mostrarModalDetalle(jugador, historial) {
         </div>
     `).join('') || '<p>Sin partidos registrados aún.</p>';
 
-    // Insertar en tu contenedor de búsqueda
     document.getElementById('resultados-busqueda').innerHTML = `
         <div class="card">
             <h3>${jugador.nombre}</h3>
@@ -4817,7 +4695,7 @@ function ajustarSancionManual(idJugador) {
         
         j.sancionPendiente = valor;
         persist();
-        renderTodo(); // Esto refresca la tabla al instante
+        renderTodo(); 
         alert("✅ Sanción actualizada.");
     }
 }
@@ -4838,7 +4716,6 @@ function buscarParaSancion() {
     lista.innerHTML = encontrados.map(j => {
         const peds = j.sancionPendiente || 0;
         
-        // Creamos los botones SOLO si es admin
         const controlesAdmin = modoAdmin ? `
     <div style="display:flex; gap:5px;">
         <button onclick="aplicarSancionRapida(${j.id}, 1)" 
@@ -4863,7 +4740,6 @@ function buscarParaSancion() {
 }
 
 function aplicarSancionRapida(idJugador, cantidad) {
-    // 1. BLOQUEO DE SEGURIDAD: Si no es admin, no hace nada
     if (!modoAdmin) {
         alert("❌ Acción denegada: No tienes permisos de administrador.");
         return;
@@ -4872,17 +4748,14 @@ function aplicarSancionRapida(idJugador, cantidad) {
     const j = db.jugadores.find(x => x.id === idJugador);
     if (!j) return;
 
-    // 2. APLICAR LÓGICA DE SANCIÓN
     if (cantidad === 0) {
         j.sancionPendiente = 0;
         alert(`✅ ${j.nombre} ha sido habilitado.`);
     } else {
-        // Sumamos la cantidad (normalmente +1) a lo que ya deba
         j.sancionPendiente = (j.sancionPendiente || 0) + cantidad;
         alert(`⚠️ ${j.nombre} ahora debe ${j.sancionPendiente} partido(s).`);
     }
 
-    // 3. PERSISTENCIA Y LIMPIEZA
     persist(); 
     
     const inputBusqueda = document.getElementById('busqueda-sancion');
@@ -4891,7 +4764,6 @@ function aplicarSancionRapida(idJugador, cantidad) {
     if(inputBusqueda) inputBusqueda.value = "";
     if(listaResultados) listaResultados.innerHTML = "";
     
-    // 4. REFRESCAR VISTA
     if (typeof renderTodo === 'function') {
         renderTodo(); 
     } else if (typeof renderDisciplina === 'function') {
@@ -4900,14 +4772,11 @@ function aplicarSancionRapida(idJugador, cantidad) {
 }
 
 function cerrarPlantilla() {
-    // 1. Borramos la memoria
     equipoActual = null;
     
-    // 2. Ocultamos el panel
     const panel = document.getElementById('panel-plantilla');
     if (panel) panel.style.display = "none";
     
-    // 3. Limpiamos los textos para que no parpadeen al abrir otro equipo
     const tit = document.getElementById('tit-equipo');
     const body = document.getElementById('body-plantilla');
     if (tit) tit.innerText = "";
@@ -4936,7 +4805,6 @@ function obtenerForma(nombreEquipo) {
 
     partidosDelEquipo = partidosDelEquipo.filter(p => p.jugado && p.score);
     
-    // Tomamos los últimos 5
     const ultimos5 = partidosDelEquipo.slice(-5);
     if (ultimos5.length === 0) return '';
 
@@ -4955,12 +4823,10 @@ function obtenerForma(nombreEquipo) {
 
         const esLocal = (p.l || "").trim().toLowerCase() === nombreBusqueda;
         
-        // --- NUEVA LÓGICA PARA EL RIVAL ---
         const rival = esLocal ? p.v : p.l;
         const textoCondicion = esLocal ? "(L)" : "(V)";
-        // ----------------------------------
 
-        let color = "#94a3b8"; // Empate
+        let color = "#94a3b8"; 
         if (esLocal) {
             if (gL > gV) color = "#16a34a";
             else if (gL < gV) color = "#dc2626";
@@ -4969,7 +4835,6 @@ function obtenerForma(nombreEquipo) {
             else if (gV < gL) color = "#dc2626";
         }
 
-        // Actualizamos el title para que muestre: "vs RIVAL (L/V) | MARCADOR"
         return `<span title="vs ${rival} ${textoCondicion} | ${p.score}" style="height: 10px; width: 10px; background-color: ${color}; border-radius: 50%; display: inline-block !important; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); cursor: help; margin-right: 4px;"></span>`;
     }).join('');
 }
@@ -4978,47 +4843,64 @@ function renderNoticias() {
     const contenedor = document.getElementById('contenedor-noticias');
     if (!contenedor) return;
 
-    if (!db.noticias || db.noticias.length === 0) {
+    let listaNoticias = [];
+    if (db.noticias) {
+        listaNoticias = Array.isArray(db.noticias) 
+            ? db.noticias 
+            : Object.values(db.noticias);
+    }
+
+    listaNoticias.sort((a, b) => {
+        const timeA = a.timestamp || 0;
+        const timeB = b.timestamp || 0;
+        
+        if (timeA !== timeB) {
+            return timeB - timeA; // Más reciente primero
+        }
+        
+        return String(b.id).localeCompare(String(a.id));
+    });
+
+    if (listaNoticias.length === 0) {
         contenedor.innerHTML = `<div style="text-align:center; padding:50px; color:#94a3b8; font-weight:800;">🗞️ NO HAY NOTICIAS PUBLICADAS.</div>`;
         return;
     }
 
-// 2. Dibujar
-contenedor.innerHTML = db.noticias.map(n => `
-    <div onclick="abrirNoticiaCompleta(${n.id})" 
-         style="display: flex; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; margin-bottom: 20px; min-height: 180px; height: 180px; align-items: stretch; cursor: pointer; transition: transform 0.2s;">
-        
-        <div style="flex: 1; padding: 15px 20px; display: flex; flex-direction: column; justify-content: center; min-width: 0;">
-            <small style="color: #3b82f6; font-weight: 800; font-size: 11px; text-transform: uppercase;">
-                📅 ${n.fecha}
-            </small>
+    contenedor.innerHTML = listaNoticias.map(n => `
+        <div onclick="abrirNoticiaCompleta('${n.id}')" 
+     style="display: flex; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; margin-bottom: 20px; min-height: 180px; height: auto; align-items: stretch; cursor: pointer; transition: transform 0.2s;">
             
-            <h3 style="font-size: 17px; font-weight: 900; color: #1e293b; margin: 4px 0; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-transform: uppercase;">
-                ${n.titulo}
-            </h3>
-            
-            <p style="color: #475569; font-size: 13px; margin: 5px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
-                ${n.descripcion}
-            </p>
+            <div style="flex: 1; padding: 15px 20px; display: flex; flex-direction: column; justify-content: center; min-width: 0;">
+                <small style="color: #3b82f6; font-weight: 800; font-size: 11px; text-transform: uppercase;">
+                    📅 ${n.fecha}
+                </small>
+                
+                <h3 style="font-size: 17px; font-weight: 900; color: #1e293b; margin: 4px 0; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-transform: uppercase;">
+                    ${n.titulo}
+                </h3>
+                
+                <div style="color: #475569; font-size: 13px; margin: 5px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
+                    ${n.descripcion}
+                </div>
 
-            <span style="color: #3b82f6; font-size: 11px; font-weight: 800; margin-top: 5px;">VER MÁS...</span>
+                <span style="color: #3b82f6; font-size: 11px; font-weight: 800; margin-top: 5px;">VER MÁS...</span>
 
-            ${modoAdmin ? `
-                <button onclick="event.stopPropagation(); eliminarNoticia(${n.id})" 
-                        style="align-self: flex-start; margin-top: 10px; background: #fee2e2; color: #ef4444; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
-                    🗑️ Borrar
-                </button>` : ''}
+                ${modoAdmin ? `
+                    <button onclick="event.stopPropagation(); eliminarNoticia('${n.id}')" 
+                            style="align-self: flex-start; margin-top: 10px; background: #fee2e2; color: #ef4444; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                        🗑️ Borrar
+                    </button>` : ''}
+            </div>
+
+            <div style="width: 140px; min-width: 140px; position: relative; background: #f1f5f9;">
+                <img src="${n.imagen || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000'}" 
+                     style="width: 100%; height: 100%; object-fit: cover;" 
+                     onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000'">
+                
+                <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(90deg, white, transparent 15%);"></div>
+            </div>
         </div>
-
-        <div style="width: 140px; min-width: 140px; position: relative; background: #f1f5f9;">
-    <img src="${n.imagen || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000'}" 
-         style="width: 100%; height: 100%; object-fit: cover;" 
-         onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000'">
-    
-    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(90deg, white, transparent 15%);"></div>
-</div>
-    </div>
-`).join('');
+    `).join('');
 }
 
 function mostrarFormularioNoticia() {
@@ -5076,110 +4958,132 @@ function previsualizarImagen(event) {
 }
 
 async function guardarNoticia() {
-    // 1. Buscamos los elementos pero usamos "let" para verificar si existen
     const btn = document.querySelector('button[onclick="guardarNoticia()"]');
     const pContainer = document.getElementById('progreso-container');
     const pBarra = document.getElementById('progreso-barra');
     const pTexto = document.getElementById('progreso-texto');
 
-    // Usamos el signo "?" para que si el elemento no existe, no lance error
     const t = document.getElementById('noticia-titulo')?.value.trim();
     const d = document.getElementById('noticia-desc')?.value.trim();
     const fileInput = document.getElementById('noticia-img-file');
 
     if (!t || !d) return alert("⚠️ Pon un título y descripción");
 
-    // 2. CAMBIO CLAVE: Solo aplicamos estilo si el elemento NO es null
     if (btn) { 
         btn.innerText = "⏳ PROCESANDO..."; 
         btn.disabled = true; 
     }
     if (pContainer) pContainer.style.display = 'block';
-    if (pTexto) pTexto.style.display = 'block';
 
     let urlImagenFinal = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000";
 
-    // 3. Lógica de Storage
     if (fileInput && fileInput.files && fileInput.files[0]) {
         const archivo = fileInput.files[0];
         const storageRef = firebase.storage().ref(`noticias/${Date.now()}_${archivo.name}`);
-        
         try {
-            // Usamos la tarea para el progreso solo si los elementos existen
             const tarea = storageRef.put(archivo);
-
             tarea.on('state_changed', (snapshot) => {
                 const porcentaje = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                // Si la barra existe, la actualizamos
                 if (pBarra) pBarra.style.width = porcentaje + '%';
                 if (pTexto) pTexto.innerText = `Subiendo: ${Math.round(porcentaje)}%`;
             });
-
-            await tarea; // Esperamos a que termine
+            await tarea;
             urlImagenFinal = await tarea.snapshot.ref.getDownloadURL();
         } catch (error) {
             console.error("Error en Storage:", error);
         }
     }
 
-    // 4. Guardar en Realtime Database
-    const nueva = {
-        id: Date.now(),
+    const idUnico = Date.now().toString();
+    const nuevaNoticia = {
+        id: idUnico,
         titulo: t.toUpperCase(),
         descripcion: d,
         imagen: urlImagenFinal,
         fecha: new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
     };
 
-    if (!db.noticias) db.noticias = [];
-    db.noticias.unshift(nueva);
-
-    database.ref('liga_datos').set(db)
+    database.ref(`liga_datos/noticias/${idUnico}`).set(nuevaNoticia)
         .then(() => {
             alert("✅ ¡Noticia publicada!");
+
+            if (!db.noticias || Array.isArray(db.noticias)) {
+                db.noticias = {}; 
+            }
+            db.noticias[idUnico] = nuevaNoticia;
+
             if (btn) { btn.innerText = "🚀 PUBLICAR AHORA"; btn.disabled = false; }
             if (pContainer) pContainer.style.display = 'none';
             
-            // Resetear campos solo si existen
-            if(document.getElementById('noticia-titulo')) document.getElementById('noticia-titulo').value = "";
-            if(document.getElementById('noticia-desc')) document.getElementById('noticia-desc').value = "";
+            document.getElementById('noticia-titulo').value = "";
+            document.getElementById('noticia-desc').value = "";
             if(fileInput) fileInput.value = "";
             
             renderNoticias();
-            navegar('sec-noticias');
+
+            if (typeof navegar === 'function') {
+                navegar('sec-noticias'); 
+            } else {
+                document.querySelectorAll('.seccion-contenedor').forEach(s => s.style.display = 'none');
+                document.getElementById('sec-noticias').style.display = 'block';
+            }
         })
         .catch(err => {
             if (btn) { btn.innerText = "🚀 PUBLICAR AHORA"; btn.disabled = false; }
-            alert("❌ Error: " + err);
+            alert("❌ Error al guardar en la nube: " + err);
         });
 }
 
 function eliminarNoticia(id) {
     if (!confirm("¿Deseas eliminar esta noticia para todos?")) return;
     
-    // 1. Buscamos la noticia antes de borrarla para obtener la URL de la imagen
-    const noticiaAEliminar = db.noticias.find(n => n.id === id);
-    
-    // 2. Si la imagen está en Storage, podemos intentar borrarla (opcional)
-    if (noticiaAEliminar && noticiaAEliminar.imagen.includes('firebasestorage')) {
-        const imagenRef = firebase.storage().refFromURL(noticiaAEliminar.imagen);
-        imagenRef.delete().catch(err => console.log("La imagen ya no existía en Storage"));
+    let listaNoticias = [];
+    if (db.noticias) {
+        listaNoticias = Array.isArray(db.noticias) 
+            ? db.noticias 
+            : Object.values(db.noticias);
     }
 
-    // 3. Filtramos el array para quitar la noticia
-    db.noticias = db.noticias.filter(n => n.id !== id);
+    const noticiaAEliminar = listaNoticias.find(n => String(n.id) === String(id));
     
-    // 4. Actualizamos Firebase para que desaparezca de todos los celulares
-    database.ref('liga_datos').set(db)
+    if (noticiaAEliminar && noticiaAEliminar.imagen && noticiaAEliminar.imagen.includes('firebasestorage')) {
+        const imagenRef = firebase.storage().refFromURL(noticiaAEliminar.imagen);
+        imagenRef.delete().catch(err => console.log("La imagen ya no existía en Storage o error al borrar"));
+    }
+
+    database.ref(`liga_datos/noticias/${id}`).remove()
         .then(() => {
-            console.log("🗑️ Noticia eliminada globalmente");
+            console.log("🗑️ Noticia eliminada de la nube");
+            
+            if (Array.isArray(db.noticias)) {
+                db.noticias = db.noticias.filter(n => String(n.id) !== String(id));
+            } else {
+                delete db.noticias[id];
+            }
+            
             renderNoticias();
+            alert("✅ Noticia eliminada permanentemente.");
+        })
+        .catch(error => {
+            console.error("Error al eliminar en Firebase:", error);
+            alert("❌ Error: No se pudo borrar de la base de datos.");
         });
 }
 
 function abrirNoticiaCompleta(id) {
-    const n = db.noticias.find(item => item.id === id);
-    if (!n) return;
+    let listaNoticias = [];
+    if (db.noticias) {
+        listaNoticias = Array.isArray(db.noticias) 
+            ? db.noticias 
+            : Object.values(db.noticias);
+    }
+
+    const n = listaNoticias.find(item => String(item.id) === String(id));
+    
+    if (!n) {
+        console.error("No se encontró la noticia con ID:", id);
+        return;
+    }
 
     const BANNER_LIGA = "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop"; 
 
@@ -5191,31 +5095,35 @@ function abrirNoticiaCompleta(id) {
         justify-content: center; z-index: 10000; padding: 20px; backdrop-filter: blur(8px);
     `;
 
+    const esTraspaso = n.cuerpo ? true : false;
+
     modal.innerHTML = `
         <div style="background: white; width: 100%; max-width: 500px; border-radius: 25px; overflow: hidden; position: relative; max-height: 90vh; display: flex; flex-direction: column; animation: slideUp 0.3s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
             
             <button onclick="cerrarNoticia()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 11; font-size: 18px; display: flex; align-items: center; justify-content: center;">✕</button>
 
-            <div style="width: 100%; background: #f1f5f9; text-align: center;">
-    <img src="${n.imagen || BANNER_LIGA}" 
-         style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: cover;" 
-         onerror="this.src='${BANNER_LIGA}'">
-</div>
+            <div style="width: 100%; background: #f1f5f9; text-align: center; border-bottom: 1px solid #eee;">
+                <img src="${n.imagen || BANNER_LIGA}" 
+                     style="width: 100%; height: auto; max-height: ${esTraspaso ? '250px' : '350px'}; display: block; object-fit: cover;" 
+                     onerror="this.src='${BANNER_LIGA}'">
+            </div>
             
-            <div style="padding: 25px; overflow-y: auto;">
-                <small style="color: #3b82f6; font-weight: 800; text-transform: uppercase;">📅 ${n.fecha}</small>
-                <h2 style="font-size: 22px; font-weight: 900; color: #1e293b; margin: 10px 0;">${n.titulo}</h2>
-                <div style="width: 50px; height: 4px; background: #3b82f6; border-radius: 2px; margin-bottom: 20px;"></div>
+            <div style="padding: 20px 25px; overflow-y: auto; display: flex; flex-direction: column;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <small style="color: #3b82f6; font-weight: 800; text-transform: uppercase;">📅 ${n.fecha}</small>
+                    <h2 style="font-size: 22px; font-weight: 900; color: #1e293b; margin: 5px 0; line-height: 1.2;">${n.titulo}</h2>
+                    <div style="width: 50px; height: 4px; background: #3b82f6; border-radius: 2px; margin: 10px auto;"></div>
+                </div>
                 
-                <p style="color: #475569; font-size: 16px; line-height: 1.6; white-space: pre-line; text-align: justify; padding-bottom: 20px;">
-                    ${n.descripcion}
-                </p>
+                <div style="color: #475569; font-size: 16px; line-height: 1.6; text-align: left;">
+                    ${esTraspaso ? n.cuerpo : n.descripcion}
+                </div>
 
                 ${modoAdmin ? `
-                    <div style="margin-top: 10px; border-top: 1px solid #f1f5f9; padding: 20px 0;">
-                        <button onclick="eliminarNoticia(${n.id}); cerrarNoticia();" 
+                    <div style="margin-top: 20px; border-top: 1px solid #f1f5f9; padding: 15px 0;">
+                        <button onclick="eliminarNoticia('${n.id}'); cerrarNoticia();" 
                                 style="width: 100%; background: #fee2e2; color: #ef4444; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            🗑️ ELIMINAR PARA TODOS
+                            🗑️ ELIMINAR NOTICIA
                         </button>
                     </div>
                 ` : ''}
@@ -5230,6 +5138,260 @@ function abrirNoticiaCompleta(id) {
 function cerrarNoticia() {
     const modal = document.getElementById('noticia-modal-overlay');
     if (modal) modal.remove();
+}
+
+let traspasoTemporal = null;
+
+function abrirPanelTraspaso(id, nombre, equipoActual) {
+    traspasoTemporal = { id, nombre, equipoActual };
+    
+    document.getElementById('t-nombre').innerText = nombre;
+    document.getElementById('t-actual').innerText = equipoActual;
+    
+    const selector = document.getElementById('t-destino');
+    selector.innerHTML = '<option value="">¿A qué equipo va?</option>' + 
+        db.equipos.filter(e => e.nombre !== equipoActual)
+                  .map(e => `<option value="${e.nombre}">${e.nombre}</option>`).join('');
+    
+    document.getElementById('modal-traspaso').style.display = 'flex';
+}
+
+function cerrarTraspaso() {
+    document.getElementById('modal-traspaso').style.display = 'none';
+}
+
+async function confirmarTraspasoDirecto() {
+    const nuevoEquipoNom = document.getElementById('t-destino').value;
+    if (!nuevoEquipoNom) return alert("Selecciona un equipo destino");
+
+    const globalIdx = db.jugadores.findIndex(j => String(j.id) === String(traspasoTemporal.id));
+    if (globalIdx === -1) return alert("No se encontró al jugador.");
+
+    const datosJ = {...db.jugadores[globalIdx]}; 
+    const equipoAnteriorNom = datosJ.equipo;
+    const idxDestino = db.equipos.findIndex(e => e.nombre === nuevoEquipoNom);
+
+    if (idxDestino === -1) return alert("Equipo destino no encontrado.");
+    if (!confirm(`¿Confirmar traspaso de ${datosJ.nombre} a ${nuevoEquipoNom}?`)) return;
+
+    try {
+        // --- PASO A: ELIMINAR DEL ORIGEN ---
+        for (let i = 0; i < db.equipos.length; i++) {
+            if (db.equipos[i].jugadores) {
+                let lista = Array.isArray(db.equipos[i].jugadores) ? [...db.equipos[i].jugadores] : Object.values(db.equipos[i].jugadores);
+                if (lista.some(j => String(j.id) === String(traspasoTemporal.id))) {
+                    const nuevaLista = lista.filter(j => String(j.id) !== String(traspasoTemporal.id));
+                    await database.ref(`liga_datos/equipos/${i}/jugadores`).set(nuevaLista);
+                }
+            }
+        }
+
+        let pDestino = db.equipos[idxDestino].jugadores || [];
+        pDestino = Array.isArray(pDestino) ? [...pDestino] : Object.values(pDestino);
+        datosJ.equipo = nuevoEquipoNom;
+        pDestino.push(datosJ);
+        await database.ref(`liga_datos/equipos/${idxDestino}/jugadores`).set(pDestino);
+
+        await database.ref(`liga_datos/jugadores/${globalIdx}`).set(datosJ);
+
+        const logoOrigen = db.equipos.find(e => e.nombre === equipoAnteriorNom)?.logo || '';
+        const logoDestino = db.equipos[idxDestino]?.logo || '';
+        const fotoJugador = datosJ.foto || '';
+        const nombreJ = datosJ.nombre || 'Jugador';
+
+        const g = parseInt(datosJ.goles) || 0;
+        const a = parseInt(datosJ.amarillas) || 0;
+        const r = parseInt(datosJ.rojas) || 0;
+        const p = parseInt(datosJ.pj) || 0; 
+
+        let notaPeriodistica = "";
+        if (p > 0 || g > 0) {
+            notaPeriodistica = `En su etapa anterior disputó ${p} partidos, anotó ${g} goles y recibió ${a} amarillas y ${r} rojas.`;
+        } else {
+            const frasesHate = [
+                "No fue del agrado del entrenador y no logró consolidarse.",
+                "Tuvo una temporada difícil sin sumar los minutos deseados.",
+                "No logró entrar en los planes del cuerpo técnico anterior.",
+                "Llega buscando la confianza que no tuvo en su club pasado."
+            ];
+            notaPeriodistica = frasesHate[Math.floor(Math.random() * frasesHate.length)];
+        }
+        
+        const noticiaRef = database.ref('liga_datos/noticias').push();
+        const idFirebase = noticiaRef.key;
+
+        const nuevaNoticia = {
+            id: idFirebase, 
+            titulo: `¡NUEVO FICHAJE: ${nombreJ.toUpperCase()}!`,
+            fecha: new Date().toLocaleDateString(),
+            imagen: fotoJugador, 
+            
+            descripcion: `
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; margin-top: 5px;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                        <img src="${logoOrigen}" style="width: 70px; height: 70px; object-fit: contain;">
+                        <span style="font-size: 35px; color: #3b82f6; font-weight: bold;">➡</span>
+                        <img src="${logoDestino}" style="width: 70px; height: 70px; object-fit: contain;">
+                    </div>
+                    <div style="text-align: center; color: #1e293b; font-size: 12px; line-height: 1.4; font-weight: 600;">
+                        EL JUGADOR <span style="color: #3b82f6; font-weight: 900;">${nombreJ.toUpperCase()}</span> 
+                        PASA DEL EQUIPO <span style="color: #64748b;">${equipoAnteriorNom.toUpperCase()}</span> 
+                        AL EQUIPO <span style="color: #3b82f6;">${nuevoEquipoNom.toUpperCase()}</span>.
+                    </div>
+                </div>
+            `,
+
+            cuerpo: `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; text-align: center;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 30px; margin: 10px 0 20px 0;">
+                        <img src="${logoOrigen}" style="width: 80px; height: 80px; object-fit: contain;">
+                        <span style="font-size: 40px; color: #3b82f6; font-weight: bold;">➡</span>
+                        <img src="${logoDestino}" style="width: 80px; height: 80px; object-fit: contain;">
+                    </div>
+                    <div style="background: #f1f5f9; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; width: 100%; box-sizing: border-box;">
+                        <p style="margin: 0; color: #1e293b; font-size: 15px; line-height: 1.6; font-style: italic; font-weight: 500;">
+                            "${notaPeriodistica}"
+                        </p>
+                    </div>
+                    <div style="margin-top: 20px; color: #3b82f6; font-weight: 900; font-size: 13px; letter-spacing: 1px;">
+                        ¡BIENVENIDO A TU NUEVA CASA!
+                    </div>
+                </div>
+            `,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        await database.ref(`liga_datos/noticias/${idFirebase}`).set(nuevaNoticia);
+
+        alert("✅ Traspaso y Noticia publicados con éxito");
+        sessionStorage.setItem('redirigir_equipo', nuevoEquipoNom);
+        location.reload(); 
+
+    } catch (e) {
+        console.error(e);
+        alert("Error en el proceso.");
+    }
+}
+
+function verificarSesionActiva() {
+    const rolGuardado = sessionStorage.getItem('session_rol');
+    
+    if (rolGuardado === 'admin') {
+        rolActual = 'admin';
+        modoAdmin = true;
+    } else if (rolGuardado === 'editor') {
+        rolActual = 'editor';
+        modoAdmin = false;
+    } else {
+        return; 
+    }
+
+    actualizarInterfazPorRol();
+}
+
+function actualizarInterfazPorRol() {
+    if (rolActual === 'admin') {
+        document.body.classList.add('role-admin');
+        document.body.classList.remove('role-editor');
+    } else {
+        document.body.classList.add('role-editor');
+        document.body.classList.remove('role-admin');
+    }
+    aplicarRestricciones();
+    if (typeof renderTodo === "function") renderTodo();
+}
+
+verificarSesionActiva();
+
+async function subirPatrocinador() {
+    const fileInput = document.getElementById('patro-img-file');
+    const linkInput = document.getElementById('patro-link');
+    const file = fileInput.files[0];
+    
+    if (!file) return alert("Selecciona una imagen primero.");
+
+    try {
+        const btn = event.target;
+        btn.innerText = "⏳ SUBIENDO...";
+        btn.disabled = true;
+
+        const storageRef = firebase.storage().ref(`patrocinadores/${Date.now()}_${file.name}`);
+        const snapshot = await storageRef.put(file);
+        const url = await snapshot.ref.getDownloadURL();
+
+        const nuevoPatroRef = database.ref('liga_datos/patrocinadores').push();
+        await nuevoPatroRef.set({
+            id: nuevoPatroRef.key,
+            url: url,
+            link: linkInput.value || "#" 
+        });
+
+        fileInput.value = "";
+        linkInput.value = "";
+        
+        btn.innerText = "➕ AÑADIR";
+        btn.disabled = false;
+        
+        alert("✅ ¡Patrocinador añadido y campos limpios!");
+        
+        if(typeof renderGestionPatrocinadores === 'function') renderGestionPatrocinadores();
+
+    } catch (e) { 
+        console.error(e); 
+        alert("Error al subir"); 
+        btn.disabled = false;
+        btn.innerText = "➕ AÑADIR";
+    }
+}
+
+function renderGestionPatrocinadores() {
+    const contenedor = document.getElementById('lista-gestion-patros');
+    if (!contenedor) return;
+
+    if (!db.patrocinadores) {
+        contenedor.innerHTML = "<small style='color:#94a3b8'>No hay patrocinadores activos.</small>";
+        return;
+    }
+
+    const lista = Object.values(db.patrocinadores);
+    contenedor.innerHTML = lista.map(p => `
+        <div style="position: relative; background: white; padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px;">
+            <img src="${p.url}" style="height: 40px; width: 80px; object-fit: contain;">
+            <button onclick="eliminarPatrocinador('${p.id}', '${p.url}')" 
+                    style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                X
+            </button>
+        </div>
+    `).join('');
+}
+
+async function eliminarPatrocinador(id, url) {
+    if (!confirm("¿Eliminar este patrocinador del carrusel?")) return;
+    try {
+        await database.ref(`liga_datos/patrocinadores/${id}`).remove();
+        if (url.includes("firebasestorage")) {
+            await firebase.storage().refFromURL(url).delete().catch(e => console.log("Imagen ya no existía en storage"));
+        }
+        alert("🗑️ Patrocinador eliminado.");
+        location.reload();
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function renderCarruselPatrocinadores() {
+    const contenedor = document.getElementById('carrusel-dinamico');
+    if (!contenedor || !db.patrocinadores) return;
+
+    const lista = Object.values(db.patrocinadores);
+    const listaLarga = [];
+    for(let i = 0; i < 8; i++) { listaLarga.push(...lista); }
+
+    contenedor.innerHTML = listaLarga.map(p => `
+        <a href="${p.link}" target="_blank" style="display: inline-block; text-decoration: none;">
+            <img src="${p.url}" class="logo-patro" title="Visitar patrocinador">
+        </a>
+    `).join('');
 }
 
 </script>
@@ -5248,25 +5410,36 @@ function cerrarNoticia() {
     </script>
 
     <script>
-      // Verificamos que Firebase esté listo antes de escuchar
 if (typeof database !== 'undefined') {
     database.ref('liga_datos').on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
             db = data; 
             
-            // 1. Validaciones de seguridad para que no fallen los renders
             if (!db.noticias) db.noticias = [];
             if (!db.equipos) db.equipos = [];
+            if (!db.patrocinadores) db.patrocinadores = {}; 
 
-            // 2. DISPARAR TODOS LOS RENDERS DE INMEDIATO
-            // Esto hace que la info aparezca apenas entras a la página
+            if (typeof verificarSesionActiva === 'function') verificarSesionActiva();
+
             if (typeof renderTodo === 'function') renderTodo(); 
             if (typeof renderTabla === 'function') renderTabla();
             if (typeof renderGoleadores === 'function') renderGoleadores();
             if (typeof renderNoticias === 'function') renderNoticias();
             if (typeof renderCalendario === 'function') renderCalendario();
             if (typeof actualizarBanner === 'function') actualizarBanner();
+            
+            if (typeof renderCarruselPatrocinadores === 'function') renderCarruselPatrocinadores();
+            if (typeof renderGestionPatrocinadores === 'function') renderGestionPatrocinadores();
+
+            const equipoRedir = sessionStorage.getItem('redirigir_equipo');
+            if (equipoRedir) {
+                sessionStorage.removeItem('redirigir_equipo');
+                if (typeof verPlantilla === 'function') {
+                    console.log("📍 Redirigiendo a la plantilla de:", equipoRedir);
+                    verPlantilla(equipoRedir); 
+                }
+            }
 
             console.log("🚀 ¡Interfaz completa actualizada desde Firebase!");
         }
@@ -5274,6 +5447,82 @@ if (typeof database !== 'undefined') {
 }
 
     </script>
+
+<section style="background: white; padding: 40px 0; border-top: 1px solid #e2e8f0; overflow: hidden; margin-top: 40px;">
+    <h4 style="text-align: center; color: #94a3b8; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px;">
+        PATROCINADORES OFICIALES
+    </h4>
+
+    <div class="carrusel-track">
+        <div id="carrusel-dinamico" class="carrusel-logos">
+            </div>
+    </div>
+</section>
+
+<style>
+    .carrusel-track {
+        width: 100%;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .carrusel-logos {
+    display: flex;
+    justify-content: flex-start; /* 👈 Obliga a empezar desde la izquierda */
+    align-items: center;
+    width: max-content; /* 👈 Se ajusta al ancho total de todos los logos */
+    animation: scroll-infinito 20s linear infinite;
+}
+
+/* Ajusta el Keyframes para que sea universal */
+@keyframes scroll-infinito {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* 👈 Camina exactamente la mitad de la cadena */
+}
+
+    /* --- 🆕 ESTILO ACTUALIZADO PARA LOGOS --- */
+.logo-patro {
+    height: 90px; /* 👈 Aumentamos la altura de 60px a 90px (¡Un 50% más grandes!) */
+    width: auto; /* Mantenemos la proporción de ancho automática */
+    max-width: 200px; /* Evitamos que logos muy anchos se deformen */
+    object-fit: contain; /* Asegura que el logo no se corte ni se estire */
+    margin: 0 50px; /* Aumentamos un poco la separación entre logos (50px) */
+    
+    /* 🎨 ELIMINAMOS EL GRIS */
+    filter: none; /* 👈 Quitamos 'grayscale(100%)' para ver el color original */
+    opacity: 1; /* 👈 Subimos la opacidad al 100% por defecto */
+    
+    transition: transform 0.3s ease; /* Suavizamos solo el efecto de hover */
+}
+
+/* --- 🌟 EFECTO AL PASAR EL RATÓN --- */
+.logo-patro:hover {
+    transform: scale(1.15);
+    cursor: pointer;
+}
+
+    /* La magia del movimiento */
+    @keyframes scroll-infinito {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-230px * 5)); } /* Ajusta segun el ancho+gap de la mitad de logos */
+    }
+
+    /* Pausar al pasar el ratón */
+    .carrusel-track:hover .carrusel-logos {
+        animation-play-state: paused;
+    }
+</style>
+
+<footer style="margin-top: 50px; padding: 30px 20px; text-align: center; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+    
+    <div style="margin-top: 10px; display: flex; justify-content: center; gap: 15px; align-items: center;">
+        <a href="https://wa.me/523251123781" target="_blank" style="text-decoration: none; color: #16a34a; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px;">
+            <span style="font-size: 16px;">📱</span> WHATSAPP
+        </a>
+        <span style="color: #cbd5e1;">|</span>
+        <span style="color: #94a3b8; font-size: 12px; font-weight: 700;">ANTONIO LIZARRAGA</span>
+    </div>
+</footer>
 
 </body>
 </html>
