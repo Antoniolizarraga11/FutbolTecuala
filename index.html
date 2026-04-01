@@ -302,7 +302,7 @@
 }
 
 .card-mvp {
-    border: 2px solid #ffd700 !important; /* Oro */
+    border: 2px solid #ffd700 !important;
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.6) !important;
     position: relative;
 }
@@ -414,30 +414,29 @@
     <button class="nav-link" onclick="navegar('sec-partido', this)" style="display: none;">⚽ PARTIDO</button>
     <button class="nav-link" onclick="navegar('sec-tabla', this)">📊 TABLA</button>
     <button class="nav-link" onclick="navegar('sec-playoffs', this)">🏆 PLAYOFFS</button> 
-    <button class="nav-link" onclick="navegar('sec-goleadores', this)">🎯 GOLES</button>
+    <button class="nav-link" onclick="navegar('sec-goleadores', this)">🎯 GOLEADORES</button>
     <button class="nav-link" onclick="navegar('sec-disciplina', this)">🟨 DISCIPLINA</button>
-    <button class="nav-link" onclick="navegar('sec-buscador', this)">🔍 BUSCAR</button>
+    <button class="nav-link" onclick="navegar('sec-buscador', this)">🔍JUGADORES</button>
     <button onclick="navegar('sec-comparador'); prepararComparador();" class="nav-link">⚖️ COMPARAR</button>
     <button class="nav-link" onclick="navegar('sec-mi-calendario', this)">🔍 MI CALENDARIO</button>
     <button class="nav-link" onclick="navegar('sec-ajustes', this)">⚙️ AJUSTES</button>
 </nav>
 
-<div class="container">
+<div class="container"> 
 <div id="sec-inicio" class="seccion visible">
-    <div style="position: relative; width: 100%; height: 350px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-    <img id="imagen-banner-dinamica" 
-         src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=2000&auto=format&fit=crop" 
-         style="width: 100%; height: 100%; object-fit: cover; object-position: center; filter: brightness(0.6);">         
-	    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
-            <h1 id="banner-titulo" style="color: white; font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); font-style: italic;">
-                cargando...
+    <div style="position: relative; width: 100%; height: 350px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); background: #1e293b;"> 
+	    <img id="imagen-banner-dinamica" src="" style="width: 100%; height: 100%; object-fit: cover; object-position: center; filter: brightness(0.6); opacity: 1; transition: opacity 0.5s ease;"> <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%;">
+            <h1 id="banner-titulo" style="color: white; font-size: clamp(2.2rem, 8vw, 4rem); font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); font-style: italic;">
             </h1>
-            <div style="width: 120px; height: 6px; background: var(--accent); margin: 15px auto; border-radius: 3px;"></div>
+            
+            <div id="linea-decorativa" style="width: 120px; height: 6px; background: #f59e0b; margin: 15px auto; border-radius: 3px; display: none;"></div>
+            
             <p id="banner-temporada" style="color: white; font-size: 1.3rem; font-weight: bold; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); letter-spacing: 1px;">
-                cargando...
             </p>
         </div>
-    </div> <h2 style="text-align: center; margin-top: 30px; font-weight: 900; color: #1e293b;">📊 RESUMEN DE TEMPORADA</h2>
+    </div>
+    
+    <h2 style="text-align: center; margin-top: 30px; font-weight: 900; color: #1e293b;">📊 RESUMEN DE TEMPORADA</h2>
     <div id="render-resumen-inicio"></div>
 </div>
 
@@ -636,33 +635,56 @@
     </div>
     <div id="sec-partido" class="seccion"><div id="area-carga"></div></div>
     <div id="sec-tabla" class="seccion">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 10px; padding-bottom: 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 0; padding-bottom: 5px;">
         <h2 style="margin:0; border:none;">TABLA GENERAL</h2>
-        <button onclick="imprimirTabla()" class="btn-main no-print" style="width: auto; padding: 8px 20px; background: #f59e0b;">
-            🖨️ EXPORTAR TABLA PDF
-        </button>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Pos</th>
-                <th style="text-align:left">Equipo</th>
-                <th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th>
-            </tr>
-        </thead>
-        <tbody id="body-tabla"></tbody>
-    </table>
-</div>
-<div id="sec-goleadores" class="seccion">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin:0;">GOLEO INDIVIDUAL</h2>
-        <button onclick="prepararImpresionGoleadores()" class="btn-main no-print" style="width:auto; background:#f59e0b;">
-            🖨️ PDF TOP 10
-        </button>
+        
+        <div style="display: flex; gap: 8px;">
+            <button onclick="exportarTabla('tabla-para-captura', 'Tabla_General')" class="btn-main no-print" style="width: auto; padding: 8px 15px; background: #1e293b; font-size: 12px;">
+                📸 JPG
+            </button>
+            <button onclick="imprimirTabla()" class="btn-main no-print" style="width: auto; padding: 8px 15px; background: #f59e0b; font-size: 12px;">
+                🖨️ PDF
+            </button>
+        </div>
     </div>
 
-    <div id="diseno-goleadores-pro"></div>
+    <div id="tabla-para-captura" style="background: white; padding: 0; border-radius: 8px;">
+        <table style="width: 100%; margin-top: 0;"> <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th style="text-align:left">Equipo</th>
+                    <th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th>
+                </tr>
+            </thead>
+            <tbody id="body-tabla"></tbody>
+        </table>
+    </div>
 </div>
+<div id="sec-goleadores" class="seccion">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 5px; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+        <h2 style="margin:0; border:none;">GOLEO INDIVIDUAL</h2>
+        
+        <div style="display: flex; gap: 8px;">
+            <button onclick="exportarTabla('goleo-para-captura', 'Tabla_Goleo')" class="btn-main no-print" style="width: auto; padding: 8px 15px; background: #1e293b; font-size: 12px;">
+                📸 JPG
+            </button>
+            <button onclick="prepararImpresionGoleadores()" class="btn-main no-print" style="width:auto; padding: 8px 15px; background:#f59e0b; font-size: 12px;">
+                🖨️ PDF
+            </button>
+        </div>
+    </div>
+
+    <div id="goleo-para-captura" style="background: white; padding: 0; border-radius: 15px;">
+        
+        <div style="text-align: center; margin-bottom: 10px;">
+            <div class="nombre-torneo-txt" style="margin: 0; color: #1e293b; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+                </div>
+        </div>
+
+        <div id="diseno-goleadores-pro" style="margin-top: 0;"></div>
+    </div>
+</div>
+      
 <div id="sec-disciplina" class="seccion">
     <h2>DISCIPLINA</h2>
     
@@ -1372,11 +1394,11 @@ nav::-webkit-scrollbar { display: none; }
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.5"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.5"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.5"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.6"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.6"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.6"></script>
 
-<script src="app.js?v=1.5"></script>
+<script src="app.js?v=1.6"></script>
 
 <script>
   // Configuración de Firebase
@@ -1962,6 +1984,8 @@ function generarCalendario() {
                     v: visitante,
                     score: "vs",
                     jugado: false,
+		    fecha: "",
+		    hora: "",
                     inc: []
                 });
             }
@@ -1983,6 +2007,8 @@ function generarCalendario() {
                     v: pIda.l,
                     score: "vs",
                     jugado: false,
+		    fecha: "",
+		    hora: "",
                     inc: []
                 });
             });
@@ -1999,6 +2025,7 @@ function renderCalendario() {
     const contenedor = document.getElementById('render-calendario');
     if (!contenedor) return;
 
+    // 1. Verificación de datos inicial
     if (!db.calendario || db.calendario.length === 0) {
         contenedor.innerHTML = `<div style="text-align:center; padding:40px; color:#94a3b8;">
             <div style="font-size:40px; margin-bottom:10px;">📅</div>
@@ -2008,8 +2035,21 @@ function renderCalendario() {
     }
 
     const tienePermiso = (rolActual === 'admin' || rolActual === 'editor');
+    const totalJornadas = db.calendario.length;
 
-    let htmlBotones = `<div style="display: flex; overflow-x: auto; gap: 8px; padding: 10px 5px; margin-bottom: 15px; -webkit-overflow-scrolling: touch; scrollbar-width: none;">`;
+    // --- SECCIÓN DE NAVEGACIÓN (FLECHAS + BOTONES) ---
+    let htmlBotones = `
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; background: #fff; padding: 5px; border-radius: 15px;">
+        
+        <button onclick="cambiarJornadaRelativa(-1)" 
+            ${jornadaSeleccionada <= 1 ? 'disabled' : ''}
+            style="background: ${jornadaSeleccionada <= 1 ? '#f8fafc' : '#f1f5f9'}; 
+                   color: ${jornadaSeleccionada <= 1 ? '#cbd5e1' : '#1e293b'}; 
+                   border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 18px; transition: 0.2s;">
+            ◀
+        </button>
+
+        <div style="display: flex; overflow-x: auto; gap: 8px; flex: 1; -webkit-overflow-scrolling: touch; scrollbar-width: none; justify-content: center; padding: 5px 0;">`;
 
     db.calendario.forEach(jor => {
         const esActiva = jor.num === jornadaSeleccionada;
@@ -2025,8 +2065,20 @@ function renderCalendario() {
                 J ${jor.num}
             </button>`;
     });
-    htmlBotones += `</div>`;
 
+    htmlBotones += `
+        </div>
+
+        <button onclick="cambiarJornadaRelativa(1)" 
+            ${jornadaSeleccionada >= totalJornadas ? 'disabled' : ''}
+            style="background: ${jornadaSeleccionada >= totalJornadas ? '#f8fafc' : '#f1f5f9'}; 
+                   color: ${jornadaSeleccionada >= totalJornadas ? '#cbd5e1' : '#1e293b'}; 
+                   border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 18px; transition: 0.2s;">
+            ▶
+        </button>
+    </div>`;
+
+    // 2. Buscar la jornada actual para renderizar partidos
     const jornada = db.calendario.find(j => j.num === jornadaSeleccionada) || db.calendario[0];
 
     let htmlPartidos = `
@@ -2043,26 +2095,23 @@ function renderCalendario() {
         
         if (p.jugado) {
            botonAccion = `
-    		<div style="font-size:32px; font-weight:900; color:#1e293b; line-height:1;">${p.score}</div>
-    		<div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
-        
-        <button onclick="verReporte(${p.id})" 
-            style="background:#3b82f6; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">
-            📄 REPORTE
-        </button>
-
-        ${tienePermiso ? `
-            <button onclick="resolverProtesta(${p.id})" 
-                style="background:#e11d48; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">
-                🚫 PROTESTA
-            </button>
-
-            <button onclick="resetearPartido(${p.id})" 
-                style="background:#64748b; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">
-                🔄 RESETEAR
-            </button>
-        ` : ''}
-    </div>`;
+            <div style="font-size:32px; font-weight:900; color:#1e293b; line-height:1;">${p.score}</div>
+            <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
+                <button onclick="verReporte(${p.id})" 
+                    style="background:#3b82f6; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">
+                    📄 VER REPORTE
+                </button>
+                ${tienePermiso ? `
+                    <button onclick="resolverProtesta(${p.id})" 
+                        style="background:#e11d48; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">
+                        🚫 PROTESTA
+                    </button>
+                    <button onclick="resetearPartido(${p.id})" 
+                        style="background:#64748b; color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold;">
+                        🔄 RESETEAR
+                    </button>
+                ` : ''}
+            </div>`;
         } else {
             botonAccion = `
                 <div style="font-weight:900; color:#cbd5e1; font-size:20px; letter-spacing:2px;">VS</div>
@@ -2078,17 +2127,40 @@ function renderCalendario() {
         const eqV = db.equipos.find(e => e.nombre === p.v) || {};
 
         htmlPartidos += `
-            <div class="partido-row" style="display:flex; align-items:center; justify-content:space-between; padding:25px 15px; border-bottom:1px solid #f1f5f9;">
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px;">
-                    <img src="${eqL.logo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.l) + '&size=60&background=0D8ABC&color=fff'}" style="width:60px; height:60px; object-fit:contain;">
-                    <span style="font-size:14px; font-weight:800; text-align:center;">${p.l}</span>
+            <div class="partido-row" style="display:flex; flex-direction:column; padding:25px 15px; border-bottom:1px solid #f1f5f9; gap:20px; background:#fff; border-radius:15px; margin-bottom:15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px; min-width:0;">
+                        <div style="width:85px; height:85px; display:flex; align-items:center; justify-content:center;">
+                            <img src="${eqL.logo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.l) + '&size=100'}" 
+                                 style="width:100%; height:100%; object-fit:contain; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.1));">
+                        </div>
+                        <span style="font-size:12px; font-weight:900; text-align:center; width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-transform:uppercase; color:#1e293b;">
+                            ${p.l}
+                        </span>
+                    </div>
+
+                    <div style="flex:0.7; text-align:center; min-width:110px;">
+                        ${botonAccion}
+                    </div>
+
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px; min-width:0;">
+                        <div style="width:85px; height:85px; display:flex; align-items:center; justify-content:center;">
+                            <img src="${eqV.logo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.v) + '&size=100'}" 
+                                 style="width:100%; height:100%; object-fit:contain; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.1));">
+                        </div>
+                        <span style="font-size:12px; font-weight:900; text-align:center; width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-transform:uppercase; color:#1e293b;">
+                            ${p.v}
+                        </span>
+                    </div>
                 </div>
-                <div style="flex:0.8; text-align:center; display:flex; flex-direction:column; align-items:center; min-width:120px;">
-                    ${botonAccion}
-                </div>
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:12px;">
-                    <img src="${eqV.logo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(p.v) + '&size=60&background=F44336&color=fff'}" style="width:60px; height:60px; object-fit:contain;">
-                    <span style="font-size:14px; font-weight:800; text-align:center;">${p.v}</span>
+
+                <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:10px; font-size:11px; font-weight:900; color:#64748b; border-top:2px solid #f8fafc; padding:15px 5px; background:#fbfcfd; margin: 0 -15px -25px -15px; border-bottom-left-radius:15px; border-bottom-right-radius:15px;">
+                    <span style="background:#fff; padding:5px 10px; border-radius:8px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:4px;">📅 ${p.fecha || 'POR CONFIRMAR'}</span>
+                    <span style="background:#fff; padding:5px 10px; border-radius:8px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:4px;">🕒 ${p.hora || 'POR CONFIRMAR'}</span>
+                    <span style="background:#e0f2fe; color:#0369a1; padding:5px 10px; border-radius:8px; border:1px solid #bae6fd; display:flex; align-items:center; gap:4px;">🏟️ ${p.cancha || 'POR ASIGNAR'}</span>
+                    ${tienePermiso ? `
+                        <button onclick="editarHorario(${p.id})" style="background:#1e293b; color:white; border:none; border-radius:6px; cursor:pointer; font-size:10px; padding:6px 12px; font-weight:bold;">✏️ EDITAR</button>
+                    ` : ''}
                 </div>
             </div>`;
     });
@@ -2110,9 +2182,45 @@ function renderCalendario() {
     contenedor.innerHTML = htmlBotones + htmlPartidos;
 }
 
-function cambiarJornada(num) {
-    jornadaSeleccionada = num;
+// --- FUNCIONES DE CONTROL DE JORNADA (FUERA DE RENDER) ---
+
+function cambiarJornada(n) {
+    jornadaSeleccionada = n;
     renderCalendario();
+}
+
+function cambiarJornadaRelativa(delta) {
+    const nueva = jornadaSeleccionada + delta;
+    // Validamos que la nueva jornada exista dentro del rango del calendario
+    if (db.calendario && nueva > 0 && nueva <= db.calendario.length) {
+        cambiarJornada(nueva);
+    }
+}
+
+async function editarHorario(partidoId) {
+    const nuevaFecha = prompt("📅 Fecha (Ej: Dom 25 Mar):");
+    const nuevaHora = prompt("🕒 Hora (Ej: 18:30):");
+    const nuevaCancha = prompt("🏟️ Cancha (Ej: Campo Principal):");
+
+    if (nuevaFecha !== null && nuevaHora !== null && nuevaCancha !== null) {
+        let encontrado = false;
+        db.calendario.forEach(jor => {
+            jor.partidos.forEach(p => {
+                if (p.id === partidoId) {
+                    p.fecha = nuevaFecha;
+                    p.hora = nuevaHora;
+                    p.cancha = nuevaCancha;
+                    encontrado = true;
+                }
+            });
+        });
+
+        if (encontrado) {
+            persist(); 
+            renderCalendario(); 
+            alert("✅ Información del encuentro actualizada.");
+        }
+    }
 }
 
 function prepararCarga(id) {
@@ -2580,19 +2688,31 @@ function verReporte(idPartido) {
 }
 
 function renderTodo() {
-    db.equipos.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    db.jugadores.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    // 🛡️ ESCUDO 1: Si la base de datos o los equipos no existen, abortamos
+    if (!db || !db.equipos) return; 
 
-    renderResumenInicio();
-    renderNoticias();
-    renderEquipos();
-    renderCalendario();
-    renderPlayoffs();
-    renderGoleadores();
-    renderDisciplina();
+    // 🛡️ ESCUDO 2: Validar que jugadores exista antes de ordenar
+    // Si no existe, lo inicializamos como array vacío para que no rompa el código
+    if (!db.jugadores) db.jugadores = [];
+
+    // Ordenamos copias para no afectar el array original si no es necesario
+    const lista = [...db.equipos].sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
+    
+    // Ordenar alfabéticamente (con seguros por si el nombre viene vacío)
+    db.equipos.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
+    db.jugadores.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
+
+    // Ejecución de renders (solo si las funciones existen)
     if (typeof renderResumenInicio === 'function') renderResumenInicio();
-
-    renderTabla(); 
+    if (typeof renderNoticias === 'function') renderNoticias();
+    if (typeof renderEquipos === 'function') renderEquipos();
+    if (typeof renderCalendario === 'function') renderCalendario();
+    if (typeof renderPlayoffs === 'function') renderPlayoffs();
+    if (typeof renderGoleadores === 'function') renderGoleadores();
+    if (typeof renderDisciplina === 'function') renderDisciplina();
+    
+    // Renderizamos la tabla principal
+    if (typeof renderTabla === 'function') renderTabla(); 
 
     if (typeof aplicarRestricciones === 'function') aplicarRestricciones();
 }
@@ -2985,14 +3105,16 @@ function buscarJugador() {
     if (!input || !contenedor) return;
     const texto = input.value.toLowerCase().trim();
 
-    let rankeados = db.jugadores.map(j => {
-        const pts = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10);
-        return { ...j, puntos: pts };
-    }).sort((a, b) => b.puntos - a.puntos);
+    // 1. Usamos el Ranking Oficial Unificado
+    const rankingOficial = obtenerJugadoresRankeados();
 
+    // 2. Creamos la LISTA ALFABÉTICA para mostrar (basada en el ranking oficial)
+    let listaAlfabetica = [...rankingOficial].sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    // 3. Filtramos
     let encontrados = texto === "" 
-        ? rankeados 
-        : rankeados.filter(j => 
+        ? listaAlfabetica 
+        : listaAlfabetica.filter(j => 
             j.nombre.toLowerCase().includes(texto) || (j.curp && j.curp.toLowerCase().includes(texto))
           );
 
@@ -3002,7 +3124,9 @@ function buscarJugador() {
     }
 
     contenedor.innerHTML = encontrados.map(j => {
-        const posicion = rankeados.findIndex(x => x.id === j.id) + 1;
+        // La posición ya viene calculada correctamente desde el ranking oficial
+        const posicionRanking = j.posicion;
+        
         const datosEquipo = db.equipos.find(e => e.nombre === j.equipo);
         const logoEquipo = datosEquipo ? datosEquipo.logo : '';
         const fotoPj = j.foto ? j.foto : `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=100&background=random&color=fff`;
@@ -3011,8 +3135,8 @@ function buscarJugador() {
         <div onclick="verExpediente('${j.id}')" 
              style="background:white; padding:18px; border-radius:16px; margin-bottom:15px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:15px; box-shadow:0 6px 12px -2px rgba(0,0,0,0.08); cursor:pointer; transition: transform 0.2s;">
             
-            <div style="background:${posicion === 1 ? '#fbbf24' : (posicion <= 3 ? '#94a3b8' : '#64748b')}; color:white; width:45px; height:45px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; flex-shrink:0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                ${posicion}
+            <div style="background:${posicionRanking === 1 ? '#fbbf24' : (posicionRanking <= 3 ? '#94a3b8' : '#64748b')}; color:white; width:45px; height:45px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; flex-shrink:0;">
+                ${posicionRanking}
             </div>
             
             <img src="${logoEquipo}" 
@@ -3020,7 +3144,7 @@ function buscarJugador() {
                  style="width:50px; height:50px; object-fit:contain; border-radius:8px; background:#f8fafc; border:1px solid #eee; flex-shrink:0;">
 
             <div style="flex:1;">
-                <div style="font-weight:900; color:#0f172a; font-size:17px; text-transform:uppercase; line-height:1.2; letter-spacing:-0.3px;">
+                <div style="font-weight:900; color:#0f172a; font-size:17px; text-transform:uppercase; line-height:1.2;">
                     ${j.nombre}
                 </div>
                 <div style="color:#3b82f6; font-weight:700; font-size:13px; margin: 4px 0 8px 0;">
@@ -3163,13 +3287,19 @@ function calcularRating(j) {
 
 function obtenerJugadoresRankeados() {
     let lista = db.jugadores.map(j => {
+        // La fórmula oficial unificada:
         const penalizacionSancion = (j.sancionPendiente || 0) * 15;      
         const puntos = (j.goles * 10) + (j.pj * 2) - (j.ama * 3) - (j.roja * 10) - penalizacionSancion;
         
         return { ...j, puntos };
     });
 
-    lista.sort((a, b) => b.puntos - a.puntos);
+    // Ordenamos por puntos. Si hay empate, por goles. Si sigue empate, por nombre.
+    lista.sort((a, b) => {
+        if (b.puntos !== a.puntos) return b.puntos - a.puntos;
+        if (b.goles !== a.goles) return b.goles - a.goles;
+        return a.nombre.localeCompare(b.nombre);
+    });
 
     return lista.map((j, index) => ({ ...j, posicion: index + 1 }));
 }
@@ -3179,27 +3309,37 @@ function reiniciarTodo() {
         return alert("⚠️ Solo el Administrador puede reiniciar la temporada.");
     }
 
-    let nuevoNombre = prompt("¿Cómo se llamará la nueva temporada?\n(Ej: TORNEO 2026)");
+    let nuevoNombreTorneo = prompt("1. NOMBRE PRINCIPAL DEL TORNEO (Letras grandes):\nEj: LIGA CHAMPIONS");
+    if (!nuevoNombreTorneo?.trim()) return alert("Reinicio cancelado.");
 
-    if (nuevoNombre === null || nuevoNombre.trim() === "") {
-        alert("Reinicio cancelado. Debes asignar un nombre a la temporada.");
-        return;
-    }
+    let nuevoSlogan = prompt("2. SLOGAN O TEMPORADA (Letras pequeñas):\nEj: TEMPORADA 2026");
+    if (!nuevoSlogan?.trim()) return alert("Reinicio cancelado.");
 
-    nuevoNombre = nuevoNombre.trim().toUpperCase();
+    nuevoNombreTorneo = nuevoNombreTorneo.trim().toUpperCase();
+    nuevoSlogan = nuevoSlogan.trim().toUpperCase();
 
-    if(confirm(`⚠️ ADVERTENCIA CRÍTICA: Se iniciará la temporada: "${nuevoNombre}".\n\nESTO ELIMINARÁ TODO: Equipos, Jugadores y Partidos.\n\n¿Deseas continuar?`)) {
+    if(confirm(`⚠️ ADVERTENCIA CRÍTICA: Se borrarán TODOS los datos actuales.\n\nNuevo Torneo: ${nuevoNombreTorneo}`)) {
         
-        db.nombreTemporada = nuevoNombre;
+        // 1. Definimos los nuevos valores
+        db.nombreTorneoActual = nuevoNombreTorneo;
+        db.nombreTemporada = nuevoSlogan;
 
+        // 2. IMPORTANTE: Inicializamos siempre como arreglos vacíos [] nunca undefined
         db.equipos = [];    
         db.jugadores = [];  
-        db.calendario = []; 
+        db.calendario = [];
+        db.patrocinadores = []; 
         db.playoffs = {};   
 
+        // 3. Guardamos
         persist(); 
         
-        location.reload(); 
+        alert("⚽ Configurando nueva temporada... Por favor espera un momento.");
+        
+        // 4. Damos 800ms de gracia para que Firebase termine la escritura antes de recargar
+        setTimeout(() => {
+            location.reload(); 
+        }, 800);
     }
 }
 
@@ -3422,9 +3562,11 @@ function renderCabeceraCaraACara(j, color, lado, numSlot) {
     
     const eq = db.equipos.find(e => e.nombre === j.equipo);
 
-    const posicionReal = [...db.jugadores]
-        .sort((a, b) => (b.goles || 0) - (a.goles || 0))
-        .findIndex(p => String(p.id) === String(j.id)) + 1;
+    // --- 🟢 CAMBIO AQUÍ: Usamos el Ranking Oficial Unificado ---
+    const rankingOficial = obtenerJugadoresRankeados();
+    const jugadorInfo = rankingOficial.find(p => String(p.id) === String(j.id));
+    const posicionReal = jugadorInfo ? jugadorInfo.posicion : "?";
+    // ----------------------------------------------------------
 
     return `
     <div style="position: relative; background: ${color}; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
@@ -4033,8 +4175,8 @@ function actualizarBanner() {
 
     // 3. Cambiar la Temporada
     if (temporadaBanner) {
-        temporadaBanner.innerText = db.nombreTemporada || "2026";
-    }
+    temporadaBanner.innerHTML = `<i class="fas fa-trophy" style="margin-right:8px;"></i> ${db.nombreTemporada || 'BIENVENIDOS'}`;
+}
 }
 
 function renderEquipos() {
@@ -4355,56 +4497,62 @@ function cardEq(titulo, eq, valor, sub, color, icono, destino) {
 
 function renderResumenInicio() {
     const contenedor = document.getElementById('render-resumen-inicio');
-    if (!contenedor || !db.equipos || db.equipos.length === 0) return;
+    if (!contenedor) return;
 
+    // 🛡️ ESCUDO: Si no hay base de datos o no hay equipos, limpiamos y salimos
+    if (!db || !db.equipos || db.equipos.length === 0) {
+        contenedor.innerHTML = `
+            <div style="text-align:center; padding:40px; color:#64748b;">
+                <div style="font-size:40px; margin-bottom:10px;">🏆</div>
+                <p style="font-weight:700; text-transform:uppercase; letter-spacing:1px;">Esperando el inicio del torneo</p>
+                <p style="font-size:12px;">Registra equipos y jugadores para ver las estadísticas.</p>
+            </div>`;
+        return;
+    }
+
+    // Inicializamos contadores
     const totalEquipos = db.equipos.length;
-    const totalJugadores = db.jugadores.length;
+    const totalJugadores = (db.jugadores || []).length;
     let totalGoles = 0, totalAma = 0, totalRoja = 0;
 
-    db.jugadores.forEach(j => {
+    // Cálculo de totales (con seguro por si jugadores es undefined)
+    (db.jugadores || []).forEach(j => {
         totalGoles += (j.goles || 0);
         totalAma += (j.ama || 0);
         totalRoja += (j.roja || 0);
     });
 
-    const lider = [...db.equipos].sort((a, b) => (b.pts||0) - (a.pts||0))[0];
-    const mejorOf = [...db.equipos].sort((a, b) => (b.gf||0) - (a.gf||0))[0];
-    const mejorDef = [...db.equipos].filter(e => (e.pj||0) > 0).sort((a, b) => (a.gc||0) - (b.gc||0))[0] || lider;
-    const jValidos = db.jugadores.filter(j => j && j.nombre);
+    // 🛡️ SEGURO PARA DESTACADOS: Evitamos que .sort()[0] de error si no hay datos
+    const lider = [...db.equipos].sort((a, b) => (b.pts || 0) - (a.pts || 0))[0] || {};
+    const mejorOf = [...db.equipos].sort((a, b) => (b.gf || 0) - (a.gf || 0))[0] || {};
+    const mejorDef = [...db.equipos].filter(e => (e.pj || 0) > 0).sort((a, b) => (a.gc || 0) - (b.gc || 0))[0] || lider;
+    
+    // Jugadores válidos para evitar errores de nombres vacíos
+    const jValidos = (db.jugadores || []).filter(j => j && j.nombre);
 
     let htmlContent = `
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; padding: 10px; margin-bottom: 20px;">
-        
-        <div onclick="document.querySelector('[onclick*=\\'sec-equipos\\']')?.click();" 
-             style="cursor:pointer; background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #e2e8f0;">
+        <div onclick="navegar('sec-equipos')" style="cursor:pointer; background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #e2e8f0;">
             <div style="font-size:20px;">🛡️</div>
             <div style="font-size:22px; font-weight:900; color:#1e293b;">${totalEquipos}</div>
             <div style="font-size:10px; font-weight:800; color:#64748b; text-transform:uppercase;">Equipos</div>
         </div>
-
-        <div onclick="document.querySelector('[onclick*=\\'sec-jugadores\\']')?.click();" 
-             style="cursor:pointer; background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #e2e8f0;">
+        <div onclick="navegar('sec-jugadores')" style="cursor:pointer; background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #e2e8f0;">
             <div style="font-size:20px;">🏃</div>
             <div style="font-size:22px; font-weight:900; color:#1e293b;">${totalJugadores}</div>
             <div style="font-size:10px; font-weight:800; color:#64748b; text-transform:uppercase;">Jugadores</div>
         </div>
-
-        <div onclick="document.querySelector('[onclick*=\\'sec-goleadores\\']')?.click();" 
-             style="cursor:pointer; background:#dcfce7; padding:15px; border-radius:15px; text-align:center; border:1px solid #bbf7d0;">
+        <div style="background:#dcfce7; padding:15px; border-radius:15px; text-align:center; border:1px solid #bbf7d0;">
             <div style="font-size:20px;">⚽</div>
             <div style="font-size:22px; font-weight:900; color:#166534;">${totalGoles}</div>
             <div style="font-size:10px; font-weight:800; color:#166534; text-transform:uppercase;">Goles</div>
         </div>
-
-        <div onclick="document.querySelector('[onclick*=\\'sec-disciplina\\']')?.click();" 
-             style="cursor:pointer; background:#fef9c3; padding:15px; border-radius:15px; text-align:center; border:1px solid #fef08a;">
+        <div style="background:#fef9c3; padding:15px; border-radius:15px; text-align:center; border:1px solid #fef08a;">
             <div style="font-size:20px;">🟨</div>
             <div style="font-size:22px; font-weight:900; color:#854d0e;">${totalAma}</div>
             <div style="font-size:10px; font-weight:800; color:#854d0e; text-transform:uppercase;">Amarillas</div>
         </div>
-
-        <div onclick="document.querySelector('[onclick*=\\'sec-disciplina\\']')?.click();" 
-             style="cursor:pointer; background:#fee2e2; padding:15px; border-radius:15px; text-align:center; border:1px solid #fecaca;">
+        <div style="background:#fee2e2; padding:15px; border-radius:15px; text-align:center; border:1px solid #fecaca;">
             <div style="font-size:20px;">🟥</div>
             <div style="font-size:22px; font-weight:900; color:#991b1b;">${totalRoja}</div>
             <div style="font-size:10px; font-weight:800; color:#991b1b; text-transform:uppercase;">Rojas</div>
@@ -4417,27 +4565,24 @@ function renderResumenInicio() {
         ${cardEq("LÍDER GENERAL", lider, lider.pts || 0, "Puntos", "#f59e0b", "🏆", "sec-tabla")}
         ${cardEq("MEJOR OFENSIVA", mejorOf, mejorOf.gf || 0, "Goles", "#3b82f6", "🔥", "sec-tabla")}
         ${cardEq("MEJOR DEFENSIVA", mejorDef, mejorDef.gc || 0, "Goles Rec.", "#10b981", "🛡️", "sec-tabla")}`;   
-	
-	if (jValidos.length > 0) {
-        const goleador = [...jValidos].sort((a, b) => (b.goles||0) - (a.goles||0))[0];
+    
+    if (jValidos.length > 0) {
+        const goleador = [...jValidos].sort((a, b) => (b.goles || 0) - (a.goles || 0))[0] || {};
         const mvp = [...jValidos].sort((a, b) => {
-            const scA = ((a.goles||0)*10) - ((a.ama||0)*2) - ((a.roja||0)*5);
-            const scB = ((b.goles||0)*10) - ((b.ama||0)*2) - ((b.roja||0)*5);
+            const scA = ((a.goles || 0) * 10) - ((a.ama || 0) * 2) - ((a.roja || 0) * 5);
+            const scB = ((b.goles || 0) * 10) - ((b.ama || 0) * 2) - ((b.roja || 0) * 5);
             return scB - scA;
-        })[0];
-        const masAma = [...jValidos].sort((a, b) => (b.ama||0) - (a.ama||0))[0];
-        const masRoja = [...jValidos].sort((a, b) => (b.roja||0) - (a.roja||0))[0];
-	
-	htmlContent += `	
-	
-	<div class="card-mvp-container">
-            ${cardPj("MVP DE LA LIGA", mvp, ((mvp.goles||0)*10 - (mvp.ama||0)*2 - (mvp.roja||0)*5), "Pts 		Rendimiento", "#ffd700", "💎", "sec-goleadores")}
+        })[0] || {};
+        const masAma = [...jValidos].sort((a, b) => (b.ama || 0) - (a.ama || 0))[0] || {};
+        const masRoja = [...jValidos].sort((a, b) => (b.roja || 0) - (a.roja || 0))[0] || {};
+    
+        htmlContent += `    
+        <div class="card-mvp-container">
+            ${cardPj("MVP DE LA LIGA", mvp, ((mvp.goles || 0) * 10 - (mvp.ama || 0) * 2 - (mvp.roja || 0) * 5), "Pts Rendimiento", "#ffd700", "💎", "sec-goleadores")}
         </div>        
-
-	${cardPj("LÍDER DE GOLEO", goleador, goleador.goles||0, "Goles", "#f43f5e", "⚽", "sec-goleadores")}
-        ${cardPj("MÁS AMARILLAS", masAma, masAma.ama||0, "Tarjetas", "#eab308", "🟨", "sec-disciplina")}
-        ${cardPj("MÁS ROJAS", masRoja, masRoja.roja||0, "Tarjetas", "#ef4444", "🟥", "sec-disciplina")}`;
-			
+        ${cardPj("LÍDER DE GOLEO", goleador, goleador.goles || 0, "Goles", "#f43f5e", "⚽", "sec-goleadores")}
+        ${cardPj("MÁS AMARILLAS", masAma, masAma.ama || 0, "Tarjetas", "#eab308", "🟨", "sec-disciplina")}
+        ${cardPj("MÁS ROJAS", masRoja, masRoja.roja || 0, "Tarjetas", "#ef4444", "🟥", "sec-disciplina")}`;
     }
 
     htmlContent += `</div>`;
@@ -4504,6 +4649,36 @@ function imprimirTabla() {
         estilo.remove();
         headerImpresion.remove(); 
     }, 500);
+}
+
+async function exportarTabla(idContenedor, nombreArchivo) {
+    const elemento = document.getElementById(idContenedor);
+    
+    if (!elemento) {
+        alert("No se encontró el contenedor: " + idContenedor);
+        return;
+    }
+
+    try {
+        console.log("Generando imagen JPG...");
+        
+        const canvas = await html2canvas(elemento, {
+            scale: 3, // Alta definición
+            backgroundColor: "#ffffff", // Fondo blanco obligatorio para JPG
+            useCORS: true, // Para que cargue los logos de los equipos
+            logging: false
+        });
+
+        const link = document.createElement('a');
+        link.download = `${nombreArchivo}.jpg`; // Nombre sencillo: Tabla_General.jpg
+        link.href = canvas.toDataURL("image/jpeg", 0.95);
+        link.click();
+        
+        console.log("✅ Exportación exitosa");
+    } catch (error) {
+        console.error("Error detallado:", error);
+        alert("Error al crear la imagen. Revisa la consola.");
+    }
 }
 
 function renderDisciplina() {
@@ -4789,27 +4964,32 @@ function obtenerForma(nombreEquipo) {
     let partidosDelEquipo = [];
     const nombreBusqueda = nombreEquipo.trim().toLowerCase();
 
+    // 1. Buscamos todos los partidos jugados por este equipo en todas las jornadas
     db.calendario.forEach(jornada => {
         if (jornada.partidos) {
             jornada.partidos.forEach(p => {
-                if (p.jugado && p.score) {
+                // Filtramos solo partidos que ya tengan resultado o estén marcados como jugados
+                if (p.jugado && (p.score !== "vs" || p.l_goles !== undefined)) {
                     const local = (p.l || "").trim().toLowerCase();
                     const visita = (p.v || "").trim().toLowerCase();
                     if (local === nombreBusqueda || visita === nombreBusqueda) {
-                        partidosDelEquipo.push(p);
+                        // Guardamos una copia del partido incluyendo su jornada para el reporte
+                        partidosDelEquipo.push({...p, numJornada: jornada.num});
                     }
                 }
             });
         }
     });
 
-    partidosDelEquipo = partidosDelEquipo.filter(p => p.jugado && p.score);
-    
+    // 2. Tomamos solo los últimos 5 partidos (la racha actual)
     const ultimos5 = partidosDelEquipo.slice(-5);
-    if (ultimos5.length === 0) return '';
+    if (ultimos5.length === 0) return '<span style="color:#cbd5e1; font-size:10px;">Sin juegos</span>';
 
+    // 3. Generamos el HTML de los círculos interactivos
     return ultimos5.map(p => {
         let gL, gV;
+        
+        // Extraer goles ya sea de campos numéricos o del string "score"
         if (p.l_goles !== undefined && p.v_goles !== undefined) {
             gL = parseInt(p.l_goles);
             gV = parseInt(p.v_goles);
@@ -4819,23 +4999,55 @@ function obtenerForma(nombreEquipo) {
             gV = partes[1];
         }
         
-        if (isNaN(gL) || isNaN(gV)) return '<span style="height:10px; width:10px; background:#e2e8f0; border-radius:50%; display:inline-block; margin-right:4px;"></span>';
-
-        const esLocal = (p.l || "").trim().toLowerCase() === nombreBusqueda;
-        
-        const rival = esLocal ? p.v : p.l;
-        const textoCondicion = esLocal ? "(L)" : "(V)";
-
-        let color = "#94a3b8"; 
-        if (esLocal) {
-            if (gL > gV) color = "#16a34a";
-            else if (gL < gV) color = "#dc2626";
-        } else {
-            if (gV > gL) color = "#16a34a";
-            else if (gV < gL) color = "#dc2626";
+        // Si no hay números válidos, ponemos un círculo gris de "error/pendiente"
+        if (isNaN(gL) || isNaN(gV)) {
+            return `<span style="height:14px; width:14px; background:#e2e8f0; border-radius:50%; display:inline-block; margin-right:4px;"></span>`;
         }
 
-        return `<span title="vs ${rival} ${textoCondicion} | ${p.score}" style="height: 10px; width: 10px; background-color: ${color}; border-radius: 50%; display: inline-block !important; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); cursor: help; margin-right: 4px;"></span>`;
+        const esLocal = (p.l || "").trim().toLowerCase() === nombreBusqueda;
+        const rival = esLocal ? p.v : p.l;
+        const marcadorPropio = esLocal ? gL : gV;
+        const marcadorRival = esLocal ? gV : gL;
+
+        // Definir color y letra del resultado
+        let color = "#94a3b8"; // Empate (Gris Azulado)
+        let letra = "E";
+        
+        if (marcadorPropio > marcadorRival) {
+            color = "#16a34a"; // Ganado (Verde)
+            letra = "G";
+        } else if (marcadorPropio < marcadorRival) {
+            color = "#dc2626"; // Perdido (Rojo)
+            letra = "P";
+        }
+
+        // Retornamos el círculo con el evento onclick para el reporte
+        return `
+            <span 
+                onclick="verReporte(${p.id})" 
+                title="J${p.numJornada}: vs ${rival} | Resultado: ${gL}-${gV}" 
+                style="
+                    height: 16px; 
+                    width: 16px; 
+                    background-color: ${color}; 
+                    border-radius: 50%; 
+                    display: inline-flex !important; 
+                    align-items: center; 
+                    justify-content: center;
+                    color: white;
+                    font-size: 8px;
+                    font-weight: 900;
+                    flex-shrink: 0; 
+                    border: 1px solid rgba(0,0,0,0.1); 
+                    cursor: pointer; 
+                    margin-right: 4px; 
+                    transition: all 0.2s ease;
+                    user-select: none;
+                "
+                onmouseover="this.style.transform='scale(1.3)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.2)';"
+                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+                ${letra}
+            </span>`;
     }).join('');
 }
 
@@ -5412,38 +5624,41 @@ function renderCarruselPatrocinadores() {
     <script>
 if (typeof database !== 'undefined') {
     database.ref('liga_datos').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            db = data; 
-            
-            if (!db.noticias) db.noticias = [];
-            if (!db.equipos) db.equipos = [];
-            if (!db.patrocinadores) db.patrocinadores = {}; 
-
-            if (typeof verificarSesionActiva === 'function') verificarSesionActiva();
-
-            if (typeof renderTodo === 'function') renderTodo(); 
-            if (typeof renderTabla === 'function') renderTabla();
-            if (typeof renderGoleadores === 'function') renderGoleadores();
-            if (typeof renderNoticias === 'function') renderNoticias();
-            if (typeof renderCalendario === 'function') renderCalendario();
-            if (typeof actualizarBanner === 'function') actualizarBanner();
-            
-            if (typeof renderCarruselPatrocinadores === 'function') renderCarruselPatrocinadores();
-            if (typeof renderGestionPatrocinadores === 'function') renderGestionPatrocinadores();
-
-            const equipoRedir = sessionStorage.getItem('redirigir_equipo');
-            if (equipoRedir) {
-                sessionStorage.removeItem('redirigir_equipo');
-                if (typeof verPlantilla === 'function') {
-                    console.log("📍 Redirigiendo a la plantilla de:", equipoRedir);
-                    verPlantilla(equipoRedir); 
-                }
-            }
-
-            console.log("🚀 ¡Interfaz completa actualizada desde Firebase!");
+    const data = snapshot.val();
+    if (data) {
+        db = data; 
+        
+        if (typeof actualizarBanner === 'function') {
+            actualizarBanner(); 
         }
-    });
+
+        if (!db.noticias) db.noticias = [];
+        if (!db.equipos) db.equipos = [];
+        if (!db.patrocinadores) db.patrocinadores = {}; 
+
+        if (typeof verificarSesionActiva === 'function') verificarSesionActiva();
+
+        if (typeof renderTodo === 'function') renderTodo(); 
+        if (typeof renderTabla === 'function') renderTabla();
+        if (typeof renderGoleadores === 'function') renderGoleadores();
+        if (typeof renderNoticias === 'function') renderNoticias();
+        if (typeof renderCalendario === 'function') renderCalendario();
+        
+                
+        if (typeof renderCarruselPatrocinadores === 'function') renderCarruselPatrocinadores();
+        if (typeof renderGestionPatrocinadores === 'function') renderGestionPatrocinadores();
+
+        const equipoRedir = sessionStorage.getItem('redirigir_equipo');
+        if (equipoRedir) {
+            sessionStorage.removeItem('redirigir_equipo');
+            if (typeof verPlantilla === 'function') {
+                verPlantilla(equipoRedir); 
+            }
+        }
+
+        console.log("🚀 ¡Interfaz completa actualizada desde Firebase!");
+    }
+});
 }
 
     </script>
@@ -5523,6 +5738,8 @@ if (typeof database !== 'undefined') {
         <span style="color: #94a3b8; font-size: 12px; font-weight: 700;">ANTONIO LIZARRAGA</span>
     </div>
 </footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 </body>
 </html>
