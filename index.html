@@ -744,7 +744,6 @@
 <div id="sec-playoffs" class="seccion">
     <div style="background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
         <h2 style="color: white; border: none; margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">🏆 Fase de Eliminatorias</h2>
-        <p style="opacity: 0.9; margin-top: 10px;">AL MOMENTO</p>
     </div>
 
 <div class="form-group no-print editor-only" style="background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
@@ -1394,9 +1393,9 @@ nav::-webkit-scrollbar { display: none; }
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.6"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.6"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.6"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.7"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.7"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.7"></script>
 
 <script src="app.js?v=1.6"></script>
 
@@ -2325,9 +2324,45 @@ function prepararCarga(id) {
         </div>
     </div>
 
+<div style="margin-top:20px; background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0;">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="text-align:left;">
+            <label style="font-size:12px; font-weight:900; color:#1e293b; display:block;">¿PUNTO EXTRA EN PENALES?</label>
+            <small style="color:#64748b;">Activa esta opción si el torneo requiere desempate.</small>
+        </div>
+        <input type="checkbox" id="check-usar-penales" onchange="togglePenales(this.checked)" style="width:20px; height:20px; cursor:pointer;">
+    </div>
+
+    <div id="seccion-penales" style="display:none; margin-top:15px; padding:15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; text-align:center;">
+    <label style="display:block; font-size:10px; font-weight:900; color:#1e293b; margin-bottom:10px;">⚽ RESULTADO</label>
+    
+    <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px;">
+        <input type="number" id="penales-L" placeholder="0" style="width:50px; text-align:center; padding:5px; border-radius:5px; border:1px solid #ccc;">
+        <span style="font-weight:bold;">-</span>
+        <input type="number" id="penales-V" placeholder="0" style="width:50px; text-align:center; padding:5px; border-radius:5px; border:1px solid #ccc;">
+    </div>
+
+    <select id="ganador-penales" style="width:100%; padding:8px; border-radius:8px; border:1px solid #3b82f6; font-weight:bold;">
+        <option value="">-- SELECCIONAR GANADOR --</option>
+        <option value="L">🏆 ${p.l}</option>
+        <option value="V">🏆 ${p.v}</option>
+    </select>
+</div>
+
     <button onclick="guardarPartido(${id}, event)" class="btn-main" style="margin-top:20px; height:60px; font-size:20px; background:var(--success); box-shadow:0 4px 10px rgba(16,185,129,0.3); width:100%; border:none; color:white; border-radius:8px; cursor:pointer;">
         ✅ FINALIZAR Y GUARDAR PARTIDO
     </button>`;
+}
+
+function togglePenales(visible) {
+    const div = document.getElementById('seccion-penales');
+    if (div) {
+        div.style.display = visible ? 'block' : 'none';
+        // Si lo apagas, limpiamos la selección
+        if (!visible) {
+            document.getElementById('ganador-penales').value = "";
+        }
+    }
 }
 
 function statInput(j, lado, esAutogol = false) {
@@ -2497,6 +2532,7 @@ function guardarPartido(idPartido, e) {
 
     if (!partidoObj || partidoObj === "YA_JUGADO") return;
 
+    // 1️⃣ CAPTURA DE DATOS BÁSICOS
     const estadioVal = document.getElementById('input-estadio').value.trim();
     const arbitroVal = document.getElementById('input-arbitro').value.trim();
     const gl = parseInt(document.getElementById('live-gl').innerText) || 0;
@@ -2511,6 +2547,7 @@ function guardarPartido(idPartido, e) {
     partidoObj.estadio = estadioVal || "Sede Principal";
     partidoObj.arbitro = arbitroVal || "Central Designado";
 
+    // 2️⃣ LÓGICA DE PUNTOS Y TABLA
     const eqL = db.equipos.find(e => e.nombre === partidoObj.l);
     const eqV = db.equipos.find(e => e.nombre === partidoObj.v);
     
@@ -2518,11 +2555,37 @@ function guardarPartido(idPartido, e) {
         eqL.pj++; eqV.pj++;
         eqL.gf += gl; eqL.gc += gv;
         eqV.gf += gv; eqV.gc += gl;
-        if (gl > gv) { eqL.g++; eqL.pts += 3; eqV.p++; }
-        else if (gv > gl) { eqV.g++; eqV.pts += 3; eqL.p++; }
-        else { eqL.e++; eqV.e++; eqL.pts += 1; eqV.pts += 1; }
-    }
 
+        if (gl > gv) { 
+            eqL.g++; eqL.pts += 3; eqV.p++; 
+        } else if (gv > gl) { 
+            eqV.g++; eqV.pts += 3; eqL.p++; 
+        } else { 
+            // EMPATE
+            eqL.e++; eqV.e++; 
+            eqL.pts += 1; eqV.pts += 1; 
+
+            const usaPenales = document.getElementById('check-usar-penales').checked;
+		if (usaPenales) {
+    		const pL = document.getElementById('penales-L').value || 0;
+    		const pV = document.getElementById('penales-V').value || 0;
+    		const ganoExtra = document.getElementById('ganador-penales').value;
+
+	    if (ganoExtra) {
+        	partidoObj.puntoExtra = ganoExtra;
+        	partidoObj.resPenales = `(${pL} - ${pV})`; // Guardamos el marcador de penales
+        
+        	if (ganoExtra === 'L') eqL.pts += 1;
+        	else eqV.pts += 1;
+    		} else {
+        	alert("Indica quién ganó el punto extra.");
+        return;
+    }
+}
+        }
+    } // <-- LLAVE DE CIERRE CORRECTA AQUÍ
+
+    // 3️⃣ ESTADÍSTICAS INDIVIDUALES Y REPORTE
     let htmlReporteL = detalleL;
     let htmlReporteV = detalleV;
     let idsParticipantes = [];
@@ -2560,6 +2623,7 @@ function guardarPartido(idPartido, e) {
         }
     });
 
+    // Manejo de sanciones pendientes (jugadores que no jugaron hoy)
     db.jugadores.forEach(j => {
         if (j.equipo === partidoObj.l || j.equipo === partidoObj.v) {
             if ((j.sancionPendiente || 0) > 0) {
@@ -2572,6 +2636,7 @@ function guardarPartido(idPartido, e) {
     partidoObj.reporteHtml = { local: htmlReporteL, visita: htmlReporteV };
     partidoObj.participantes = idsParticipantes;
 
+    // 4️⃣ PERSISTENCIA Y FINALIZACIÓN
     persist();
     
     alert("¡Partido finalizado con éxito!");
@@ -2579,8 +2644,8 @@ function guardarPartido(idPartido, e) {
 
     setTimeout(() => {
         if (typeof renderTodo === 'function') renderTodo();
+	if (typeof renderTabla === 'function') renderTabla();
         if (typeof renderCalendario === 'function') renderCalendario();
-        // Limpiar el área de carga para el próximo partido
         const areaCarga = document.getElementById('area-carga');
         if (areaCarga) areaCarga.innerHTML = "";
     }, 100);
@@ -2607,6 +2672,20 @@ function verReporte(idPartido) {
     
     const ahora = new Date();
     const fechaFomateada = ahora.toLocaleDateString() + " - " + ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    // --- LÓGICA PARA EL PUNTO EXTRA ---
+    // Dentro de verReporte(idPartido):
+let htmlPuntoExtra = "";
+if (partido.puntoExtra) {
+    const ganadorNombre = partido.puntoExtra === 'L' ? partido.l : partido.v;
+    const marcadorPenales = partido.resPenales || ""; // Aquí aparece el (4 - 3)
+    
+    htmlPuntoExtra = `
+        <div style="margin-top: 15px; color: #16a34a; font-weight: 800; font-size: 14px; text-transform: uppercase; background: #f0fdf4; padding: 10px; border-radius: 10px; border: 1px solid #bbf7d0; display: inline-block;">
+            🏆 Gana punto extra: ${ganadorNombre} ${marcadorPenales}
+        </div>
+    `;
+}
 
     const win = window.open('', '_blank');
     win.document.write(`
@@ -2641,7 +2720,7 @@ function verReporte(idPartido) {
                     <span>ID PARTIDO: #${idPartido.toString().slice(-4)}</span>
                 </div>
                 
-                <div class="header-title">${nombreTorneoParaReporte}</div>	
+                <div class="header-title">${nombreTorneoParaReporte}</div>    
                 <div class="sub-title">${db.nombreTemporada || "TEMPORADA 2026"}</div>
 
                 <div class="info-tecnica">
@@ -2651,21 +2730,19 @@ function verReporte(idPartido) {
                 
                 <div class="scoreboard">
                     <div class="team-info">
-                        <img src="${logoL}" 
-     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=120&background=f0f0f0&color=666';" 
-     class="logo-img">
+                        <img src="${logoL}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=120&background=f0f0f0&color=666';" class="logo-img">
                         <div class="team-name">${partido.l}</div>
                     </div>
                     
                     <div class="score-display">${partido.score}</div>
                     
                     <div class="team-info">
-                        <img src="${logoV}" 
-     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=120&background=f0f0f0&color=666';" 
-     class="logo-img">
+                        <img src="${logoV}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=LOGO&size=120&background=f0f0f0&color=666';" class="logo-img">
                         <div class="team-name">${partido.v}</div>
                     </div>
                 </div>
+
+                ${htmlPuntoExtra}
 
                 <div class="grid">
                     <div>
@@ -2721,7 +2798,7 @@ function renderPlayoffs() {
     const p = db.playoffs;
     const contenedor = document.getElementById('render-playoffs');
     if (!contenedor) return;
-    
+
     if (!p || !p.llaves || p.llaves.length === 0) {
         contenedor.innerHTML = `
             <div style="text-align:center; padding:40px; color:#94a3b8; background: white; border-radius: 20px; border: 1px dashed #cbd5e1;">
@@ -2736,9 +2813,7 @@ function renderPlayoffs() {
     if (p.faseActual === 8) { nombreFase = "CUARTOS DE FINAL"; iconoFase = "🛡️"; }
     else if (p.faseActual === 4) { nombreFase = "SEMIFINALES"; iconoFase = "🔥"; }
     else if (p.faseActual === 2) { nombreFase = "GRAN FINAL"; iconoFase = "🏆"; }
-
     const tienePermiso = (rolActual === 'admin' || rolActual === 'editor');
-
     let html = `
         <div style="margin-top:20px; animation: fadeIn 0.5s ease;">
             <div style="text-align:center; margin-bottom:20px;">
@@ -2748,7 +2823,6 @@ function renderPlayoffs() {
                     ${p.tipoDuelo === 2 ? '⚽ Ida y Vuelta' : '⚽ Partido Único'}
                 </span>
             </div>`;
-
     if (p.exentos && p.exentos.length > 0) {
         p.exentos.forEach(nombreLider => {
             const eqLider = db.equipos.find(e => e.nombre === nombreLider) || {};
@@ -2765,11 +2839,10 @@ function renderPlayoffs() {
     }
 
     html += `<div style="display:grid; gap:25px;">`;
-
     p.llaves.forEach((llave, i) => {
         const esIdaVuelta = (p.tipoDuelo === 2);
-        const totalSup = esIdaVuelta ? (Number(llave.gIdaSup) + Number(llave.gVtaSup)) : Number(llave.gIdaSup);
-        const totalInf = esIdaVuelta ? (Number(llave.gIdaInf) + Number(llave.gVtaInf)) : Number(llave.gIdaInf);
+        const totalSup = Number(llave.gIdaSup || 0) + (esIdaVuelta ? Number(llave.gVtaSup || 0) : 0);
+	const totalInf = Number(llave.gIdaInf || 0) + (esIdaVuelta ? Number(llave.gVtaInf || 0) : 0);
 
         const eqSup = db.equipos.find(e => e.nombre === llave.sup) || {};
         const eqInf = db.equipos.find(e => e.nombre === llave.inf) || {};
@@ -2782,7 +2855,7 @@ function renderPlayoffs() {
                             <img src="${eqInf.logo || 'https://ui-avatars.com/api/?name='+llave.inf}" style="width:55px; height:55px; object-fit:contain; margin-bottom:8px;">
                             <div style="font-size:12px; font-weight:900; color:#1e293b; text-transform:uppercase;">${llave.inf}</div>
                         </div>
-                        
+                   
                         <div style="flex:1.2; text-align:center; background:#f1f5f9; padding:12px; border-radius:15px; border:1px solid #e2e8f0;">
                             <div style="font-size:9px; color:#64748b; font-weight:900; margin-bottom:8px; letter-spacing:1px;">${esIdaVuelta ? 'IDA' : 'MARCADOR'}</div>
                             <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
@@ -2795,7 +2868,6 @@ function renderPlayoffs() {
                                     style="width:50px; height:45px; text-align:center; font-weight:900; border:2px solid #cbd5e1; border-radius:10px; font-size:22px; background: ${tienePermiso ? 'white' : '#f8fafc'};">
                             </div>
                         </div>
-
                         <div style="flex:1; text-align:center;">
                             <img src="${eqSup.logo || 'https://ui-avatars.com/api/?name='+llave.sup}" style="width:55px; height:55px; object-fit:contain; margin-bottom:8px;">
                             <div style="font-size:12px; font-weight:900; color:#1e293b; text-transform:uppercase;">${llave.sup}</div>
@@ -2807,8 +2879,8 @@ function renderPlayoffs() {
                         <div style="flex:1; text-align:center;">
                             <img src="${eqSup.logo || 'https://ui-avatars.com/api/?name='+llave.sup}" style="width:55px; height:55px; object-fit:contain; margin-bottom:8px;">
                             <div style="font-size:12px; font-weight:900; color:#1e293b; text-transform:uppercase;">${llave.sup}</div>
-                        </div>
-                        
+                        </div>                      
+
                         <div style="flex:1.2; text-align:center; background:#f8fafc; padding:12px; border-radius:15px; border:1px solid #e2e8f0;">
                             <div style="font-size:9px; color:#64748b; font-weight:900; margin-bottom:8px; letter-spacing:1px;">VUELTA</div>
                             <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
@@ -2819,25 +2891,33 @@ function renderPlayoffs() {
                                     style="width:50px; height:45px; text-align:center; font-weight:900; border:2px solid #cbd5e1; border-radius:10px; font-size:22px; background: ${tienePermiso ? 'white' : '#f8fafc'};">
                             </div>
                         </div>
-
                         <div style="flex:1; text-align:center;">
                             <img src="${eqInf.logo || 'https://ui-avatars.com/api/?name='+llave.inf}" style="width:55px; height:55px; object-fit:contain; margin-bottom:8px;">
                             <div style="font-size:12px; font-weight:900; color:#1e293b; text-transform:uppercase;">${llave.inf}</div>
                         </div>
                     </div>` : ''}
-                </div>
+                </div>           
 
-                <div style="background:#1e293b; color:white; padding:15px; text-align:center; display:flex; justify-content:center; align-items:center; gap:20px;">
-                    <div style="font-size:10px; font-weight:bold; color:#94a3b8; letter-spacing:3px; text-transform:uppercase;">Global</div>
-                    <div id="global-${i}" style="font-size:24px; font-weight:900; letter-spacing:2px; color:#f8fafc;">
-                        ${totalInf} <span style="color:#475569; font-size:18px; margin: 0 5px;">VS</span> ${totalSup}
-                    </div>
-                </div>
+<div style="background:#1e293b; color:white; padding:15px; text-align:center; display:flex; justify-content:center; align-items:center; gap:15px;">
+    <div style="font-size:10px; font-weight:bold; color:#94a3b8; letter-spacing:3px; text-transform:uppercase; margin-right:10px;">Global</div>
+    <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.05); padding:8px 20px; border-radius:50px;">
+
+        <div style="display:flex; align-items:center; gap:8px;">
+            <img src="${eqSup.logo || 'https://ui-avatars.com/api/?name='+llave.sup}" style="width:30px; height:30px; object-fit:contain;">
+            <span style="font-size:24px; font-weight:900; color:#f8fafc;">${totalSup}</span>
+        </div>
+
+        <span style="color:#475569; font-size:18px; font-weight:900;">VS</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:24px; font-weight:900; color:#f8fafc;">${totalInf}</span>
+            <img src="${eqInf.logo || 'https://ui-avatars.com/api/?name='+llave.inf}" style="width:30px; height:30px; object-fit:contain;">
+        </div>
+    </div>
+</div>
             </div>`;
     });
 
     html += `</div>`; 
-
     if ((rolActual === 'admin' || rolActual === 'editor')) {
         let textoBoton = p.faseActual === 2 ? "🏆 FINALIZAR TORNEO" : "➡️ AVANZAR SIGUIENTE FASE";
         html += `
@@ -2854,7 +2934,6 @@ function renderPlayoffs() {
                     Información actualizada por la organización del torneo.
                  </div>`;
     }
-
     contenedor.innerHTML = html;
 }
 
@@ -3385,9 +3464,17 @@ function renderGoleadores() {
     if (!contenedor) return;
 
     const goleadores = db.jugadores
-        .filter(j => (j.goles || 0) > 0)
-        .sort((a, b) => b.goles - a.goles)
-        .slice(0, 10);
+    .filter(j => (j.goles || 0) > 0)
+    .sort((a, b) => {
+            if (b.goles !== a.goles) {
+            return b.goles - a.goles;
+        }
+        const promedioA = a.goles / (a.pj || 1);
+        const promedioB = b.goles / (b.pj || 1);
+        
+        return promedioB - promedioA;
+    })
+    .slice(0, 10);
 
     if (goleadores.length === 0) {
         contenedor.innerHTML = "<p style='text-align:center; padding:50px;'>⚽ Aún no hay goles registrados.</p>";
@@ -4499,7 +4586,7 @@ function renderResumenInicio() {
     const contenedor = document.getElementById('render-resumen-inicio');
     if (!contenedor) return;
 
-    // 🛡️ ESCUDO: Si no hay base de datos o no hay equipos, limpiamos y salimos
+    // 🛡️ ESCUDO
     if (!db || !db.equipos || db.equipos.length === 0) {
         contenedor.innerHTML = `
             <div style="text-align:center; padding:40px; color:#64748b;">
@@ -4510,26 +4597,41 @@ function renderResumenInicio() {
         return;
     }
 
-    // Inicializamos contadores
+    // 1️⃣ CÁLCULO DE TOTALES
     const totalEquipos = db.equipos.length;
     const totalJugadores = (db.jugadores || []).length;
     let totalGoles = 0, totalAma = 0, totalRoja = 0;
 
-    // Cálculo de totales (con seguro por si jugadores es undefined)
     (db.jugadores || []).forEach(j => {
         totalGoles += (j.goles || 0);
         totalAma += (j.ama || 0);
         totalRoja += (j.roja || 0);
     });
 
-    // 🛡️ SEGURO PARA DESTACADOS: Evitamos que .sort()[0] de error si no hay datos
-    const lider = [...db.equipos].sort((a, b) => (b.pts || 0) - (a.pts || 0))[0] || {};
-    const mejorOf = [...db.equipos].sort((a, b) => (b.gf || 0) - (a.gf || 0))[0] || {};
-    const mejorDef = [...db.equipos].filter(e => (e.pj || 0) > 0).sort((a, b) => (a.gc || 0) - (b.gc || 0))[0] || lider;
-    
-    // Jugadores válidos para evitar errores de nombres vacíos
+    // 2️⃣ CÁLCULO DE EQUIPOS DESTACADOS
+    const lider = [...db.equipos].sort((a, b) => {
+        if ((b.pts || 0) !== (a.pts || 0)) return (b.pts || 0) - (a.pts || 0);
+        const dgA = (a.gf || 0) - (a.gc || 0);
+        const dgB = (b.gf || 0) - (b.gc || 0);
+        if (dgB !== dgA) return dgB - dgA;
+        return (b.gf || 0) - (a.gf || 0);
+    })[0] || {};
+
+    const mejorOf = [...db.equipos].sort((a, b) => {
+        if ((b.gf || 0) !== (a.gf || 0)) return (b.gf || 0) - (a.gf || 0);
+        return (a.pj || 0) - (b.pj || 0);
+    })[0] || {};
+
+    const mejorDef = [...db.equipos]
+        .filter(e => (e.pj || 0) > 0)
+        .sort((a, b) => {
+            if ((a.gc || 0) !== (b.gc || 0)) return (a.gc || 0) - (b.gc || 0);
+            return (b.pj || 0) - (a.pj || 0);
+        })[0] || lider;
+
     const jValidos = (db.jugadores || []).filter(j => j && j.nombre);
 
+    // 3️⃣ INICIO DE CONSTRUCCIÓN DEL HTML
     let htmlContent = `
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; padding: 10px; margin-bottom: 20px;">
         <div onclick="navegar('sec-equipos')" style="cursor:pointer; background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #e2e8f0;">
@@ -4564,32 +4666,109 @@ function renderResumenInicio() {
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; padding: 10px;">
         ${cardEq("LÍDER GENERAL", lider, lider.pts || 0, "Puntos", "#f59e0b", "🏆", "sec-tabla")}
         ${cardEq("MEJOR OFENSIVA", mejorOf, mejorOf.gf || 0, "Goles", "#3b82f6", "🔥", "sec-tabla")}
-        ${cardEq("MEJOR DEFENSIVA", mejorDef, mejorDef.gc || 0, "Goles Rec.", "#10b981", "🛡️", "sec-tabla")}`;   
+        ${cardEq("MEJOR DEFENSIVA", mejorDef, mejorDef.gc || 0, "Goles Rec.", "#10b981", "🛡️", "sec-tabla")}`;    
     
     if (jValidos.length > 0) {
-        const goleador = [...jValidos].sort((a, b) => (b.goles || 0) - (a.goles || 0))[0] || {};
-        const mvp = [...jValidos].sort((a, b) => {
-            const scA = ((a.goles || 0) * 10) - ((a.ama || 0) * 2) - ((a.roja || 0) * 5);
-            const scB = ((b.goles || 0) * 10) - ((b.ama || 0) * 2) - ((b.roja || 0) * 5);
-            return scB - scA;
-        })[0] || {};
-        const masAma = [...jValidos].sort((a, b) => (b.ama || 0) - (a.ama || 0))[0] || {};
-        const masRoja = [...jValidos].sort((a, b) => (b.roja || 0) - (a.roja || 0))[0] || {};
-    
+        const goleador = [...jValidos].filter(j => (j.goles || 0) > 0).sort((a, b) => (b.goles || 0) - (a.goles || 0))[0] || null;
+        const mvp = [...jValidos].sort((a, b) => ((b.goles||0)*10 - (b.ama||0)*2) - ((a.goles||0)*10 - (a.ama||0)*2))[0] || null;
+        const masAma = [...jValidos].filter(j => (j.ama || 0) > 0).sort((a, b) => (b.ama || 0) - (a.ama || 0))[0] || null;
+        const masRoja = [...jValidos].filter(j => (j.roja || 0) > 0).sort((a, b) => (b.roja || 0) - (a.roja || 0))[0] || null;
+
         htmlContent += `    
         <div class="card-mvp-container">
-            ${cardPj("MVP DE LA LIGA", mvp, ((mvp.goles || 0) * 10 - (mvp.ama || 0) * 2 - (mvp.roja || 0) * 5), "Pts Rendimiento", "#ffd700", "💎", "sec-goleadores")}
+            ${mvp ? cardPj("MVP DE LA LIGA", mvp, ((mvp.goles || 0) * 10 - (mvp.ama || 0) * 2), "Pts Rendimiento", "#ffd700", "💎", "sec-goleadores") : ''}
         </div>        
-        ${cardPj("LÍDER DE GOLEO", goleador, goleador.goles || 0, "Goles", "#f43f5e", "⚽", "sec-goleadores")}
-        ${cardPj("MÁS AMARILLAS", masAma, masAma.ama || 0, "Tarjetas", "#eab308", "🟨", "sec-disciplina")}
-        ${cardPj("MÁS ROJAS", masRoja, masRoja.roja || 0, "Tarjetas", "#ef4444", "🟥", "sec-disciplina")}`;
+        ${goleador ? cardPj("LÍDER DE GOLEO", goleador, goleador.goles || 0, "Goles", "#f43f5e", "⚽", "sec-goleadores") : cardVacia("LÍDER DE GOLEO", "⚽")}
+        ${masAma ? cardPj("MÁS AMARILLAS", masAma, masAma.ama || 0, "Tarjetas", "#eab308", "🟨", "sec-disciplina") : cardVacia("MÁS AMARILLAS", "🟨")}
+        ${masRoja ? cardPj("MÁS ROJAS", masRoja, masRoja.roja || 0, "Tarjetas", "#ef4444", "🟥", "sec-disciplina") : cardVacia("MÁS ROJAS", "🟥")}`;
     }
 
-    htmlContent += `</div>`;
+    // 4️⃣ RÉCORDS DE PARTIDOS
+    let goleada = { dif: -1, gL: 0, gV: 0, local: null, visita: null };
+    let masGoles = { total: -1, gL: 0, gV: 0, local: null, visita: null };
+
+    db.calendario.forEach(jornada => {
+        (jornada.partidos || []).forEach(m => {
+            if (m.l_goles !== undefined && m.l_goles !== null && m.jugado === true) {
+                const gL = Number(m.l_goles);
+                const gV = Number(m.v_goles);
+                const total = gL + gV;
+                const dif = Math.abs(gL - gV);
+
+                if (dif > goleada.dif) {
+                    goleada = { dif, gL, gV, local: m.l, visita: m.v };
+                }
+                if (total > masGoles.total) {
+                    masGoles = { total, gL, gV, local: m.l, visita: m.v };
+                }
+            }
+        });
+    });
+
+    const getLogo = (nombre) => {
+        const eq = db.equipos.find(e => e.nombre === nombre);
+        return eq ? eq.logo : 'https://ui-avatars.com/api/?name=' + nombre;
+    };
+
+    if (goleada.local) {
+        htmlContent += `
+        <div class="card-resumen" style="border-top: 4px solid #64748b;">
+            <div style="font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center;">🥊 MAYOR GOLEADA</div>
+            <div style="display: flex; align-items: center; justify-content: space-around; margin: 10px 0;">
+                <div style="text-align: center; flex: 1;">
+                    <img src="${getLogo(goleada.local)}" style="width: 40px; height: 40px; object-fit: contain;">
+                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${goleada.local}</div>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <div style="font-size: 24px; font-weight: 900; color: #1e293b;">${goleada.gL} - ${goleada.gV}</div>
+                    <div style="font-size: 8px; color: #94a3b8; font-weight: bold;">MARCADOR</div>
+                </div>
+                <div style="text-align: center; flex: 1;">
+                    <img src="${getLogo(goleada.visita)}" style="width: 40px; height: 40px; object-fit: contain;">
+                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${goleada.visita}</div>
+                </div>
+            </div>
+            <div style="background: #f1f5f9; padding: 5px; border-radius: 8px; text-align: center; font-size: 10px; font-weight: 900; color: #475569;">
+                DIFERENCIA: ${goleada.dif} GOLES
+            </div>
+        </div>
+
+        <div class="card-resumen" style="border-top: 4px solid #3b82f6;">
+            <div style="font-size: 9px; font-weight: 900; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center;">⚽ MÁS GOLES EN UN PARTIDO</div>
+            <div style="display: flex; align-items: center; justify-content: space-around; margin: 10px 0;">
+                <div style="text-align: center; flex: 1;">
+                    <img src="${getLogo(masGoles.local)}" style="width: 40px; height: 40px; object-fit: contain;">
+                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${masGoles.local}</div>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <div style="font-size: 24px; font-weight: 900; color: #1e293b;">${masGoles.gL} - ${masGoles.gV}</div>
+                    <div style="font-size: 8px; color: #94a3b8; font-weight: bold;">MARCADOR</div>
+                </div>
+                <div style="text-align: center; flex: 1;">
+                    <img src="${getLogo(masGoles.visita)}" style="width: 40px; height: 40px; object-fit: contain;">
+                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${masGoles.visita}</div>
+                </div>
+            </div>
+            <div style="background: #eff6ff; padding: 5px; border-radius: 8px; text-align: center; font-size: 10px; font-weight: 900; color: #1d4ed8;">
+                TOTAL: ${masGoles.total} GOLES
+            </div>
+        </div>`;
+    }
+
+    htmlContent += `</div>`; 
     contenedor.innerHTML = htmlContent;
 
     const cardMvp = contenedor.querySelector('.card-mvp-container .card-resumen');
     if(cardMvp) cardMvp.classList.add('card-mvp');
+}
+
+function cardVacia(titulo, icono) {
+    return `
+    <div style="background:#f8fafc; border-radius:15px; padding:20px; text-align:center; border:1px dashed #cbd5e1; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:150px;">
+        <div style="font-size:24px; margin-bottom:5px; opacity:0.5;">${icono}</div>
+        <div style="font-size:10px; font-weight:800; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">${titulo}</div>
+        <div style="font-size:11px; color:#94a3b8; font-style:italic;">Sin registros aún</div>
+    </div>`;
 }
 
 function controlarFila(id, checkbox) {
