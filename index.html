@@ -4713,43 +4713,43 @@ function renderResumenInicio() {
     if (goleada.local) {
         htmlContent += `
         <div class="card-resumen" style="border-top: 4px solid #64748b;">
-            <div style="font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center;">🥊 MAYOR GOLEADA</div>
+            <div style="font-size: 14px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center;">🥊 MAYOR GOLEADA</div>
             <div style="display: flex; align-items: center; justify-content: space-around; margin: 10px 0;">
                 <div style="text-align: center; flex: 1;">
                     <img src="${getLogo(goleada.local)}" style="width: 40px; height: 40px; object-fit: contain;">
-                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${goleada.local}</div>
+                    <div style="font-size: 12px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${goleada.local}</div>
                 </div>
                 <div style="flex: 1; text-align: center;">
                     <div style="font-size: 24px; font-weight: 900; color: #1e293b;">${goleada.gL} - ${goleada.gV}</div>
-                    <div style="font-size: 8px; color: #94a3b8; font-weight: bold;">MARCADOR</div>
+                    <div style="font-size: 10px; color: #94a3b8; font-weight: bold;">MARCADOR</div>
                 </div>
                 <div style="text-align: center; flex: 1;">
                     <img src="${getLogo(goleada.visita)}" style="width: 40px; height: 40px; object-fit: contain;">
-                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${goleada.visita}</div>
+                    <div style="font-size: 12px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${goleada.visita}</div>
                 </div>
             </div>
-            <div style="background: #f1f5f9; padding: 5px; border-radius: 8px; text-align: center; font-size: 10px; font-weight: 900; color: #475569;">
+            <div style="background: #f1f5f9; padding: 5px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 900; color: #475569;">
                 DIFERENCIA: ${goleada.dif} GOLES
             </div>
         </div>
 
         <div class="card-resumen" style="border-top: 4px solid #3b82f6;">
-            <div style="font-size: 10px; font-weight: 900; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center;">⚽ MÁS GOLES EN UN PARTIDO</div>
+            <div style="font-size: 14px; font-weight: 900; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center;">⚽ MÁS GOLES EN UN PARTIDO</div>
             <div style="display: flex; align-items: center; justify-content: space-around; margin: 10px 0;">
                 <div style="text-align: center; flex: 1;">
                     <img src="${getLogo(masGoles.local)}" style="width: 40px; height: 40px; object-fit: contain;">
-                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${masGoles.local}</div>
+                    <div style="font-size: 12px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${masGoles.local}</div>
                 </div>
                 <div style="flex: 1; text-align: center;">
                     <div style="font-size: 24px; font-weight: 900; color: #1e293b;">${masGoles.gL} - ${masGoles.gV}</div>
-                    <div style="font-size: 8px; color: #94a3b8; font-weight: bold;">MARCADOR</div>
+                    <div style="font-size: 10px; color: #94a3b8; font-weight: bold;">MARCADOR</div>
                 </div>
                 <div style="text-align: center; flex: 1;">
                     <img src="${getLogo(masGoles.visita)}" style="width: 40px; height: 40px; object-fit: contain;">
-                    <div style="font-size: 9px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${masGoles.visita}</div>
+                    <div style="font-size: 12px; font-weight: 800; margin-top: 5px; color: #1e293b; text-transform: uppercase;">${masGoles.visita}</div>
                 </div>
             </div>
-            <div style="background: #eff6ff; padding: 5px; border-radius: 8px; text-align: center; font-size: 10px; font-weight: 900; color: #1d4ed8;">
+            <div style="background: #eff6ff; padding: 5px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 900; color: #1d4ed8;">
                 TOTAL: ${masGoles.total} GOLES
             </div>
         </div>`;
