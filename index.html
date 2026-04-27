@@ -417,7 +417,7 @@
     <button class="nav-link" onclick="navegar('sec-goleadores', this)">🎯 GOLEADORES</button>
     <button class="nav-link" onclick="navegar('sec-disciplina', this)">🟨 DISCIPLINA</button>
     <button class="nav-link" onclick="navegar('sec-buscador', this)">🔍JUGADORES</button>
-    <button onclick="navegar('sec-comparador'); prepararComparador();" class="nav-link">⚖️ COMPARAR</button>
+    <button onclick="navegar('sec-comparador', this); prepararComparador();" class="nav-link">⚖️ COMPARAR</button>
     <button class="nav-link" onclick="navegar('sec-mi-calendario', this)">🔍 MI CALENDARIO</button>
     <button class="nav-link" onclick="navegar('sec-ajustes', this)">⚙️ AJUSTES</button>
 </nav>
@@ -582,9 +582,11 @@
     <label style="font-size: 11px; font-weight: bold;">LOGO DEL EQUIPO:</label>
     <input type="file" id="eq-logo-file" accept="image/*" class="input-std" onchange="procesarLogoEquipo(event)">
     
-    <div style="display: flex; gap: 10px;">
-        <button onclick="guardarEquipo()" class="btn-main" style="flex: 2;">GUARDAR EQUIPO</button>
-        <button onclick="cancelarEdicionEquipo()" class="btn-main" style="background: var(--danger); flex: 1; display: none;" id="btn-cancelar-eq">X</button>
+    <img id="previsualizar-logo-equipo" src="" style="display:none; width:60px; margin: 10px auto; border-radius: 5px;">
+
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button onclick="guardarEquipo()" class="btn-main" id="btn-guardar-eq" style="flex: 2;">GUARDAR EQUIPO</button>
+        <button onclick="cancelarEdicionEquipo()" class="btn-main" style="background: var(--danger); flex: 1; display: none;" id="btn-cancelar-eq">CANCELAR</button>
     </div>
 </div>
 
@@ -1474,33 +1476,22 @@ let modoAdmin = false;
 let jornadaSeleccionada =1; 
 
 const persist = () => {
-    // 1. Intentamos guardar en LocalStorage, pero con un "seguro" (try-catch)
-    // para que si falla por falta de espacio, el código NO se detenga.
-    try {
-        localStorage.setItem('LIGA_PRO_FINAL', JSON.stringify(db));
-    } catch (e) {
-        console.warn("⚠️ LocalStorage lleno, los datos solo se guardarán en Firebase.");
-    }
+    console.log("Datos que se intentan subir:", db); // <-- Revisa esto en la consola (F12)
 
-    // 2. La parte más importante: Sincronización con Firebase
     database.ref('liga_datos').set(db)
         .then(() => {
-            console.log("☁️ Sincronizado en la nube");
+            console.log("☁️ Firebase confirmó la recepción");
             
-            // 3. ACTUALIZACIÓN VISUAL INMEDIATA:
-            // Al ejecutarse dentro del .then(), garantizamos que la tabla 
-            // se dibuje solo cuando los datos ya están seguros.
-            if (typeof renderTodo === 'function') {
-                renderTodo(); 
-            } else if (typeof renderTabla === 'function') {
-                renderTabla();
-            }
-
-            if (typeof actualizarBanner === 'function') actualizarBanner();
+            // Forzamos una lectura rápida para confirmar que el cambio pegó
+            database.ref('liga_datos').once('value').then(snapshot => {
+                console.log("Datos reales actuales en la nube:", snapshot.val());
+                
+                if (typeof renderTodo === 'function') renderTodo();
+                alert("✅ ¡Cambios confirmados en la nube y local!");
+            });
         })
         .catch(err => {
-            console.error("❌ Error de Firebase:", err);
-            alert("No se pudo guardar en la nube. Revisa tu conexión.");
+            console.error("❌ Error real de Firebase:", err);
         });
 };
 
@@ -1509,8 +1500,33 @@ function procesarLogoEquipo(event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            fotoBase64Temp = e.target.result; 
-            console.log("Imagen cargada en memoria");
+            const img = new Image();
+            img.src = e.target.result;
+            
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 120px es perfecto para logos de equipos
+                const MAX_WIDTH = 120;
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+
+                // Dibujamos la imagen en el tamaño pequeño
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Guardamos en la variable temporal
+                fotoBase64Temp = canvas.toDataURL('image/jpeg', 0.7);
+                console.log("✅ Logo comprimido y listo para guardar");
+
+                // OPCIONAL: Mostrar una previsualización inmediata en el formulario
+                const preview = document.getElementById('previsualizar-logo-equipo');
+                if (preview) {
+                    preview.src = fotoBase64Temp;
+                    preview.style.display = "block";
+                }
+            };
         };
         reader.readAsDataURL(file);
     }
@@ -1721,9 +1737,14 @@ function guardarEquipo() {
     
     if (!nombre) return alert("Ingresa el nombre del equipo");
 
-    const existe = db.equipos.find(e => e.nombre === nombre);
-    
+    // Validamos el peso de la imagen antes de hacer nada
+    if (fotoBase64Temp && fotoBase64Temp.length > 500000) { 
+        alert("⚠️ La imagen es muy pesada. Se intentará guardar, pero podría haber problemas de sincronización.");
+    }
+
     if (idEditando === "-1") {
+        // --- CASO: NUEVO EQUIPO ---
+        const existe = db.equipos.find(e => e.nombre === nombre);
         if (existe) {
             return alert("⚠️ Error: Ya existe un equipo llamado " + nombre);
         }
@@ -1737,20 +1758,29 @@ function guardarEquipo() {
 
         equipoActual = nombre;
         document.getElementById('tit-equipo').innerText = nombre;
+
     } else {
-        const idx = parseInt(idEditando);
-        if (existe && db.equipos[idx].nombre !== nombre) {
-            return alert("⚠️ Error: No puedes usar ese nombre porque ya pertenece a otro equipo.");
-        }
-        let antiguoNombre = db.equipos[idx].nombre;
-        db.equipos[idx].nombre = nombre;
+        // --- CASO: EDITAR EQUIPO ---
+        const equipoIndex = db.equipos.findIndex(e => String(e.id) === String(idEditando));
+        
+        if (equipoIndex !== -1) {
+            const antiguoNombre = db.equipos[equipoIndex].nombre; // Definimos esto aquí
+            
+            // Verificamos si alguien más ya tiene el nombre nuevo
+            const existeOtro = db.equipos.find(e => e.nombre === nombre && e.id != idEditando);
+            if (existeOtro) {
+                return alert("⚠️ Error: El nombre ya pertenece a otro equipo.");
+            }
 
-        if (fotoBase64Temp) {
-            db.equipos[idx].logo = fotoBase64Temp;
-        }
+            db.equipos[equipoIndex].nombre = nombre;
+            if (fotoBase64Temp) {
+                db.equipos[equipoIndex].logo = fotoBase64Temp;
+            }
 
-        if (antiguoNombre !== nombre) {
-            actualizarVinculosEquipo(antiguoNombre, nombre);
+            // Ahora sí, esta variable existe y se puede usar:
+            if (antiguoNombre !== nombre) {
+                actualizarVinculosEquipo(antiguoNombre, nombre);
+            }
         }
     }
 
@@ -1761,72 +1791,136 @@ function guardarEquipo() {
     cancelarEdicionEquipo(); 
     renderTodo();
 
-    alert("✅ Equipo guardado correctamente. Ya puedes añadir jugadores.");
+    alert("✅ Equipo guardado correctamente.");
 }
+
 function actualizarVinculosEquipo(viejo, nuevo) {
     const v = viejo.trim().toUpperCase();
     const n = nuevo.trim().toUpperCase();
+
+    // 1. Actualizar Jugadores
     db.jugadores.forEach(j => {
-        if (j.equipo.trim().toUpperCase() === v) {
+        if (j.equipo && j.equipo.trim().toUpperCase() === v) {
             j.equipo = n;
         }
     });
 
-    db.calendario.forEach(semana => {
-        semana.partidos.forEach(p => {
-            if (p.l.trim().toUpperCase() === v) p.l = n;
-            if (p.v.trim().toUpperCase() === v) p.v = n;
-          
-            if (p.inc && Array.isArray(p.inc)) {
-                p.inc.forEach(incidencia => {
-                    if (incidencia.equipo && incidencia.equipo.trim().toUpperCase() === v) incidencia.equipo = n;
-                    if (incidencia.e && incidencia.e.trim().toUpperCase() === v) incidencia.e = n;
+    // 2. Actualizar Calendario e Incidencias
+    if (db.calendario) {
+        db.calendario.forEach(semana => {
+            if (semana.partidos) {
+                semana.partidos.forEach(p => {
+                    // Cambiar nombres de Local y Visitante
+                    if (p.l && p.l.trim().toUpperCase() === v) p.l = n;
+                    if (p.v && p.v.trim().toUpperCase() === v) p.v = n;
+                  
+                    // Cambiar nombres dentro de las incidencias (Goles, Rojas, etc.)
+                    if (p.inc && Array.isArray(p.inc)) {
+                        p.inc.forEach(incidencia => {
+                            // Algunos usan 'equipo' y otros solo 'e' por espacio, cubrimos ambos
+                            if (incidencia.equipo && incidencia.equipo.trim().toUpperCase() === v) {
+                                incidencia.equipo = n;
+                            }
+                            if (incidencia.e && incidencia.e.trim().toUpperCase() === v) {
+                                incidencia.e = n;
+                            }
+                        });
+                    }
                 });
             }
         });
-    });
+    }
 
-    if (typeof equipoActual !== 'undefined' && equipoActual.trim().toUpperCase() === v) {
+    // 3. Actualizar Referencia Global de Sesión
+    if (typeof equipoActual !== 'undefined' && equipoActual && equipoActual.trim().toUpperCase() === v) {
         equipoActual = n;
         const tit = document.getElementById('tit-equipo');
         if (tit) tit.innerText = n;
     }
 
+    // 4. Guardar cambios en Firebase
     persist(); 
     console.log(`✅ Integridad total: ${v} ahora es ${n}`);
 }
 
-function borrarEquipo(index) {
+function borrarEquipo(idRecibido) {
     if (typeof rolActual !== 'undefined' && rolActual !== "admin") {
         return alert("⚠️ Solo el Administrador puede borrar equipos.");
     }
 
-    const equipo = db.equipos[index];
-    if (!equipo) return;
+    // 1. Buscamos el equipo por su ID único
+    const equipoIndex = db.equipos.findIndex(e => String(e.id) === String(idRecibido));
+    const equipo = db.equipos[equipoIndex];
 
-    const tieneJugadores = db.jugadores.some(j => j.equipo === equipo.nombre);
+    if (equipoIndex === -1) return;
+
+    // 2. Validación de Integridad: ¿Tiene jugadores?
+    const tieneJugadores = db.jugadores.some(j => j.equipo && j.equipo.trim().toUpperCase() === equipo.nombre.trim().toUpperCase());
     if (tieneJugadores) {
-        alert(`No puedes borrar "${equipo.nombre}" porque tiene jugadores asignados. \n\nElimina primero a los jugadores de la plantilla.`);
-        return;
+        return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque tiene jugadores asignados. \nElimina primero a los jugadores de la plantilla.`);
     }
 
+    // 3. Validación de Integridad: ¿Tiene partidos en el calendario?
+    const tienePartidos = db.calendario.some(semana => 
+        semana.partidos.some(p => p.l === equipo.nombre || p.v === equipo.nombre)
+    );
+    if (tienePartidos) {
+        return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque ya tiene partidos registrados en el calendario.`);
+    }
+
+    // 4. Confirmación y Borrado
     if (confirm(`¿Estás seguro de que deseas eliminar permanentemente al equipo: ${equipo.nombre}?`)) {
+        db.equipos.splice(equipoIndex, 1); // Borramos por índice encontrado
         
-        db.equipos.splice(index, 1);
-        persist();
-        renderEquipos();
-        if (typeof renderTodo === 'function') renderTodo(); 
-        alert("Equipo eliminado con éxito.");
+        persist(); // Guardamos en Firebase
+        renderTodo(); // Recargamos toda la interfaz
+        alert("✅ Equipo eliminado con éxito.");
     }
 }
 
-function editarEq(i) {
+function editarEq(idRecibido) {
     if (rolActual !== 'admin') {
-        return alert("⛔ Acceso denegado. Solo administradores pueden modificar equipos.");
+        return alert("⛔ Acceso denegado.");
     }
-    document.getElementById('eq-nombre').value = db.equipos[i].nombre;
-    document.getElementById('edit-eq-id').value = i;
+
+    // 1. Buscamos el equipo por su ID único
+    const equipo = db.equipos.find(e => String(e.id) === String(idRecibido));
+
+    if (!equipo) {
+        console.error("No se encontró el equipo con ID:", idRecibido);
+        return;
+    }
+
+    // 2. Cargamos los datos en el formulario
+    document.getElementById('eq-nombre').value = equipo.nombre;
+    document.getElementById('edit-eq-id').value = equipo.id; 
+
+    // 3. Manejo del Logo y la Previsualización
+    const preview = document.getElementById('previsualizar-logo-equipo');
+    if (preview) {
+        if (equipo.logo) {
+            preview.src = equipo.logo;
+            preview.style.display = "block";
+        } else {
+            preview.src = ""; 
+            preview.style.display = "none";
+        }
+    }
+
+    // 4. CAMBIOS VISUALES (Título y Botones)
+    const tituloForm = document.getElementById('titulo-form-equipo');
+    if (tituloForm) tituloForm.innerText = "EDITANDO EQUIPO";
+
+    const btnMain = document.querySelector('#form-registro-equipo .btn-main'); 
+    if (btnMain) btnMain.innerText = "ACTUALIZAR DATOS";
+
+    // Mostramos el botón de cancelar (el que tiene la X o dice CANCELAR)
+    const btnCancel = document.getElementById('btn-cancelar-eq');
+    if (btnCancel) btnCancel.style.display = "block";
+
+    // 5. Subida suave al formulario
     window.scrollTo({top: 0, behavior: 'smooth'});
+    console.log("Editando equipo:", equipo.nombre);
 }
 
 function verPlantilla(referencia) {
@@ -2776,33 +2870,41 @@ if (partido.puntoExtra) {
 }
 
 function renderTodo() {
-    // 🛡️ ESCUDO 1: Si la base de datos o los equipos no existen, abortamos
+    // 🛡️ ESCUDO: Validación inicial
     if (!db || !db.equipos) return; 
 
-    // 🛡️ ESCUDO 2: Validar que jugadores exista antes de ordenar
-    // Si no existe, lo inicializamos como array vacío para que no rompa el código
+    // Inicialización segura
     if (!db.jugadores) db.jugadores = [];
+    if (!db.calendario) db.calendario = [];
 
-    // Ordenamos copias para no afectar el array original si no es necesario
-    const lista = [...db.equipos].sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
+    // --- ORDENAMIENTO ---
+    // NO ordenes directamente db.equipos si necesitas mantener el orden de inserción
+    // Mejor usa copias locales para las vistas que requieran orden específico.
     
-    // Ordenar alfabéticamente (con seguros por si el nombre viene vacío)
+    // Si quieres mantener el orden alfabético en TODA la app, esta bien, 
+    // pero si usas IDs para editar, ten cuidado al ordenar el array original.
     db.equipos.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
     db.jugadores.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
 
-    // Ejecución de renders (solo si las funciones existen)
-    if (typeof renderResumenInicio === 'function') renderResumenInicio();
-    if (typeof renderNoticias === 'function') renderNoticias();
-    if (typeof renderEquipos === 'function') renderEquipos();
-    if (typeof renderCalendario === 'function') renderCalendario();
-    if (typeof renderPlayoffs === 'function') renderPlayoffs();
-    if (typeof renderGoleadores === 'function') renderGoleadores();
-    if (typeof renderDisciplina === 'function') renderDisciplina();
-    
-    // Renderizamos la tabla principal
-    if (typeof renderTabla === 'function') renderTabla(); 
+    // --- EJECUCIÓN DE RENDERS ---
+    const funcionesRender = [
+        renderResumenInicio,
+        renderNoticias,
+        renderEquipos,
+        renderCalendario,
+        renderPlayoffs,
+        renderGoleadores,
+        renderDisciplina,
+        renderTabla
+    ];
+
+    funcionesRender.forEach(fn => {
+        if (typeof fn === 'function') fn();
+    });
 
     if (typeof aplicarRestricciones === 'function') aplicarRestricciones();
+    
+    console.log("✅ Interfaz actualizada correctamente.");
 }
 
 function renderPlayoffs() {
@@ -4299,16 +4401,18 @@ function actualizarBanner() {
 function renderEquipos() {
     const grid = document.getElementById('grid-equipos');
     if (!grid) return;
-    grid.innerHTML = ""; // Limpieza del contenedor
+    grid.innerHTML = ""; 
 
-    db.equipos.forEach((eq, index) => {
+    db.equipos.forEach((eq) => { // Quitamos el index de aquí
         if (!eq.nombre) return; 
 
         const card = document.createElement('div');
         card.className = "equipo-card";
         
+        // Usamos el nombre para la plantilla
         card.onclick = () => verPlantilla(eq.nombre);
         
+        // Si hay logo lo muestra, si no, el emoji
         const logoHTML = eq.logo 
             ? `<img src="${eq.logo}" class="img-logo" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">`
             : `<div style="width:60px; height:60px; background:#e2e8f0; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:30px; margin: 0 auto 10px;">🛡️</div>`;
@@ -4318,8 +4422,8 @@ function renderEquipos() {
             <div style="font-weight:bold">${eq.nombre}</div>
             ${(rolActual === 'admin' || rolActual === 'editor') ? `
                 <div class="admin-only" style="margin-top:10px; display:flex; gap:5px; justify-content:center;">
-                    <button class="btn-del" style="padding:4px 8px;" onclick="event.stopPropagation(); prepararEdicionEquipo(${index})">✏️</button>
-                    <button class="btn-del" style="padding:4px 8px;" onclick="event.stopPropagation(); borrarEquipo(${index})">🗑️</button>
+                    <button class="btn-del" style="padding:4px 8px;" onclick="event.stopPropagation(); prepararEdicionEquipo('${eq.id}')">✏️</button>
+                    <button class="btn-del" style="padding:4px 8px;" onclick="event.stopPropagation(); borrarEquipo('${eq.id}')">🗑️</button>
                 </div>` : ''}
         `;
         grid.appendChild(card);
@@ -4366,8 +4470,9 @@ function procesarFoto(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Feedback visual para el usuario
     console.log("Iniciando subida a Storage...");
-
+    
     const reader = new FileReader();
     reader.onload = function(e) {
         const img = new Image();
@@ -4375,7 +4480,7 @@ function procesarFoto(event) {
         
         img.onload = function() {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 300; // Subimos un poco a 300px (ya no pesa en la DB)
+            const MAX_WIDTH = 300; 
             const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scaleSize;
@@ -4383,39 +4488,48 @@ function procesarFoto(event) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
+            // Convertimos a Blob para subir un archivo real, no texto
             canvas.toBlob((blob) => {
                 const nombreArchivo = `jugadores/foto_${Date.now()}.jpg`;
                 const storageRef = firebase.storage().ref().child(nombreArchivo);
 
+                // Subida al Storage
                 storageRef.put(blob).then(snapshot => {
                     return snapshot.ref.getDownloadURL();
                 }).then(urlDescarga => {
-                    fotoBase64Temp = urlDescarga; 
+                    fotoBase64Temp = urlDescarga; // Guardamos el LINK
 
                     const idEditando = document.getElementById('edit-pj-id').value;
-                    if (idEditando !== "-1") {
+                    
+                    if (idEditando && idEditando !== "-1") {
+                        // CASO: EDITANDO JUGADOR EXISTENTE
                         const index = db.jugadores.findIndex(j => String(j.id) === String(idEditando));
                         if (index !== -1) {
                             db.jugadores[index].foto = urlDescarga;
-                            persist();
+                            persist(); // Guardamos el cambio en la Database
                             
-                            const equipoActual = document.getElementById('tit-equipo').innerText.trim();
-                            verPlantilla(equipoActual);
-                            alert("✅ Foto subida a la nube y actualizada");
+                            // Refrescamos la vista
+                            const tituloEquipo = document.getElementById('tit-equipo').innerText.trim();
+                            if (typeof verPlantilla === 'function') verPlantilla(tituloEquipo);
+                            
+                            alert("✅ Foto actualizada en la nube");
                         }
                     } else {
+                        // CASO: NUEVO JUGADOR (Previsualización)
                         const preview = document.getElementById('previsualizar-foto');
                         if (preview) {
                             preview.src = urlDescarga;
                             preview.style.display = "block";
+                            preview.style.width = "100px"; // Aseguramos tamaño en la vista
                         }
+                        console.log("Link listo para el nuevo jugador");
                     }
                 }).catch(error => {
                     console.error("Error al subir:", error);
-                    alert("Error al subir la foto. Revisa las reglas (Rules) de Storage.");
+                    alert("Error al subir la foto. Asegúrate de que las 'Rules' de Storage permitan escritura.");
                 });
 
-            }, 'image/jpeg', 0.7);
+            }, 'image/jpeg', 0.7); // Calidad 0.7 es perfecta para web
         };
     };
     reader.readAsDataURL(file);
@@ -4444,31 +4558,68 @@ function aplicarPermisosVisuales() {
     });
 }
 
-function prepararEdicionEquipo(index) {
-    const eq = db.equipos[index];
-    if (!eq) return;
-
-    document.getElementById('eq-nombre').value = eq.nombre;
-    document.getElementById('edit-eq-id').value = index;
+function prepararEdicionEquipo(idRecibido) {
+    // 1. Buscamos el equipo comparando IDs como String (evita errores de tipo)
+    const eq = db.equipos.find(e => String(e.id) === String(idRecibido));
     
+    if (!eq) {
+        console.error("No se encontró el equipo con ID:", idRecibido);
+        return;
+    }
+
+    // 2. Llenamos los campos del formulario con los datos del equipo
+    document.getElementById('eq-nombre').value = eq.nombre;
+    
+    // Guardamos el ID en el input oculto para que guardarEquipo() sepa cuál editar
+    document.getElementById('edit-eq-id').value = eq.id; 
+    
+    // 3. Mostramos la previsualización del logo actual
+    const preview = document.getElementById('previsualizar-logo-equipo');
+    if (preview) {
+        if (eq.logo && eq.logo !== "") {
+            preview.src = eq.logo;
+            preview.style.display = "block";
+        } else {
+            preview.style.display = "none";
+        }
+    }
+
+    // 4. Cambiamos el texto del botón principal
     const btn = document.querySelector('#form-registro-equipo .btn-main');
     if (btn) btn.innerText = "ACTUALIZAR EQUIPO";
 
+    // 5. Subimos suavemente al formulario
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function cancelarEdicionEquipo() {
+    // 1. Limpiar campos
     document.getElementById('eq-nombre').value = "";
-    document.getElementById('edit-eq-id').value = "-1";
+    document.getElementById('edit-eq-id').value = "-1"; 
     document.getElementById('eq-logo-file').value = "";
     
+    // 2. Limpiar previsualización
+    const preview = document.getElementById('previsualizar-logo-equipo');
+    if (preview) {
+        preview.src = "";
+        preview.style.display = "none";
+    }
+
+    // 3. Restaurar el texto del botón principal
     const btn = document.querySelector('#form-registro-equipo .btn-main');
     if (btn) btn.innerText = "GUARDAR EQUIPO";
     
+    // 4. Limpiar la variable global de la foto
+    fotoBase64Temp = "";
+
+    // === NUEVOS AJUSTES VISUALES ===
+    // 5. Restaurar el título original
+    const tituloForm = document.getElementById('titulo-form-equipo');
+    if (tituloForm) tituloForm.innerText = "Registrar Nuevo Equipo";
+
+    // 6. Ocultar el botón de cancelar (la X)
     const btnCancel = document.getElementById('btn-cancelar-eq');
     if (btnCancel) btnCancel.style.display = "none";
-
-    fotoBase64Temp = "";
 }
 
 function logout() {
