@@ -395,11 +395,45 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+@media print {
+    /* Fuerza a los navegadores a imprimir fondos y colores exactos */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Asegura que el texto blanco no se pierda */
+    .jornada-header, .marcador-box {
+        color: white !important;
+    }
+}
+
+@media print {
+    #diseno-goleadores-pro {
+        display: flex !important;
+        flex-direction: row !important; /* Mantiene las dos columnas lado a lado */
+        background: #f1f5f9 !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+    
+    #lider-card {
+        flex: 0 0 40% !important; /* La tarjeta ocupa el 40% del ancho */
+    }
+    
+    #lista-goleadores {
+        flex: 0 0 55% !important;
+    }
+
+    /* Evita que los jugadores se corten entre páginas */
+    .fila-goleador {
+        break-inside: avoid;
+    }
+}
 </style>
 
 </head>
 <body>
-<div id="auth-panel" style="background:#1e293b; color:white; padding:10px; display:flex; justify-content:center; gap:15px; align-items:center; font-size:12px;">
+<div id="auth-panel" class="no-print" style="background:#1e293b; color:white; padding:10px; display:flex; justify-content:center; gap:15px; align-items:center; font-size:12px;">
     <span id="status-role">MODO: 👤 USUARIO</span>
     <div id="auth-actions">
         <button onclick="loginAdmin()" id="btn-login" style="background:var(--accent); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;">Acceso Admin</button>
@@ -663,30 +697,30 @@
     </div>
 </div>
 <div id="sec-goleadores" class="seccion">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 5px; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-        <h2 style="margin:0; border:none;">GOLEO INDIVIDUAL</h2>
+    <div class="no-print" style="display: flex; justify-content: flex-end; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 5px; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
         
         <div style="display: flex; gap: 8px;">
             <button onclick="exportarTabla('goleo-para-captura', 'Tabla_Goleo')" class="btn-main no-print" style="width: auto; padding: 8px 15px; background: #1e293b; font-size: 12px;">
-                📸 JPG
-            </button>
-            <button onclick="prepararImpresionGoleadores()" class="btn-main no-print" style="width:auto; padding: 8px 15px; background:#f59e0b; font-size: 12px;">
-                🖨️ PDF
+                📸 IMPRIMIR
             </button>
         </div>
+
     </div>
 
-    <div id="goleo-para-captura" style="background: white; padding: 0; border-radius: 15px;">
+    <div id="goleo-para-captura" style="background: #f1f5f9; padding: 20px; border-radius: 15px;">
         
-        <div style="text-align: center; margin-bottom: 10px;">
-            <div class="nombre-torneo-txt" style="margin: 0; color: #1e293b; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
-                </div>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div id="titulo-torneo-goleo" style="margin: 0; color: #1e293b; font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+            </div>
+            <div id="subtitulo-temporada-goleo" style="color: #64748b; font-size: 14px; font-weight: bold; margin-top: 5px;">
+            </div>
         </div>
 
-        <div id="diseno-goleadores-pro" style="margin-top: 0;"></div>
+        <div id="diseno-goleadores-pro" style="margin-top: 0;">
+            </div>
     </div>
 </div>
-      
+
 <div id="sec-disciplina" class="seccion">
     <h2>DISCIPLINA</h2>
     
@@ -1377,7 +1411,7 @@ nav::-webkit-scrollbar { display: none; }
 </style>
 
 <div id="sec-mi-calendario" class="seccion">
-        <h2 style="text-align: center;">🔍 Partidos de la Temporada</h2>
+        <h2 id="titulo-mi-calendario" style="text-align: center;">🔍 Partidos de la Temporada</h2>
         
         <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 10px; background: #f1f5f9; padding: 15px; border-radius: 12px;">
             <input type="text" id="busqueda-usuario" 
@@ -1395,11 +1429,11 @@ nav::-webkit-scrollbar { display: none; }
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.7"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.7"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.7"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.8"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.8"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.8"></script>
 
-<script src="app.js?v=1.6"></script>
+<script src="app.js?v=1.8"></script>
 
 <script>
   // Configuración de Firebase
@@ -1476,22 +1510,18 @@ let modoAdmin = false;
 let jornadaSeleccionada =1; 
 
 const persist = () => {
-    console.log("Datos que se intentan subir:", db); // <-- Revisa esto en la consola (F12)
+    console.log("Subiendo datos...", db);
 
-    database.ref('liga_datos').set(db)
+    // Agregamos 'return' para que podamos esperar a que termine fuera de aquí
+    return database.ref('liga_datos').set(db) 
         .then(() => {
             console.log("☁️ Firebase confirmó la recepción");
-            
-            // Forzamos una lectura rápida para confirmar que el cambio pegó
-            database.ref('liga_datos').once('value').then(snapshot => {
-                console.log("Datos reales actuales en la nube:", snapshot.val());
-                
-                if (typeof renderTodo === 'function') renderTodo();
-                alert("✅ ¡Cambios confirmados en la nube y local!");
-            });
+            if (typeof renderTodo === 'function') renderTodo();
+            // Quitamos el alert de aquí para que no sea molesto en cada guardado
         })
         .catch(err => {
-            console.error("❌ Error real de Firebase:", err);
+            console.error("❌ Error de Firebase:", err);
+            throw err; // Lanzamos el error para que guardarEquipo lo detecte
         });
 };
 
@@ -1681,9 +1711,9 @@ function importarDatos(input) {
         if(btnNav) btnNav.classList.add('active');
     }
 
-    switch(idSeccion) {
+switch(idSeccion) {
         case 'sec-inicio':
-	    equipoActual = null;
+            equipoActual = null;
             actualizarBanner(); 
             renderResumenInicio(); 
             renderTodo(); 
@@ -1695,8 +1725,13 @@ function importarDatos(input) {
             if(inputTemp) inputTemp.value = db.nombreTemporada;
             break;
         case 'sec-equipos':
+            // Limpieza de buscador de equipos si existe
+            const busqEq = document.getElementById('input-busqueda-equipo');
+            if(busqEq) busqEq.value = "";
+            
+            if (typeof limpiarFormularioJugador === 'function') limpiarFormularioJugador();
+
             renderEquipos(); 
-            // Solo abre la plantilla si realmente hay un equipoActual
             if (equipoActual) {
                 verPlantilla(equipoActual);
             } else {
@@ -1708,9 +1743,24 @@ function importarDatos(input) {
             renderCalendario();
             break;
         case 'sec-buscador':
-            buscarJugador();
+            // 1. Limpiamos el campo de texto usando su ID real
+            const busqPj = document.getElementById('input-busqueda'); 
+            if(busqPj) busqPj.value = ""; 
+
+            // 2. Restauramos el mensaje inicial en el contenedor de resultados
+            const contenedorResultados = document.getElementById('resultados-busqueda');
+            if(contenedorResultados) {
+                contenedorResultados.innerHTML = `<p style="text-align:center; color:#64748b;">Escribe un nombre para comenzar la búsqueda...</p>`;
+            }
+            buscarJugador(); 
             break;
         case 'sec-mi-calendario':
+            // 1. Limpiamos el input de búsqueda del equipo
+            const busqMiCal = document.getElementById('busqueda-usuario');
+            if(busqMiCal) busqMiCal.value = "";
+            
+            // 2. Ejecutamos el render para que muestre el calendario completo o vacío
+            // (Dependiendo de cómo esté programada tu función renderMiCalendario)
             renderMiCalendario();
             break;
         case 'sec-goleadores':
@@ -1727,76 +1777,103 @@ function importarDatos(input) {
     aplicarRestricciones(); 
 }
 
-function guardarEquipo() {
+async function guardarEquipo() { // 1. Agregamos async
     if (rolActual !== 'admin') {
         return alert("⛔ Permiso insuficiente.");
     }
 
     const nombre = document.getElementById('eq-nombre').value.trim().toUpperCase();
     const idEditando = document.getElementById('edit-eq-id').value;
+    const btn = document.getElementById('btn-guardar-eq'); // Referencia al botón
     
     if (!nombre) return alert("Ingresa el nombre del equipo");
 
-    // Validamos el peso de la imagen antes de hacer nada
     if (fotoBase64Temp && fotoBase64Temp.length > 500000) { 
-        alert("⚠️ La imagen es muy pesada. Se intentará guardar, pero podría haber problemas de sincronización.");
+        alert("⚠️ La imagen es muy pesada. Podría tardar más en sincronizar.");
     }
 
-    if (idEditando === "-1") {
-        // --- CASO: NUEVO EQUIPO ---
-        const existe = db.equipos.find(e => e.nombre === nombre);
-        if (existe) {
-            return alert("⚠️ Error: Ya existe un equipo llamado " + nombre);
-        }
+    // --- BLOQUEO VISUAL ---
+    // Mientras esto esté así, NO cierres la página
+    const textoOriginal = btn.innerText;
+    btn.innerText = "⏳ SINCRONIZANDO...";
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
 
-        db.equipos.push({
-            id: Date.now(),
-            nombre: nombre,
-            logo: fotoBase64Temp || "", 
-            pj:0, g:0, e:0, p:0, gf:0, gc:0, pts:0 
-        });
+    try {
+        if (idEditando === "-1") {
+            // --- CASO: NUEVO EQUIPO ---
+            const existe = db.equipos.find(e => e.nombre === nombre);
+            if (existe) {
+                restaurarBoton(btn, textoOriginal);
+                return alert("⚠️ Error: Ya existe un equipo llamado " + nombre);
+            }
 
-        equipoActual = nombre;
-        document.getElementById('tit-equipo').innerText = nombre;
+            db.equipos.push({
+                id: Date.now(),
+                nombre: nombre,
+                logo: fotoBase64Temp || "", 
+                pj:0, g:0, e:0, p:0, gf:0, gc:0, pts:0 
+            });
 
-    } else {
-        // --- CASO: EDITAR EQUIPO ---
-        const equipoIndex = db.equipos.findIndex(e => String(e.id) === String(idEditando));
-        
-        if (equipoIndex !== -1) {
-            const antiguoNombre = db.equipos[equipoIndex].nombre; // Definimos esto aquí
+        } else {
+            // --- CASO: EDITAR EQUIPO ---
+            const equipoIndex = db.equipos.findIndex(e => String(e.id) === String(idEditando));
             
-            // Verificamos si alguien más ya tiene el nombre nuevo
-            const existeOtro = db.equipos.find(e => e.nombre === nombre && e.id != idEditando);
-            if (existeOtro) {
-                return alert("⚠️ Error: El nombre ya pertenece a otro equipo.");
-            }
+            if (equipoIndex !== -1) {
+                const antiguoNombre = db.equipos[equipoIndex].nombre;
+                const existeOtro = db.equipos.find(e => e.nombre === nombre && e.id != idEditando);
+                
+                if (existeOtro) {
+                    restaurarBoton(btn, textoOriginal);
+                    return alert("⚠️ Error: El nombre ya pertenece a otro equipo.");
+                }
 
-            db.equipos[equipoIndex].nombre = nombre;
-            if (fotoBase64Temp) {
-                db.equipos[equipoIndex].logo = fotoBase64Temp;
-            }
+                db.equipos[equipoIndex].nombre = nombre;
+                if (fotoBase64Temp) db.equipos[equipoIndex].logo = fotoBase64Temp;
 
-            // Ahora sí, esta variable existe y se puede usar:
-            if (antiguoNombre !== nombre) {
-                actualizarVinculosEquipo(antiguoNombre, nombre);
+                if (antiguoNombre !== nombre) {
+                    actualizarVinculosEquipo(antiguoNombre, nombre);
+                }
             }
         }
+
+        // --- EL MOMENTO CLAVE ---
+        // Esperamos a que la promesa de persist() se cumpla en Firebase
+        await persist(); 
+
+        // --- ÉXITO TOTAL ---
+        btn.innerText = "✅ ¡GUARDADO!";
+        btn.style.background = "#28a745"; // Verde éxito
+
+        setTimeout(() => {
+            fotoBase64Temp = ""; 
+            document.getElementById('eq-logo-file').value = ""; 
+            cancelarEdicionEquipo(); 
+            renderTodo();
+            restaurarBoton(btn, textoOriginal);
+            alert("✅ ¡Sincronizado con éxito! Ya puedes cerrar.");
+        }, 1000);
+
+    } catch (error) {
+        console.error(error);
+        alert("❌ Error de conexión. Los datos no llegaron a la nube.");
+        restaurarBoton(btn, textoOriginal);
     }
-
-    persist(); 
-    fotoBase64Temp = ""; 
-    document.getElementById('eq-logo-file').value = ""; 
-    
-    cancelarEdicionEquipo(); 
-    renderTodo();
-
-    alert("✅ Equipo guardado correctamente.");
 }
 
-function actualizarVinculosEquipo(viejo, nuevo) {
+// Función auxiliar para resetear el botón
+function restaurarBoton(btn, texto) {
+    btn.innerText = texto;
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.style.background = ""; // Vuelve a su color original
+}
+
+async function actualizarVinculosEquipo(viejo, nuevo) { // 1. Agregamos async
     const v = viejo.trim().toUpperCase();
     const n = nuevo.trim().toUpperCase();
+
+    if (v === n) return; // Si el nombre es el mismo, no perdemos tiempo
 
     // 1. Actualizar Jugadores
     db.jugadores.forEach(j => {
@@ -1817,7 +1894,6 @@ function actualizarVinculosEquipo(viejo, nuevo) {
                     // Cambiar nombres dentro de las incidencias (Goles, Rojas, etc.)
                     if (p.inc && Array.isArray(p.inc)) {
                         p.inc.forEach(incidencia => {
-                            // Algunos usan 'equipo' y otros solo 'e' por espacio, cubrimos ambos
                             if (incidencia.equipo && incidencia.equipo.trim().toUpperCase() === v) {
                                 incidencia.equipo = n;
                             }
@@ -1838,43 +1914,66 @@ function actualizarVinculosEquipo(viejo, nuevo) {
         if (tit) tit.innerText = n;
     }
 
-    // 4. Guardar cambios en Firebase
-    persist(); 
-    console.log(`✅ Integridad total: ${v} ahora es ${n}`);
+    // 4. PERSISTENCIA CON ESPERA
+    try {
+        // Usamos await para asegurar que toda la "cascada" de cambios se guarde
+        await persist(); 
+        console.log(`✅ Integridad total: ${v} ahora es ${n}`);
+    } catch (error) {
+        console.error("❌ Falló la actualización de vínculos en la nube:", error);
+        alert("⚠️ Hubo un error al renombrar los vínculos. Verifica la conexión.");
+    }
 }
 
-function borrarEquipo(idRecibido) {
+async function borrarEquipo(idRecibido) { // 1. Agregamos async
     if (typeof rolActual !== 'undefined' && rolActual !== "admin") {
         return alert("⚠️ Solo el Administrador puede borrar equipos.");
     }
 
-    // 1. Buscamos el equipo por su ID único
     const equipoIndex = db.equipos.findIndex(e => String(e.id) === String(idRecibido));
     const equipo = db.equipos[equipoIndex];
 
     if (equipoIndex === -1) return;
 
-    // 2. Validación de Integridad: ¿Tiene jugadores?
-    const tieneJugadores = db.jugadores.some(j => j.equipo && j.equipo.trim().toUpperCase() === equipo.nombre.trim().toUpperCase());
+    // 2. Validación: ¿Tiene jugadores?
+    const tieneJugadores = db.jugadores.some(j => 
+        j.equipo && j.equipo.trim().toUpperCase() === equipo.nombre.trim().toUpperCase()
+    );
     if (tieneJugadores) {
-        return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque tiene jugadores asignados. \nElimina primero a los jugadores de la plantilla.`);
+        return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque tiene jugadores asignados.`);
     }
 
-    // 3. Validación de Integridad: ¿Tiene partidos en el calendario?
+    // 3. Validación: ¿Tiene partidos?
     const tienePartidos = db.calendario.some(semana => 
         semana.partidos.some(p => p.l === equipo.nombre || p.v === equipo.nombre)
     );
     if (tienePartidos) {
-        return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque ya tiene partidos registrados en el calendario.`);
+        return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque ya aparece en el calendario.`);
     }
 
-    // 4. Confirmación y Borrado
+    // 4. Confirmación y Borrado Asíncrono
     if (confirm(`¿Estás seguro de que deseas eliminar permanentemente al equipo: ${equipo.nombre}?`)) {
-        db.equipos.splice(equipoIndex, 1); // Borramos por índice encontrado
-        
-        persist(); // Guardamos en Firebase
-        renderTodo(); // Recargamos toda la interfaz
-        alert("✅ Equipo eliminado con éxito.");
+        try {
+            db.equipos.splice(equipoIndex, 1); 
+            
+            // Esperamos a que la nube confirme el borrado
+            await persist(); 
+            
+            alert("✅ Equipo eliminado con éxito.");
+            
+            if (typeof renderTodo === 'function') renderTodo();
+            
+            // Si el formulario de edición estaba abierto con este equipo, lo limpiamos
+            if (document.getElementById('edit-eq-id').value === String(idRecibido)) {
+                cancelarEdicionEquipo();
+            }
+
+        } catch (error) {
+            console.error("Error al borrar equipo:", error);
+            alert("❌ No se pudo eliminar el equipo en la nube. Revisa tu conexión.");
+            // Opcional: podrías recargar los datos para revertir el splice local si falló
+            if (typeof initApp === 'function') initApp(); 
+        }
     }
 }
 
@@ -1988,51 +2087,103 @@ function verPlantilla(referencia) {
     document.getElementById('panel-plantilla').scrollIntoView({ behavior: 'smooth' });
 }
 
-function guardarJugador() {
+async function guardarJugador() { // 1. Agregamos async
     if (!modoAdmin) return alert("Acción bloqueada: Permisos requeridos.");
 
     const nombre = document.getElementById('pj-nombre').value.trim();
     const curp = document.getElementById('pj-curp').value.trim().toUpperCase();
     const idEditando = document.getElementById('edit-pj-id').value;
-    const nombreEquipoDestino = (equipoActual || "").trim().toUpperCase(); 
+    const nombreEquipoDestino = (equipoActual || "").trim().toUpperCase();
+    
+    // Referencia al botón para el feedback visual
+    const btn = document.querySelector('#form-registro-jugador .btn-main'); 
+
     if (!nombreEquipoDestino) {
-        return alert("❌ ERROR: No hay un equipo seleccionado. \nPor favor, selecciona un equipo de la lista o crea uno antes de añadir jugadores.");
+        return alert("❌ ERROR: No hay un equipo seleccionado.");
     }
     if (!nombre || !curp) return alert("Por favor, ingresa Nombre y CURP.");
 
+    // Validación de duplicados
     const duplicado = db.jugadores.find(j => j.curp === curp && String(j.id) !== String(idEditando));
     if (duplicado) return alert(`¡ERROR! El CURP ${curp} ya existe en el equipo: ${duplicado.equipo}`);
-    if (idEditando === "-1") {
-        db.jugadores.push({ 
-            id: Date.now(), 
-            nombre: nombre, 
-            curp: curp, 
-            equipo: nombreEquipoDestino,
-            pj: 0, goles: 0, ama: 0, roja: 0, 
-            foto: fotoBase64Temp || "",
-	    fechaRegistro: new Date().toLocaleDateString() 
-        });
-    } else {
-        const j = db.jugadores.find(x => String(x.id) === String(idEditando));
-        if (j) {
-            j.nombre = nombre; 
-            j.curp = curp;
-            if (fotoBase64Temp) j.foto = fotoBase64Temp;
+
+    // --- INICIO DE SINCRONIZACIÓN (Bloqueo de UI) ---
+    const textoOriginal = btn ? btn.innerText : "GUARDAR JUGADOR";
+    if (btn) {
+        btn.innerText = "⏳ REGISTRANDO EN NUBE...";
+        btn.disabled = true;
+        btn.style.opacity = "0.7";
+    }
+
+    try {
+        if (idEditando === "-1") {
+            // --- NUEVO JUGADOR ---
+            db.jugadores.push({ 
+                id: Date.now(), 
+                nombre: nombre, 
+                curp: curp, 
+                equipo: nombreEquipoDestino,
+                pj: 0, goles: 0, ama: 0, roja: 0, 
+                foto: fotoBase64Temp || "",
+                fechaRegistro: new Date().toLocaleDateString() 
+            });
+        } else {
+            // --- EDITAR JUGADOR ---
+            const j = db.jugadores.find(x => String(x.id) === String(idEditando));
+            if (j) {
+                j.nombre = nombre; 
+                j.curp = curp;
+                if (fotoBase64Temp) j.foto = fotoBase64Temp;
+            }
+        }
+
+        db.jugadores.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+        // 2. ESPERAMOS a que Firebase confirme la recepción
+        await persist(); 
+
+        // --- ÉXITO ---
+        if (btn) {
+            btn.innerText = "✅ REGISTRADO";
+            btn.style.background = "#28a745";
+        }
+
+        setTimeout(() => {
+            fotoBase64Temp = "";
+            const inputFoto = document.getElementById('pj-foto-file') || document.getElementById('foto-archivo');
+            if(inputFoto) inputFoto.value = "";
+            
+            limpiarFormularioJugador();
+            
+            if (nombreEquipoDestino) {
+                document.getElementById('tit-equipo').innerText = nombreEquipoDestino;
+                verPlantilla(nombreEquipoDestino); 
+            }  
+            
+            if (typeof renderTodo === 'function') renderTodo();
+
+            // Restaurar botón
+            if (btn) {
+                btn.innerText = textoOriginal;
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.style.background = "";
+            }
+
+            alert("✅ Jugador guardado y sincronizado correctamente.");
+            
+            document.getElementById('body-plantilla').scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 1000);
+
+    } catch (error) {
+        console.error("Error al guardar jugador:", error);
+        alert("❌ Error de red: No se pudo guardar el jugador en Firebase.");
+        if (btn) {
+            btn.innerText = "❌ REINTENTAR";
+            btn.disabled = false;
+            btn.style.opacity = "1";
         }
     }
-    db.jugadores.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    persist();   
-    fotoBase64Temp = "";
-    const inputFoto = document.getElementById('pj-foto-file') || document.getElementById('foto-archivo');
-    if(inputFoto) inputFoto.value = "";
-    alert("✅ ¡Jugador guardado y lista ordenada!");  
-    limpiarFormularioJugador();
-    if (nombreEquipoDestino) {
-        document.getElementById('tit-equipo').innerText = nombreEquipoDestino;
-        verPlantilla(nombreEquipoDestino); 
-    }  
-    if (typeof renderTodo === 'function') renderTodo();
-    document.getElementById('body-plantilla').scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
 function editarPj(id) {
@@ -2613,12 +2764,15 @@ function actualizarMarcadorVivo() {
     document.getElementById('incidencias-V').innerHTML = htmlV ? labelV + htmlV : labelV + "Sin incidencias";
 }
 
-function guardarPartido(idPartido, e) {
+async function guardarPartido(idPartido, e) { // 1. Agregamos async
     const btnGuardar = (e && e.target) ? e.target : null;
+    
+    // Feedback visual inmediato
     if (btnGuardar && btnGuardar.tagName === 'BUTTON') {
         if (btnGuardar.disabled) return; 
         btnGuardar.disabled = true;
-        btnGuardar.innerText = "PROCESANDO...";
+        btnGuardar.innerText = "⏳ CALCULANDO Y SUBIENDO...";
+        btnGuardar.style.opacity = "0.7";
     }
 
     let partidoObj = null;
@@ -2635,9 +2789,12 @@ function guardarPartido(idPartido, e) {
         }
     });
 
-    if (!partidoObj || partidoObj === "YA_JUGADO") return;
+    if (!partidoObj || partidoObj === "YA_JUGADO") {
+        if (btnGuardar) restaurarBotonPartido(btnGuardar);
+        return;
+    }
 
-    // 1️⃣ CAPTURA DE DATOS BÁSICOS
+    // --- CAPTURA DE DATOS ---
     const estadioVal = document.getElementById('input-estadio').value.trim();
     const arbitroVal = document.getElementById('input-arbitro').value.trim();
     const gl = parseInt(document.getElementById('live-gl').innerText) || 0;
@@ -2652,7 +2809,7 @@ function guardarPartido(idPartido, e) {
     partidoObj.estadio = estadioVal || "Sede Principal";
     partidoObj.arbitro = arbitroVal || "Central Designado";
 
-    // 2️⃣ LÓGICA DE PUNTOS Y TABLA
+    // --- LÓGICA DE TABLA GENERAL ---
     const eqL = db.equipos.find(e => e.nombre === partidoObj.l);
     const eqV = db.equipos.find(e => e.nombre === partidoObj.v);
     
@@ -2665,35 +2822,34 @@ function guardarPartido(idPartido, e) {
             eqL.g++; eqL.pts += 3; eqV.p++; 
         } else if (gv > gl) { 
             eqV.g++; eqV.pts += 3; eqL.p++; 
-        } else { 
-            // EMPATE
+        } else {
             eqL.e++; eqV.e++; 
             eqL.pts += 1; eqV.pts += 1; 
 
             const usaPenales = document.getElementById('check-usar-penales').checked;
-		if (usaPenales) {
-    		const pL = document.getElementById('penales-L').value || 0;
-    		const pV = document.getElementById('penales-V').value || 0;
-    		const ganoExtra = document.getElementById('ganador-penales').value;
+            if (usaPenales) {
+                const pL = document.getElementById('penales-L').value || 0;
+                const pV = document.getElementById('penales-V').value || 0;
+                const ganoExtra = document.getElementById('ganador-penales').value;
 
-	    if (ganoExtra) {
-        	partidoObj.puntoExtra = ganoExtra;
-        	partidoObj.resPenales = `(${pL} - ${pV})`; // Guardamos el marcador de penales
-        
-        	if (ganoExtra === 'L') eqL.pts += 1;
-        	else eqV.pts += 1;
-    		} else {
-        	alert("Indica quién ganó el punto extra.");
-        return;
-    }
-}
+                if (ganoExtra) {
+                    partidoObj.puntoExtra = ganoExtra;
+                    partidoObj.resPenales = `(${pL} - ${pV})`;
+                    if (ganoExtra === 'L') eqL.pts += 1;
+                    else eqV.pts += 1;
+                } else {
+                    alert("Indica quién ganó el punto extra.");
+                    if (btnGuardar) restaurarBotonPartido(btnGuardar);
+                    return;
+                }
+            }
         }
-    } // <-- LLAVE DE CIERRE CORRECTA AQUÍ
+    }
 
-    // 3️⃣ ESTADÍSTICAS INDIVIDUALES Y REPORTE
+    // --- ESTADÍSTICAS INDIVIDUALES ---
+    let idsParticipantes = [];
     let htmlReporteL = detalleL;
     let htmlReporteV = detalleV;
-    let idsParticipantes = [];
 
     document.querySelectorAll('.stat-input-row').forEach(row => {
         const esAG = row.dataset.esAg === "true";
@@ -2717,9 +2873,6 @@ function guardarPartido(idPartido, e) {
             if (da) {
                 j.roja = (j.roja || 0) + 1;
                 j.sancionPendiente = (j.sancionPendiente || 0) + 1;
-                const itemRoja = `<div style="margin-top:5px; padding:2px 5px; border-left:3px solid #ef4444; background:#fff5f5; font-size:11px;">
-                                    <span style="color:#ef4444;">🟥</span> <b>${j.nombre}</b> <small>(Doble Amarilla)</small></div>`;
-                if (j.equipo === partidoObj.l) htmlReporteL += itemRoja; else htmlReporteV += itemRoja;
             } else {
                 j.ama = (j.ama || 0) + amaJ;
                 j.roja = (j.roja || 0) + rojaJ;
@@ -2728,7 +2881,7 @@ function guardarPartido(idPartido, e) {
         }
     });
 
-    // Manejo de sanciones pendientes (jugadores que no jugaron hoy)
+    // Gestión de sanciones (quitar partidos de castigo a los que NO jugaron)
     db.jugadores.forEach(j => {
         if (j.equipo === partidoObj.l || j.equipo === partidoObj.v) {
             if ((j.sancionPendiente || 0) > 0) {
@@ -2741,19 +2894,32 @@ function guardarPartido(idPartido, e) {
     partidoObj.reporteHtml = { local: htmlReporteL, visita: htmlReporteV };
     partidoObj.participantes = idsParticipantes;
 
-    // 4️⃣ PERSISTENCIA Y FINALIZACIÓN
-    persist();
-    
-    alert("¡Partido finalizado con éxito!");
-    navegar('sec-calendario');
+    // --- PERSISTENCIA CRÍTICA ---
+    try {
+        await persist(); // Esperamos confirmación de Firebase
 
-    setTimeout(() => {
-        if (typeof renderTodo === 'function') renderTodo();
-	if (typeof renderTabla === 'function') renderTabla();
-        if (typeof renderCalendario === 'function') renderCalendario();
-        const areaCarga = document.getElementById('area-carga');
-        if (areaCarga) areaCarga.innerHTML = "";
-    }, 100);
+        if (btnGuardar) {
+            btnGuardar.innerText = "✅ FINALIZADO";
+            btnGuardar.style.background = "#22c55e";
+        }
+
+        setTimeout(() => {
+            alert("¡Partido finalizado y sincronizado con éxito!");
+            navegar('sec-calendario');
+            renderTodo();
+        }, 1000);
+
+    } catch (error) {
+        alert("❌ Error al guardar en la nube. Revisa tu conexión.");
+        if (btnGuardar) restaurarBotonPartido(btnGuardar);
+    }
+}
+
+function restaurarBotonPartido(btn) {
+    btn.disabled = false;
+    btn.innerText = "FINALIZAR PARTIDO";
+    btn.style.opacity = "1";
+    btn.style.background = "";
 }
 
 function verReporte(idPartido) {
@@ -2862,7 +3028,7 @@ if (partido.puntoExtra) {
 
                 <div class="footer-note">Este documento es una representación digital del encuentro. Generado el: ${fechaFomateada}</div>
                 
-                <button class="btn-print" onclick="window.print()">🖨️ IMPRIMIR REPORTE OFICIAL</button>
+                <button class="btn-print" onclick="window.print()">🖨️ IMPRIMIR </button>
             </div>
         </body>
         </html>
@@ -3220,61 +3386,64 @@ function prepararImpresionGoleadores() {
         return alert("Error: No hay datos de goleadores en pantalla.");
     }
 
-    let nombreFinal = "TORNEO SIN NOMBRE";
-    
-    if (typeof db !== 'undefined' && db.nombreTorneoActual) {
-        nombreFinal = db.nombreTorneoActual;
-    } else if (typeof nombreTorneoActual !== 'undefined' && nombreTorneoActual) {
-        nombreFinal = nombreTorneoActual;
-    } else {
-        const banner = document.querySelector('.header-banner h1, #header h1');
-        if(banner) nombreFinal = banner.innerText;
-    }
-
+    // 1. Obtener nombres del torneo y temporada
+    let nombreFinal = (typeof db !== 'undefined' && db.nombreTorneoActual) ? db.nombreTorneoActual : "TORNEO";
     const nombreTemp = (typeof db !== 'undefined' && db.nombreTemporada) ? db.nombreTemporada : "2026";
 
+    // 2. Guardar el contenido original para restaurarlo después
     const contenidoOriginal = contenedor.innerHTML;
 
-    const headerImpresion = document.createElement('div');
-    headerImpresion.id = "temp-header-goleadores";
-    headerImpresion.innerHTML = `
-        <div style="text-align:center; padding: 20px; border: 2px solid #ef4444; border-radius: 15px; margin-bottom: 25px; background: #fffafb !important; color: #1e293b !important; font-family: Arial, sans-serif;">
-            <h1 style="margin:0; font-size:32px; text-transform:uppercase; font-weight:bold;">
-                ${nombreFinal}
+    // 3. Crear el encabezado limpio
+    const headerHtml = `
+        <div id="temp-header-goleadores" style="text-align:center; padding: 10px 0 20px 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; width: 100%;">
+            <h1 style="margin:0; font-size:28px; text-transform:uppercase; font-weight:900; color: #0f172a !important;">
+                GOLEO INDIVIDUAL ${nombreFinal.toUpperCase()}
             </h1>
-            <div style="background:#ef4444 !important; color:white !important; display:inline-block; padding:5px 20px; border-radius:50px; font-weight:bold; margin-top:10px; text-transform:uppercase; font-size:12px; -webkit-print-color-adjust: exact;">
-                Reporte Oficial de Goleo
-            </div>
-            <h3 style="margin:10px 0 0; color:#64748b !important; font-size:16px;">${nombreTemp}</h3>
+            <h3 style="margin:5px 0 0; color:#64748b !important; font-size:16px; font-weight: normal;">
+                Temporada: ${nombreTemp}
+            </h3>
         </div>
     `;
-    
-    contenedor.prepend(headerImpresion);
 
+    // 4. IMPORTANTE: Envolver el contenido actual en un div flex para que el título quede ARRIBA
+    const cuerpoActual = contenedor.innerHTML;
+    contenedor.innerHTML = headerHtml + `<div id="goleo-flex-container" style="display: flex; gap: 20px; align-items: flex-start;">${cuerpoActual}</div>`;
+
+    // 5. Estilos de impresión corregidos
     const estilo = document.createElement('style');
     estilo.id = "print-temp";
     estilo.innerHTML = `
         @media print {
-            nav, #auth-panel, .no-print, .nav-bar, .btn-main, header, footer { 
+            /* Ocultar todo lo innecesario */
+            nav, #auth-panel, .no-print, .nav-bar, .btn-main, header, footer, .seccion { 
                 display: none !important; 
             }
-            .seccion { 
-                display: none !important; 
-            }
-            #sec-goleadores { 
-                display: block !important; 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
+
+            /* Forzar el contenedor principal */
+            #diseno-goleadores-pro {
+                display: block !important; /* El contenedor padre debe ser block */
+                background: #f1f5f9 !important;
+                padding: 20px !important;
                 width: 100% !important;
             }
-            #temp-header-goleadores { 
-                display: block !important; 
-                visibility: visible !important;
+
+            /* Forzar las dos columnas de la imagen */
+            #goleo-flex-container {
+                display: flex !important;
+                flex-direction: row !important;
+                gap: 20px !important;
+                width: 100% !important;
             }
-            #temp-header-goleadores h1 {
-                color: #1e293b !important;
+
+            #lider-card {
+                flex: 1 !important;
+                max-width: 40% !important;
             }
+
+            #lista-goleadores {
+                flex: 1.5 !important;
+            }
+
             * { 
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
@@ -3283,10 +3452,11 @@ function prepararImpresionGoleadores() {
     `;
     document.head.appendChild(estilo);
 
+    // 6. Ejecutar impresión
     setTimeout(() => {
         window.print();
         estilo.remove();
-        contenedor.innerHTML = contenidoOriginal;
+        contenedor.innerHTML = contenidoOriginal; // Restaurar la web
     }, 500);
 }
 
@@ -3574,105 +3744,141 @@ document.addEventListener('change', function(e) {
 
 function renderGoleadores() {
     const contenedor = document.getElementById('diseno-goleadores-pro');
+    const tituloGoleo = document.getElementById('titulo-torneo-goleo'); // El ID que pusimos en el HTML
+    const subtituloGoleo = document.getElementById('subtitulo-temporada-goleo');
+    
     if (!contenedor) return;
 
+    // 1. Actualizar Títulos automáticamente
+    let nombreTorneo = (typeof db !== 'undefined' && db.nombreTorneoActual) ? db.nombreTorneoActual : "TORNEO";
+    let nombreTemp = (typeof db !== 'undefined' && db.nombreTemporada) ? db.nombreTemporada : "TEMPORADA 2026";
+
+    if (tituloGoleo) tituloGoleo.innerText = `GOLEO INDIVIDUAL - ${nombreTorneo}`;
+    if (subtituloGoleo) subtituloGoleo.innerText = nombreTemp;
+
+    // 2. Lógica de filtrado y orden de jugadores
     const goleadores = db.jugadores
-    .filter(j => (j.goles || 0) > 0)
-    .sort((a, b) => {
+        .filter(j => (j.goles || 0) > 0)
+        .sort((a, b) => {
             if (b.goles !== a.goles) {
-            return b.goles - a.goles;
-        }
-        const promedioA = a.goles / (a.pj || 1);
-        const promedioB = b.goles / (b.pj || 1);
-        
-        return promedioB - promedioA;
-    })
-    .slice(0, 10);
+                return b.goles - a.goles;
+            }
+            const promedioA = a.goles / (a.pj || 1);
+            const promedioB = b.goles / (b.pj || 1);
+            return promedioB - promedioA;
+        })
+        .slice(0, 10);
 
     if (goleadores.length === 0) {
         contenedor.innerHTML = "<p style='text-align:center; padding:50px;'>⚽ Aún no hay goles registrados.</p>";
         return;
     }
 
+    // 3. Preparar datos del MVP (1er lugar)
     const mvp = goleadores[0];
     const resto = goleadores.slice(1);
     const eqMvp = db.equipos.find(e => e.nombre === mvp.equipo);
     const promedio = (mvp.goles / (mvp.pj || 1)).toFixed(2);
 
+    // 4. Renderizado con estructura de DOS COLUMNAS para la captura perfecta
     contenedor.innerHTML = `
-    <div class="contenedor-goleadores-pro">
-        <div class="mvp-card" style="background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding-bottom: 25px;">
-            
-            <div class="mvp-photo-wrapper" style="margin-bottom: 10px;">
-                <img src="${mvp.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mvp.nombre)}&size=200&background=FFD700&color=000`}" 
-     class="mvp-photo" 
-     alt="MVP">
-                <div class="mvp-number">1º</div>
+    <div style="display: flex; gap: 20px; align-items: flex-start; text-align: left;">
+        
+        <div class="mvp-card" style="flex: 1; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 25px; display: flex; flex-direction: column; align-items: center;">
+            <div class="mvp-photo-wrapper" style="margin-bottom: 10px; position: relative;">
+                <img src="${mvp.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mvp.nombre)}&size=200&background=22c55e&color=fff`}" 
+                     style="width: 180px; height: 180px; border-radius: 50%; border: 5px solid #22c55e; object-fit: cover;">
+                <div style="position: absolute; bottom: 5px; right: 5px; background: #22c55e; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 3px solid white;">1º</div>
             </div>
 
-            <div class="mvp-info" style="text-align:center;">
-                <h2 style="margin:0; font-size:26px; color:#1e293b;">${mvp.nombre}</h2>
-                <div style="color:#4caf50; font-weight:bold; text-transform:uppercase; font-size:15px; margin-top:5px;">${mvp.equipo}</div>
-            </div>
+            <h2 style="margin: 10px 0 0; font-size: 24px; color: #1e293b; text-transform: uppercase;">${mvp.nombre}</h2>
+            <div style="color: #22c55e; font-weight: 800; text-transform: uppercase; font-size: 14px; margin-bottom: 15px;">${mvp.equipo}</div>
 
-            <div style="text-align:center; margin: 20px 0;">
-                <img src="${eqMvp?.logo || ''}" style="width:85px; height:85px; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.1));" onerror="this.style.display='none'">
-            </div>
+            <img src="${eqMvp?.logo || ''}" style="width: 70px; height: 70px; object-fit: contain; margin-bottom: 15px;" onerror="this.style.display='none'">
                 
-            <div class="mvp-stats-grid" style="display:flex; justify-content:space-around; align-items:center; background:#f8fafc; border-radius:15px; padding:20px; border:1px solid #edf2f7; margin: 0 25px;">
-                <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
-                    <span style="font-size:30px; margin-bottom:5px;">⚽</span>
-                    <strong style="font-size:32px; color:#16a34a;">${mvp.goles}</strong>
-                    <small style="font-size:11px; color:#94a3b8; text-transform:uppercase; font-weight:bold;">Goles</small>
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <div style="flex: 1; background: #f8fafc; border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #edf2f7;">
+                    <span style="font-size: 24px;">⚽</span>
+                    <div style="font-size: 28px; font-weight: 900; color: #16a34a;">${mvp.goles}</div>
+                    <small style="font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase;">Goles</small>
                 </div>
-
-                <div style="width:1px; height:50px; background:#e2e8f0;"></div>
-
-                <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
-                    <span style="font-size:30px; margin-bottom:5px;">🏟️</span>
-                    <strong style="font-size:32px; color:#1e293b;">${mvp.pj}</strong>
-                    <small style="font-size:11px; color:#94a3b8; text-transform:uppercase; font-weight:bold;">Partidos</small>
+                <div style="flex: 1; background: #f8fafc; border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #edf2f7;">
+                    <span style="font-size: 24px;">🏟️</span>
+                    <div style="font-size: 28px; font-weight: 900; color: #1e293b;">${mvp.pj}</div>
+                    <small style="font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase;">Partidos</small>
                 </div>
             </div>
 
-            <div style="text-align:center; margin-top: 20px;">
-                <div style="display:inline-block; background:#f0fdf4; color:#16a34a; padding:8px 25px; border-radius:50px; font-size:13px; font-weight:800; border:1.5px solid #16a34a;">
-                    ⚡ PROMEDIO: ${promedio} GOLES POR PARTIDO
-                </div>
+            <div style="margin-top: 20px; background: #f0fdf4; color: #16a34a; padding: 8px 20px; border-radius: 50px; font-size: 12px; font-weight: 800; border: 1.5px solid #16a34a;">
+                ⚡ PROMEDIO: ${promedio} GOLES POR PARTIDO
             </div>
         </div>
 
-        <div class="lista-goleadores" style="margin-top:25px;">
+        <div class="lista-goleadores" style="flex: 1.3; display: flex; flex-direction: column; gap: 8px;">
             ${resto.map((j, i) => {
                 const eq = db.equipos.find(e => e.nombre === j.equipo);
-                const background = i % 2 === 0 ? '#ffffff' : '#f8fafc'; 
                 return `
-                <div class="item-goleador" style="display:flex; align-items:center; padding:12px 15px; background:${background}; border-radius:12px; margin-bottom:8px; border:1px solid #edf2f7;">
-                    <div class="rank" style="width:35px; font-weight:800; color:#1e293b; font-size:15px;">${i + 2}º</div>
-                    <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&size=48&background=random&color=fff`}" 
-     class="img-pj" 
-     style="width:48px; height:48px; border-radius:12px; border:2px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); object-fit:cover; margin: 0 12px;"
-     alt="Foto">
-                    <div class="name-pj" style="flex:1;">
-                        <strong style="font-size:15px; color:#0f172a; display:block;">${j.nombre}</strong>
-                        <span style="font-size:12px; color:#64748b; font-weight:600; text-transform:uppercase;">${j.equipo}</span>
-                    </div>
-                    <img src="${eq?.logo || ''}" class="img-eq" style="width:30px; height:30px; object-fit:contain; margin-right:15px;">
-                    <div style="display:flex; gap:12px; align-items:center; background:#f1f5f9; padding:6px 14px; border-radius:10px;">
-                        <div style="display:flex; align-items:center; gap:5px;">
-                            <span style="font-size:16px;">⚽</span>
-                            <div style="font-weight:900; color:#16a34a; font-size:20px;">${j.goles}</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; background: white; border-radius: 12px; border: 1px solid #edf2f7; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="color: #94a3b8; font-weight: 800; width: 30px;">${i + 2}º</span>
+                        <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&background=f1f5f9&color=64748b`}" 
+                             style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                        <div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 14px;">${j.nombre}</div>
+                            <div style="color: #94a3b8; font-size: 10px; text-transform: uppercase; font-weight: bold;">${j.equipo}</div>
                         </div>
-                        <div style="width:1px; height:20px; background:#cbd5e1;"></div>
-                        <div style="display:flex; align-items:center; gap:5px;">
-                            <span style="font-size:16px;">🏟️</span>
-                            <div style="font-weight:700; color:#475569; font-size:16px;">${j.pj}</div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${eq?.logo || ''}" style="width: 30px; height: 30px; object-fit: contain;">
+                        <div style="display: flex; align-items: center; background: #f8fafc; padding: 5px 12px; border-radius: 8px; gap: 8px; border: 1px solid #f1f5f9;">
+                            <span style="font-size: 14px;">⚽</span>
+                            <span style="font-weight: 900; color: #16a34a; font-size: 18px;">${j.goles}</span>
+                            <span style="border-left: 1px solid #e2e8f0; height: 15px; margin: 0 2px;"></span>
+                            <span style="font-size: 14px;">🏟️</span>
+                            <span style="font-weight: bold; color: #475569;">${j.pj}</span>
                         </div>
                     </div>
                 </div>`;
             }).join('')}
         </div>
     </div>`;
+}
+
+function renderGoleoPro(datosGoleadores) {
+    const lista = document.getElementById('lista-goleadores');
+    let html = "";
+
+    // Saltamos al primero (porque ya está en la tarjeta grande)
+    const topDiez = datosGoleadores.slice(1, 10);
+
+    topDiez.forEach((jugador, index) => {
+        html += `
+            <div class="fila-goleador" style="background: white; border-radius: 12px; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="color: #94a3b8; font-weight: bold; width: 30px;">${index + 2}º</span>
+                    <div>
+                        <div style="font-weight: bold; color: #1e293b; font-size: 16px;">${jugador.nombre}</div>
+                        <div style="color: #94a3b8; font-size: 11px; text-transform: uppercase;">${jugador.equipo}</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <img src="${jugador.logoEquipo}" style="width: 35px; height: 35px; object-fit: contain;">
+                    
+                    <div style="display: flex; align-items: center; background: #f8fafc; padding: 5px 10px; border-radius: 8px; gap: 8px;">
+                        <span style="font-size: 14px;">⚽</span>
+                        <span style="font-weight: 900; color: #22c55e; font-size: 18px;">${jugador.goles}</span>
+                        <span style="border-left: 1px solid #e2e8f0; height: 20px; margin: 0 5px;"></span>
+                        <span style="font-size: 14px;">🏟️</span>
+                        <span style="font-weight: bold; color: #475569;">${jugador.partidos}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    lista.innerHTML = html;
 }
 
 function prepararComparador() {
@@ -3955,42 +4161,82 @@ function renderCardComparador(j, prom, colorBase, esGanador, puesto, titulo, num
 }
 
 function renderMiCalendario() {
-        const contenedor = document.getElementById('render-mi-calendario');
-        const filtro = document.getElementById('busqueda-usuario').value.toLowerCase();
-        
-        if (filtro === "") {
-            contenedor.innerHTML = "<p style='text-align:center; color:#64748b;'>Escribe el nombre de tu equipo para ver sus partidos.</p>";
-            return;
-        }
-
-        let html = "";
-        db.calendario.forEach(jornada => {
-            const partidosEncontrados = jornada.partidos.filter(p => 
-                p.l.toLowerCase().includes(filtro) || p.v.toLowerCase().includes(filtro)
-            );
-            if (partidosEncontrados.length > 0) {
-                html += `
-                    <div style="margin-bottom:15px; border:1px solid #eee; border-radius:8px; overflow:hidden;">
-                        <div style="background:#1e293b; color:white; padding:8px 15px; font-weight:bold; font-size:13px;">
-                            JORNADA ${jornada.num}
-                        </div>
-                `;
-                partidosEncontrados.forEach(p => {
-                    html += `
-                        <div style="display:flex; justify-content:space-between; padding:12px; background:white; align-items:center;">
-                            <span style="flex:1; text-align:right; font-weight:bold; font-size:14px;">${p.l}</span>
-                            <span style="flex:0.3; text-align:center; color:#3b82f6; font-weight:bold;">${p.score || 'vs'}</span>
-                            <span style="flex:1; text-align:left; font-weight:bold; font-size:14px;">${p.v}</span>
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
-        });
-
-        contenedor.innerHTML = html || `<p style='text-align:center; padding:20px;'>No se encontraron partidos para "${filtro}".</p>`;
+    const contenedor = document.getElementById('render-mi-calendario');
+    const titulo = document.getElementById('titulo-mi-calendario');
+    const filtro = document.getElementById('busqueda-usuario').value.toLowerCase().trim();
+    
+    if (filtro === "") {
+        if (titulo) titulo.innerText = "🔍 Partidos de la Temporada";
+        contenedor.innerHTML = "<p style='text-align:center; color:#64748b;'>Escribe el nombre de tu equipo para ver sus partidos.</p>";
+        return;
     }
 
+    let html = "";
+    let nombreEquipoCabecera = "";
+
+    db.calendario.forEach(jornada => {
+        const partidosEncontrados = jornada.partidos.filter(p => 
+            p.l.toLowerCase().includes(filtro) || p.v.toLowerCase().includes(filtro)
+        );
+
+        if (partidosEncontrados.length > 0) {
+            html += `
+                <div style="margin-bottom:25px; border:1px solid #e2e8f0; border-radius:15px; overflow:hidden; break-inside: avoid; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="background-color:#f8fafc !important; color:#475569 !important; padding:12px 15px; font-weight:800; font-size:14px; text-transform:uppercase; text-align:center; border-bottom:1px solid #e2e8f0; -webkit-print-color-adjust: exact;">
+                        JORNADA ${jornada.num}
+                    </div>
+            `;
+
+            partidosEncontrados.forEach(p => {
+                const datosL = db.equipos.find(e => e.nombre === p.l) || {};
+                const datosV = db.equipos.find(e => e.nombre === p.v) || {};
+
+                if (p.l.toLowerCase().includes(filtro)) nombreEquipoCabecera = p.l;
+                if (p.v.toLowerCase().includes(filtro)) nombreEquipoCabecera = p.v;
+
+                const tieneResultado = p.score && /\d/.test(p.score);
+                
+                // --- COLORES INVERTIDOS ---
+                // Si es VS: Fondo Gris clarito (#f1f5f9) y texto Gris oscuro (#64748b)
+                // Si es Marcador: Fondo Verde suave y texto blanco para resaltar el éxito
+                const colorFondo = tieneResultado ? "#22c55e" : "#f1f5f9"; 
+                const colorTexto = tieneResultado ? "#ffffff" : "#64748b";
+                const textoMarcador = tieneResultado ? p.score : "VS";
+
+                html += `
+                    <div style="display:flex; justify-content:space-between; padding:20px 10px; background:white; align-items:center; border-bottom:1px solid #f1f5f9;">
+                        
+                        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                            <img src="${datosL.logo || ''}" style="width:75px; height:60px; object-fit:contain; ${!datosL.logo ? 'visibility:hidden;' : ''}">
+                            <span style="font-weight:800; font-size:14px; text-align:center; color:#1e293b;">${p.l.toUpperCase()}</span>
+                        </div>
+
+                        <div style="flex:0.5; display:flex; justify-content:center;">
+                            <div style="background-color:${colorFondo} !important; color:${colorTexto} !important; padding:8px 15px; border-radius:8px; font-weight:900; font-size:18px; min-width:75px; text-align:center; -webkit-print-color-adjust: exact;">
+                                ${textoMarcador}
+                            </div>
+                        </div>
+
+                        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                            <img src="${datosV.logo || ''}" style="width:75px; height:60px; object-fit:contain; ${!datosV.logo ? 'visibility:hidden;' : ''}">
+                            <span style="font-weight:800; font-size:14px; text-align:center; color:#1e293b;">${p.v.toUpperCase()}</span>
+                        </div>
+
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        }
+    });
+
+    if (nombreEquipoCabecera && html !== "") {
+        if (titulo) titulo.innerText = `PARTIDOS DE LA TEMPORADA DE: ${nombreEquipoCabecera.toUpperCase()}`;
+    } else {
+        if (titulo) titulo.innerText = "🔍 Sin resultados";
+    }
+
+    contenedor.innerHTML = html || `<p style='text-align:center; padding:20px;'>No se encontraron partidos para "${filtro}".</p>`;
+}
 function resolverDefault(idPartido) {
     let partido;
     db.calendario.forEach(j => {
@@ -4536,13 +4782,44 @@ function procesarFoto(event) {
 }
 
 function limpiarFormularioJugador() {
+    // 1. Limpiar campos de texto e ID
     document.getElementById('pj-nombre').value = "";
     document.getElementById('pj-curp').value = "";
-    document.getElementById('edit-pj-id').value = "-1";
-    document.getElementById('foto-archivo').value = "";
-    document.getElementById('previsualizar-foto').style.display = "none";
-    document.getElementById('placeholder-foto').style.display = "block";
+    document.getElementById('edit-pj-id').value = "-1"; // Vital para volver a modo "Nuevo"
+
+    // 2. Limpiar archivos y previsualización
+    // Usamos el operador || por si el ID del input cambia en diferentes vistas
+    const inputFoto = document.getElementById('pj-foto-file') || document.getElementById('foto-archivo');
+    if (inputFoto) inputFoto.value = "";
+
+    const preview = document.getElementById('previsualizar-foto');
+    const placeholder = document.getElementById('placeholder-foto');
+    
+    if (preview) {
+        preview.src = "";
+        preview.style.display = "none";
+    }
+    if (placeholder) {
+        placeholder.style.display = "block";
+    }
+
+    // 3. Resetear variable global de imagen
     fotoBase64Temp = "";
+
+    // 4. Restaurar el botón (Texto y Color)
+    const btn = document.querySelector('#form-registro-jugador .btn-main');
+    if (btn) {
+        btn.innerText = "GUARDAR JUGADOR";
+        btn.disabled = false;
+        btn.style.background = ""; // Quita el verde de éxito o rojo de error
+        btn.style.opacity = "1";
+    }
+
+    // 5. Restaurar el título del formulario (Opcional si usas títulos dinámicos)
+    const titulo = document.getElementById('titulo-form-jugador');
+    if (titulo) {
+        titulo.innerText = "Registrar Nuevo Jugador";
+    }
 }
 
 function aplicarPermisosVisuales() {
@@ -4605,19 +4882,24 @@ function cancelarEdicionEquipo() {
         preview.style.display = "none";
     }
 
-    // 3. Restaurar el texto del botón principal
+    // 3. Restaurar el botón principal (Texto, estado y color)
     const btn = document.querySelector('#form-registro-equipo .btn-main');
-    if (btn) btn.innerText = "GUARDAR EQUIPO";
+    if (btn) {
+        btn.innerText = "GUARDAR EQUIPO";
+        btn.disabled = false;      // Aseguramos que sea cliqueable
+        btn.style.opacity = "1";   // Restauramos opacidad
+        btn.style.background = ""; // Quitamos el verde de éxito o rojo de error
+    }
     
     // 4. Limpiar la variable global de la foto
     fotoBase64Temp = "";
 
-    // === NUEVOS AJUSTES VISUALES ===
+    // === AJUSTES VISUALES ===
     // 5. Restaurar el título original
     const tituloForm = document.getElementById('titulo-form-equipo');
     if (tituloForm) tituloForm.innerText = "Registrar Nuevo Equipo";
 
-    // 6. Ocultar el botón de cancelar (la X)
+    // 6. Ocultar el botón de cancelar (el botón con ID 'btn-cancelar-eq')
     const btnCancel = document.getElementById('btn-cancelar-eq');
     if (btnCancel) btnCancel.style.display = "none";
 }
@@ -4981,7 +5263,7 @@ function imprimirTabla() {
     headerImpresion.innerHTML = `
         <div style="text-align:center; margin-bottom:20px; border-bottom:3px solid #1e293b; padding-bottom:10px;">
             <h1 style="margin:0; font-size:28px; text-transform:uppercase; color:#1e293b;">${nombreTorneo}</h1>
-            <h3 style="margin:5px 0; color:#3b82f6; font-size:16px;">REPORTE OFICIAL - ${nombreTemp}</h3>
+            <h3 style="margin:5px 0; color:#3b82f6; font-size:16px;"> ${nombreTemp}</h3>
           </div>
     `;
 
@@ -5102,20 +5384,51 @@ function renderDisciplina() {
     }
 }
 
-function guardarConfiguracionGeneral() {
+async function guardarConfiguracionGeneral() {
     const nuevoTorneo = document.getElementById('cfg-nombre-torneo').value.trim();
     const nuevaTemp = document.getElementById('cfg-nombre-temporada').value.trim();
+    const btn = document.querySelector('#sec-config .btn-main'); // Asegúrate de que el selector sea correcto
 
-    if (nuevoTorneo === "" || nuevaTemp === "") return alert("Por favor, llena los campos.");
+    if (nuevoTorneo === "" || nuevaTemp === "") {
+        return alert("Por favor, llena los campos.");
+    }
 
+    // --- BLOQUEO VISUAL ---
+    const textoOriginal = btn.innerText;
+    btn.innerText = "⏳ ACTUALIZANDO NUBE...";
+    btn.disabled = true;
+    btn.style.opacity = "0.7";
+
+    // Actualizamos el objeto local
     db.nombreTorneoActual = nuevoTorneo; 
     db.nombreTemporada = nuevaTemp;
 
-    persist();
-    
-    actualizarBanner();
-    
-    alert("✅ Cambios guardados. Ahora sí son permanentes.");
+    try {
+        // ESPERAMOS a que Firebase confirme
+        await persist(); 
+
+        // ÉXITO
+        btn.innerText = "✅ CAMBIOS PERMANENTES";
+        btn.style.background = "#28a745";
+
+        actualizarBanner();
+
+        setTimeout(() => {
+            btn.innerText = textoOriginal;
+            btn.style.background = "";
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            alert("✅ Configuración guardada correctamente.");
+        }, 1500);
+
+    } catch (error) {
+        console.error(error);
+        btn.innerText = "❌ ERROR AL GUARDAR";
+        btn.style.background = "#dc3545";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        alert("⚠️ No se pudo conectar con Firebase. Revisa tu señal.");
+    }
 }
 
 function mostrarExpedienteJugador(idJugador) {
@@ -6023,18 +6336,27 @@ if (typeof database !== 'undefined') {
 
     </script>
 
-<section style="background: white; padding: 40px 0; border-top: 1px solid #e2e8f0; overflow: hidden; margin-top: 40px;">
+<section class="no-print" style="background: white; padding: 40px 0; border-top: 1px solid #e2e8f0; overflow: hidden; margin-top: 40px;">
     <h4 style="text-align: center; color: #94a3b8; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px;">
         PATROCINADORES OFICIALES
     </h4>
-
     <div class="carrusel-track">
-        <div id="carrusel-dinamico" class="carrusel-logos">
-            </div>
+        <div id="carrusel-dinamico" class="carrusel-logos"></div>
     </div>
 </section>
 
 <style>
+    /* 1. REGLA MAESTRA PARA IMPRESIÓN (PDF LIMPIO) */
+    @media print {
+        .no-print, 
+        section.no-print, 
+        footer.no-print,
+        .carrusel-track { 
+            display: none !important; 
+        }
+    }
+
+    /* 2. CONTENEDOR DEL CARRUSEL */
     .carrusel-track {
         width: 100%;
         display: flex;
@@ -6042,54 +6364,44 @@ if (typeof database !== 'undefined') {
     }
 
     .carrusel-logos {
-    display: flex;
-    justify-content: flex-start; /* 👈 Obliga a empezar desde la izquierda */
-    align-items: center;
-    width: max-content; /* 👈 Se ajusta al ancho total de todos los logos */
-    animation: scroll-infinito 20s linear infinite;
-}
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: max-content;
+        /* Animación única y fluida */
+        animation: scroll-infinito 20s linear infinite;
+    }
 
-/* Ajusta el Keyframes para que sea universal */
-@keyframes scroll-infinito {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); } /* 👈 Camina exactamente la mitad de la cadena */
-}
-
-    /* --- 🆕 ESTILO ACTUALIZADO PARA LOGOS --- */
-.logo-patro {
-    height: 90px; /* 👈 Aumentamos la altura de 60px a 90px (¡Un 50% más grandes!) */
-    width: auto; /* Mantenemos la proporción de ancho automática */
-    max-width: 200px; /* Evitamos que logos muy anchos se deformen */
-    object-fit: contain; /* Asegura que el logo no se corte ni se estire */
-    margin: 0 50px; /* Aumentamos un poco la separación entre logos (50px) */
-    
-    /* 🎨 ELIMINAMOS EL GRIS */
-    filter: none; /* 👈 Quitamos 'grayscale(100%)' para ver el color original */
-    opacity: 1; /* 👈 Subimos la opacidad al 100% por defecto */
-    
-    transition: transform 0.3s ease; /* Suavizamos solo el efecto de hover */
-}
-
-/* --- 🌟 EFECTO AL PASAR EL RATÓN --- */
-.logo-patro:hover {
-    transform: scale(1.15);
-    cursor: pointer;
-}
-
-    /* La magia del movimiento */
+    /* 3. ANIMACIÓN CORREGIDA (Solo una definición) */
     @keyframes scroll-infinito {
         0% { transform: translateX(0); }
-        100% { transform: translateX(calc(-230px * 5)); } /* Ajusta segun el ancho+gap de la mitad de logos */
+        100% { transform: translateX(-50%); } 
     }
 
     /* Pausar al pasar el ratón */
     .carrusel-track:hover .carrusel-logos {
         animation-play-state: paused;
     }
+
+    /* 4. ESTILO DE LOS LOGOS */
+    .logo-patro {
+        height: 90px;
+        width: auto;
+        max-width: 200px;
+        object-fit: contain;
+        margin: 0 50px;
+        filter: none;
+        opacity: 1;
+        transition: transform 0.3s ease;
+    }
+
+    .logo-patro:hover {
+        transform: scale(1.15);
+        cursor: pointer;
+    }
 </style>
 
-<footer style="margin-top: 50px; padding: 30px 20px; text-align: center; border-top: 1px solid #e2e8f0; background: #f8fafc;">
-    
+<footer class="no-print" style="margin-top: 50px; padding: 30px 20px; text-align: center; border-top: 1px solid #e2e8f0; background: #f8fafc;">
     <div style="margin-top: 10px; display: flex; justify-content: center; gap: 15px; align-items: center;">
         <a href="https://wa.me/523251123781" target="_blank" style="text-decoration: none; color: #16a34a; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px;">
             <span style="font-size: 16px;">📱</span> WHATSAPP
