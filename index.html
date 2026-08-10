@@ -6300,13 +6300,25 @@ function renderCarruselPatrocinadores() {
     `).join('');
 }
 
-// 1️⃣ Función para copiar directamente al portapapeles
+// Abrir/Cerrar el mini menú
+function toggleMenuCompartir() {
+    const menu = document.getElementById('menu-compartir-mini');
+    if (!menu) return;
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'flex';
+    } else {
+        menu.style.display = 'none';
+    }
+}
+
+// 1️⃣ Copiar Enlace
 function copiarEnlaceDirecto() {
+    toggleMenuCompartir(); // Cierra el menú al hacer clic
     const url = window.location.href;
 
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(url).then(() => {
-            mostrarToastCompartir('¡Enlace copiado al portapapeles! 📋');
+            mostrarToastCompartir('¡Enlace copiado! 📋');
         }).catch(() => {
             copiarFallbackDirecto(url);
         });
@@ -6315,7 +6327,6 @@ function copiarEnlaceDirecto() {
     }
 }
 
-// Respaldo por si falla la API de portapapeles
 function copiarFallbackDirecto(texto) {
     const inputOculto = document.createElement('input');
     inputOculto.value = texto;
@@ -6323,27 +6334,25 @@ function copiarFallbackDirecto(texto) {
     inputOculto.select();
     try {
         document.execCommand('copy');
-        mostrarToastCompartir('¡Enlace copiado al portapapeles! 📋');
+        mostrarToastCompartir('¡Enlace copiado! 📋');
     } catch (err) {
         alert('Copia este enlace: ' + texto);
     }
     document.body.removeChild(inputOculto);
 }
 
-// 2️⃣ Función para enviar directamente a WhatsApp
+// 2️⃣ Compartir por WhatsApp
 function compartirWhatsAppDirecto() {
+    toggleMenuCompartir(); // Cierra el menú al hacer clic
     let torneo = (typeof db !== 'undefined' && db.nombreTorneoActual) ? db.nombreTorneoActual : 'Liga de Fútbol';
     const url = window.location.href;
+    const mensaje = `¡Sigue los resultados y estadísticas de ${torneo} aquí! ⚽👇\n${url}`;
     
-    // Mensaje predeterminado listo para enviar
-    const mensaje = `¡Sigue los resultados, la tabla general y las estadísticas de ${torneo} aquí! ⚽👇\n${url}`;
-    
-    // Abre WhatsApp Web en PC o la App de WhatsApp en celulares
     const urlWhatsapp = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;
     window.open(urlWhatsapp, '_blank');
 }
 
-// Mensaje flotante de confirmación (Toast)
+// Notificación Flotante
 function mostrarToastCompartir(mensaje) {
     const toast = document.createElement('div');
     toast.innerText = mensaje;
@@ -6353,10 +6362,10 @@ function mostrarToastCompartir(mensaje) {
         right: 20px;
         background: #0f172a;
         color: white;
-        padding: 10px 18px;
+        padding: 8px 16px;
         border-radius: 20px;
         font-weight: 800;
-        font-size: 12px;
+        font-size: 11px;
         box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
         z-index: 10000;
         transition: opacity 0.3s;
@@ -6365,8 +6374,17 @@ function mostrarToastCompartir(mensaje) {
     setTimeout(() => {
         toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 300);
-    }, 2500);
+    }, 2000);
 }
+
+// Cerrar el menú si hacen clic fuera de él
+document.addEventListener('click', function(e) {
+    const contenedor = document.getElementById('menu-compartir-mini');
+    const btnPrincipal = e.target.closest('button[onclick="toggleMenuCompartir()"]');
+    if (contenedor && contenedor.style.display === 'flex' && !contenedor.contains(e.target) && !btnPrincipal) {
+        contenedor.style.display = 'none';
+    }
+});
 
 </script>
 <link rel="manifest" href="/manifest.json">
@@ -6514,55 +6532,74 @@ if (typeof database !== 'undefined') {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-<!-- Contenedor Flotante de Compartir -->
-<div class="no-print" style="
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    gap: 10px;
-    z-index: 9999;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 8px 12px;
-    border-radius: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    backdrop-filter: blur(5px);
-    border: 1px solid #e2e8f0;
-">
-    <!-- Botón Copiar Link -->
-    <button onclick="copiarEnlaceDirecto()" style="
-        background: #1e293b;
-        color: white;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 20px;
-        font-weight: 800;
-        font-size: 12px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
+<!-- Botón Flotante y Menú Desplegable -->
+<div class="no-print" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+    
+    <!-- Menú Desplegable (Oculto por defecto) -->
+    <div id="menu-compartir-mini" style="
+        display: none;
+        flex-direction: column;
         gap: 6px;
-        transition: transform 0.2s;
+        background: white;
+        padding: 8px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 8px;
+        min-width: 140px;
     ">
-        <span>📋</span> Copiar Link
-    </button>
+        <button onclick="copiarEnlaceDirecto()" style="
+            background: #f8fafc;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+        ">
+            <span>📋</span> Copiar Link
+        </button>
 
-    <!-- Botón WhatsApp -->
-    <button onclick="compartirWhatsAppDirecto()" style="
-        background: #25d366;
+        <button onclick="compartirWhatsAppDirecto()" style="
+            background: #dcfce7;
+            color: #14532d;
+            border: 1px solid #bbf7d0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+        ">
+            <span>📲</span> WhatsApp
+        </button>
+    </div>
+
+    <!-- Botón Principal Circular -->
+    <button onclick="toggleMenuCompartir()" style="
+        background: #3b82f6;
         color: white;
         border: none;
-        padding: 8px 14px;
-        border-radius: 20px;
-        font-weight: 800;
-        font-size: 12px;
-        cursor: pointer;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
-        gap: 6px;
-        transition: transform 0.2s;
-    ">
-        <span>📲</span> WhatsApp
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        cursor: pointer;
+        margin-left: auto;
+    " title="Compartir">
+        🔗
     </button>
 </div>
 
