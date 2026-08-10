@@ -1429,11 +1429,11 @@ nav::-webkit-scrollbar { display: none; }
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.8"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.8"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.8"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.9"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.9"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.9"></script>
 
-<script src="app.js?v=1.8"></script>
+<script src="app.js?v=1.9"></script>
 
 <script>
   // Configuración de Firebase
@@ -5049,7 +5049,7 @@ function renderResumenInicio() {
     const contenedor = document.getElementById('render-resumen-inicio');
     if (!contenedor) return;
 
-    // 🛡️ ESCUDO
+    // 🛡️ ESCUDO DE EQUIPOS REGISTRADOS
     if (!db || !db.equipos || db.equipos.length === 0) {
         contenedor.innerHTML = `
             <div style="text-align:center; padding:40px; color:#64748b;">
@@ -5071,26 +5071,35 @@ function renderResumenInicio() {
         totalRoja += (j.roja || 0);
     });
 
-    // 2️⃣ CÁLCULO DE EQUIPOS DESTACADOS
-    const lider = [...db.equipos].sort((a, b) => {
-        if ((b.pts || 0) !== (a.pts || 0)) return (b.pts || 0) - (a.pts || 0);
-        const dgA = (a.gf || 0) - (a.gc || 0);
-        const dgB = (b.gf || 0) - (b.gc || 0);
-        if (dgB !== dgA) return dgB - dgA;
-        return (b.gf || 0) - (a.gf || 0);
-    })[0] || {};
+    // ⚠️ CONTROLADOR: SABER SI EL TORNEO YA TIENE ACTIVIDAD
+    const torneoIniciado = db.equipos.some(e => (e.pj || 0) > 0) || totalGoles > 0;
 
-    const mejorOf = [...db.equipos].sort((a, b) => {
-        if ((b.gf || 0) !== (a.gf || 0)) return (b.gf || 0) - (a.gf || 0);
-        return (a.pj || 0) - (b.pj || 0);
-    })[0] || {};
+    // 2️⃣ CÁLCULO DE EQUIPOS DESTACADOS (Solo si el torneo ya inició)
+    let lider = null, mejorOf = null, mejorDef = null;
 
-    const mejorDef = [...db.equipos]
-        .filter(e => (e.pj || 0) > 0)
-        .sort((a, b) => {
-            if ((a.gc || 0) !== (b.gc || 0)) return (a.gc || 0) - (b.gc || 0);
-            return (b.pj || 0) - (a.pj || 0);
-        })[0] || lider;
+    if (torneoIniciado) {
+        lider = [...db.equipos].sort((a, b) => {
+            if ((b.pts || 0) !== (a.pts || 0)) return (b.pts || 0) - (a.pts || 0);
+            const dgA = (a.gf || 0) - (a.gc || 0);
+            const dgB = (b.gf || 0) - (b.gc || 0);
+            if (dgB !== dgA) return dgB - dgA;
+            return (b.gf || 0) - (a.gf || 0);
+        })[0] || null;
+
+        mejorOf = [...db.equipos]
+            .filter(e => (e.gf || 0) > 0)
+            .sort((a, b) => {
+                if ((b.gf || 0) !== (a.gf || 0)) return (b.gf || 0) - (a.gf || 0);
+                return (a.pj || 0) - (b.pj || 0);
+            })[0] || null;
+
+        mejorDef = [...db.equipos]
+            .filter(e => (e.pj || 0) > 0)
+            .sort((a, b) => {
+                if ((a.gc || 0) !== (b.gc || 0)) return (a.gc || 0) - (b.gc || 0);
+                return (b.pj || 0) - (a.pj || 0);
+            })[0] || null;
+    }
 
     const jValidos = (db.jugadores || []).filter(j => j && j.nombre);
 
@@ -5127,46 +5136,58 @@ function renderResumenInicio() {
     <h3 style="padding: 0 10px; text-align:center; color: #64748b; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">⭐ Destacados ⭐</h3>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; padding: 10px;">
-        ${cardEq("LÍDER GENERAL", lider, lider.pts || 0, "Puntos", "#f59e0b", "🏆", "sec-tabla")}
-        ${cardEq("MEJOR OFENSIVA", mejorOf, mejorOf.gf || 0, "Goles", "#3b82f6", "🔥", "sec-tabla")}
-        ${cardEq("MEJOR DEFENSIVA", mejorDef, mejorDef.gc || 0, "Goles Rec.", "#10b981", "🛡️", "sec-tabla")}`;    
+        ${lider ? cardEq("LÍDER GENERAL", lider, lider.pts || 0, "Puntos", "#f59e0b", "🏆", "sec-tabla") : cardVacia("LÍDER GENERAL", "🏆")}
+        ${mejorOf ? cardEq("MEJOR OFENSIVA", mejorOf, mejorOf.gf || 0, "Goles", "#3b82f6", "🔥", "sec-tabla") : cardVacia("MEJOR OFENSIVA", "🔥")}
+        ${mejorDef ? cardEq("MEJOR DEFENSIVA", mejorDef, mejorDef.gc || 0, "Goles Rec.", "#10b981", "🛡️", "sec-tabla") : cardVacia("MEJOR DEFENSIVA", "🛡️")}`;    
     
     if (jValidos.length > 0) {
+        // Solo obtener si el valor numérico es mayor que 0
         const goleador = [...jValidos].filter(j => (j.goles || 0) > 0).sort((a, b) => (b.goles || 0) - (a.goles || 0))[0] || null;
-        const mvp = [...jValidos].sort((a, b) => ((b.goles||0)*10 - (b.ama||0)*2) - ((a.goles||0)*10 - (a.ama||0)*2))[0] || null;
+        
+        // MVP requiere tener al menos 1 gol o rendimiento positivo registrado
+        const mvp = torneoIniciado ? [...jValidos].filter(j => (j.goles || 0) > 0).sort((a, b) => ((b.goles||0)*10 - (b.ama||0)*2) - ((a.goles||0)*10 - (a.ama||0)*2))[0] || null : null;
+        
         const masAma = [...jValidos].filter(j => (j.ama || 0) > 0).sort((a, b) => (b.ama || 0) - (a.ama || 0))[0] || null;
         const masRoja = [...jValidos].filter(j => (j.roja || 0) > 0).sort((a, b) => (b.roja || 0) - (a.roja || 0))[0] || null;
 
         htmlContent += `    
         <div class="card-mvp-container">
-            ${mvp ? cardPj("MVP DE LA LIGA", mvp, ((mvp.goles || 0) * 10 - (mvp.ama || 0) * 2), "Pts Rendimiento", "#ffd700", "💎", "sec-goleadores") : ''}
+            ${mvp ? cardPj("MVP DE LA LIGA", mvp, ((mvp.goles || 0) * 10 - (mvp.ama || 0) * 2), "Pts Rendimiento", "#ffd700", "💎", "sec-goleadores") : cardVacia("MVP DE LA LIGA", "💎")}
         </div>        
         ${goleador ? cardPj("LÍDER DE GOLEO", goleador, goleador.goles || 0, "Goles", "#10b981", "⚽", "sec-goleadores") : cardVacia("LÍDER DE GOLEO", "⚽")}
         ${masAma ? cardPj("MÁS AMARILLAS", masAma, masAma.ama || 0, "Tarjetas", "#eab308", "🟨", "sec-disciplina") : cardVacia("MÁS AMARILLAS", "🟨")}
         ${masRoja ? cardPj("MÁS ROJAS", masRoja, masRoja.roja || 0, "Tarjetas", "#ef4444", "🟥", "sec-disciplina") : cardVacia("MÁS ROJAS", "🟥")}`;
+    } else {
+        htmlContent += `
+        ${cardVacia("MVP DE LA LIGA", "💎")}
+        ${cardVacia("LÍDER DE GOLEO", "⚽")}
+        ${cardVacia("MÁS AMARILLAS", "🟨")}
+        ${cardVacia("MÁS ROJAS", "🟥")}`;
     }
 
-    // 4️⃣ RÉCORDS DE PARTIDOS
+    // 4️⃣ RÉCORDS DE PARTIDOS (Solo si existen marcadores jugados)
     let goleada = { dif: -1, gL: 0, gV: 0, local: null, visita: null };
     let masGoles = { total: -1, gL: 0, gV: 0, local: null, visita: null };
 
-    db.calendario.forEach(jornada => {
-        (jornada.partidos || []).forEach(m => {
-            if (m.l_goles !== undefined && m.l_goles !== null && m.jugado === true) {
-                const gL = Number(m.l_goles);
-                const gV = Number(m.v_goles);
-                const total = gL + gV;
-                const dif = Math.abs(gL - gV);
+    if (db.calendario) {
+        db.calendario.forEach(jornada => {
+            (jornada.partidos || []).forEach(m => {
+                if (m.l_goles !== undefined && m.l_goles !== null && m.jugado === true) {
+                    const gL = Number(m.l_goles);
+                    const gV = Number(m.v_goles);
+                    const total = gL + gV;
+                    const dif = Math.abs(gL - gV);
 
-                if (dif > goleada.dif) {
-                    goleada = { dif, gL, gV, local: m.l, visita: m.v };
+                    if (dif > goleada.dif) {
+                        goleada = { dif, gL, gV, local: m.l, visita: m.v };
+                    }
+                    if (total > masGoles.total) {
+                        masGoles = { total, gL, gV, local: m.l, visita: m.v };
+                    }
                 }
-                if (total > masGoles.total) {
-                    masGoles = { total, gL, gV, local: m.l, visita: m.v };
-                }
-            }
+            });
         });
-    });
+    }
 
     const getLogo = (nombre) => {
         const eq = db.equipos.find(e => e.nombre === nombre);
@@ -6279,6 +6300,81 @@ function renderCarruselPatrocinadores() {
     `).join('');
 }
 
+async function compartirPagina() {
+    // Obtenemos el nombre del torneo dinámico si existe en tu base de datos
+    let torneo = (typeof db !== 'undefined' && db.nombreTorneoActual) ? db.nombreTorneoActual : 'Liga de Fútbol';
+
+    const datosCompartir = {
+        title: torneo,
+        text: `¡Sigue las estadísticas, tabla y resultados de ${torneo}! ⚽`,
+        url: window.location.href // Toma la URL actual automáticamente
+    };
+
+    // 1️⃣ Intenta usar la API nativa del celular (WhatsApp, Facebook, etc.)
+    if (navigator.share) {
+        try {
+            await navigator.share(datosCompartir);
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                copiarAlPortapapeles(datosCompartir.url);
+            }
+        }
+    } else {
+        // 2️⃣ Si es PC o navegador sin soporte, copia el link al portapapeles
+        copiarAlPortapapeles(datosCompartir.url);
+    }
+}
+
+function copiarAlPortapapeles(url) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(() => {
+            mostrarNotificacion('¡Enlace copiado al portapapeles!');
+        }).catch(() => {
+            copiarFallback(url);
+        });
+    } else {
+        copiarFallback(url);
+    }
+}
+
+function copiarFallback(texto) {
+    const inputOculto = document.createElement('input');
+    inputOculto.value = texto;
+    document.body.appendChild(inputOculto);
+    inputOculto.select();
+    try {
+        document.execCommand('copy');
+        mostrarNotificacion('¡Enlace copiado al portapapeles!');
+    } catch (err) {
+        alert('Copia el siguiente enlace: ' + texto);
+    }
+    document.body.removeChild(inputOculto);
+}
+
+function mostrarNotificacion(mensaje) {
+    const toast = document.createElement('div');
+    toast.innerText = mensaje;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 85px;
+        right: 20px;
+        background: #1e293b;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+        z-index: 10000;
+        transition: opacity 0.3s;
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
+}
+
 </script>
 <link rel="manifest" href="/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -6336,7 +6432,19 @@ if (typeof database !== 'undefined') {
 
     </script>
 
-<section class="no-print" style="background: white; padding: 40px 0; border-top: 1px solid #e2e8f0; overflow: hidden; margin-top: 40px;">
+<section class="no-print" style="
+    background: white; 
+    padding: 40px 0; 
+    border-top: 1px solid #e2e8f0; 
+    overflow: hidden; 
+    margin-top: 40px;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+">
     <h4 style="text-align: center; color: #94a3b8; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px;">
         PATROCINADORES OFICIALES
     </h4>
@@ -6412,6 +6520,29 @@ if (typeof database !== 'undefined') {
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- Botón Flotante para Compartir -->
+<button onclick="compartirPagina()" id="btn-flotante-compartir" class="no-print" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25d366; /* Verde tipo WhatsApp/Compartir */
+    color: white;
+    border: none;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.2s, background-color 0.2s;
+" title="Compartir liga">
+    🔗
+</button>
 
 </body>
 </html>
