@@ -6300,65 +6300,58 @@ function renderCarruselPatrocinadores() {
     `).join('');
 }
 
-async function compartirPagina() {
-    // Obtenemos el nombre del torneo dinámico si existe en tu base de datos
-    let torneo = (typeof db !== 'undefined' && db.nombreTorneoActual) ? db.nombreTorneoActual : 'Liga de Fútbol';
+// 1️⃣ Función para copiar directamente al portapapeles
+function copiarEnlaceDirecto() {
+    const url = window.location.href;
 
-    const datosCompartir = {
-        title: torneo,
-        text: `¡Sigue las estadísticas, tabla y resultados de ${torneo}! ⚽`,
-        url: window.location.href // Toma la URL actual automáticamente
-    };
-
-    // 1️⃣ Intenta usar la API nativa del celular (WhatsApp, Facebook, etc.)
-    if (navigator.share) {
-        try {
-            await navigator.share(datosCompartir);
-        } catch (error) {
-            if (error.name !== 'AbortError') {
-                copiarAlPortapapeles(datosCompartir.url);
-            }
-        }
-    } else {
-        // 2️⃣ Si es PC o navegador sin soporte, copia el link al portapapeles
-        copiarAlPortapapeles(datosCompartir.url);
-    }
-}
-
-function copiarAlPortapapeles(url) {
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(url).then(() => {
-            mostrarNotificacion('¡Enlace copiado al portapapeles!');
+            mostrarToastCompartir('¡Enlace copiado al portapapeles! 📋');
         }).catch(() => {
-            copiarFallback(url);
+            copiarFallbackDirecto(url);
         });
     } else {
-        copiarFallback(url);
+        copiarFallbackDirecto(url);
     }
 }
 
-function copiarFallback(texto) {
+// Respaldo por si falla la API de portapapeles
+function copiarFallbackDirecto(texto) {
     const inputOculto = document.createElement('input');
     inputOculto.value = texto;
     document.body.appendChild(inputOculto);
     inputOculto.select();
     try {
         document.execCommand('copy');
-        mostrarNotificacion('¡Enlace copiado al portapapeles!');
+        mostrarToastCompartir('¡Enlace copiado al portapapeles! 📋');
     } catch (err) {
-        alert('Copia el siguiente enlace: ' + texto);
+        alert('Copia este enlace: ' + texto);
     }
     document.body.removeChild(inputOculto);
 }
 
-function mostrarNotificacion(mensaje) {
+// 2️⃣ Función para enviar directamente a WhatsApp
+function compartirWhatsAppDirecto() {
+    let torneo = (typeof db !== 'undefined' && db.nombreTorneoActual) ? db.nombreTorneoActual : 'Liga de Fútbol';
+    const url = window.location.href;
+    
+    // Mensaje predeterminado listo para enviar
+    const mensaje = `¡Sigue los resultados, la tabla general y las estadísticas de ${torneo} aquí! ⚽👇\n${url}`;
+    
+    // Abre WhatsApp Web en PC o la App de WhatsApp en celulares
+    const urlWhatsapp = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;
+    window.open(urlWhatsapp, '_blank');
+}
+
+// Mensaje flotante de confirmación (Toast)
+function mostrarToastCompartir(mensaje) {
     const toast = document.createElement('div');
     toast.innerText = mensaje;
     toast.style.cssText = `
         position: fixed;
-        bottom: 85px;
+        bottom: 80px;
         right: 20px;
-        background: #1e293b;
+        background: #0f172a;
         color: white;
         padding: 10px 18px;
         border-radius: 20px;
@@ -6521,28 +6514,57 @@ if (typeof database !== 'undefined') {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-<!-- Botón Flotante para Compartir -->
-<button onclick="compartirPagina()" id="btn-flotante-compartir" class="no-print" style="
+<!-- Contenedor Flotante de Compartir -->
+<div class="no-print" style="
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #25d366; /* Verde tipo WhatsApp/Compartir */
-    color: white;
-    border: none;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    cursor: pointer;
+    gap: 10px;
     z-index: 9999;
-    transition: transform 0.2s, background-color 0.2s;
-" title="Compartir liga">
-    🔗
-</button>
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 12px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
+    border: 1px solid #e2e8f0;
+">
+    <!-- Botón Copiar Link -->
+    <button onclick="copiarEnlaceDirecto()" style="
+        background: #1e293b;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.2s;
+    ">
+        <span>📋</span> Copiar Link
+    </button>
+
+    <!-- Botón WhatsApp -->
+    <button onclick="compartirWhatsAppDirecto()" style="
+        background: #25d366;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.2s;
+    ">
+        <span>📲</span> WhatsApp
+    </button>
+</div>
 
 </body>
 </html>
