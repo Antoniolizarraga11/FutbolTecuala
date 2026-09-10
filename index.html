@@ -1925,17 +1925,17 @@ async function actualizarVinculosEquipo(viejo, nuevo) { // 1. Agregamos async
     }
 }
 
-async function borrarEquipo(idRecibido) { // 1. Agregamos async
+async function borrarEquipo(idRecibido) {
     if (typeof rolActual !== 'undefined' && rolActual !== "admin") {
         return alert("⚠️ Solo el Administrador puede borrar equipos.");
     }
 
     const equipoIndex = db.equipos.findIndex(e => String(e.id) === String(idRecibido));
+    if (equipoIndex === -1) return;
+    
     const equipo = db.equipos[equipoIndex];
 
-    if (equipoIndex === -1) return;
-
-    // 2. Validación: ¿Tiene jugadores?
+    // 1. Validación: ¿Tiene jugadores?
     const tieneJugadores = db.jugadores.some(j => 
         j.equipo && j.equipo.trim().toUpperCase() === equipo.nombre.trim().toUpperCase()
     );
@@ -1943,35 +1943,39 @@ async function borrarEquipo(idRecibido) { // 1. Agregamos async
         return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque tiene jugadores asignados.`);
     }
 
-    // 3. Validación: ¿Tiene partidos?
-    const tienePartidos = db.calendario.some(semana => 
-        semana.partidos.some(p => p.l === equipo.nombre || p.v === equipo.nombre)
-    );
-    if (tienePartidos) {
-        return alert(`⚠️ No puedes borrar "${equipo.nombre}" porque ya aparece en el calendario.`);
-    }
-
-    // 4. Confirmación y Borrado Asíncrono
-    if (confirm(`¿Estás seguro de que deseas eliminar permanentemente al equipo: ${equipo.nombre}?`)) {
+    // 2. Confirmación
+    if (confirm(`¿Estás seguro de que deseas eliminar permanentemente al equipo: ${equipo.nombre}?\n\nNOTA: Si existe en el calendario, sus partidos programados también serán eliminados.`)) {
         try {
+            // Eliminar el equipo del arreglo de equipos
             db.equipos.splice(equipoIndex, 1); 
+
+            // Limpiar partidos del calendario donde participa este equipo
+            if (Array.isArray(db.calendario)) {
+                db.calendario.forEach(semana => {
+                    if (Array.isArray(semana.partidos)) {
+                        semana.partidos = semana.partidos.filter(p => 
+                            p.l !== equipo.nombre && p.v !== equipo.nombre
+                        );
+                    }
+                });
+            }
             
-            // Esperamos a que la nube confirme el borrado
+            // Guardar cambios en Firebase / DB
             await persist(); 
             
-            alert("✅ Equipo eliminado con éxito.");
+            alert("✅ Equipo y sus partidos asignados fueron eliminados con éxito.");
             
             if (typeof renderTodo === 'function') renderTodo();
             
-            // Si el formulario de edición estaba abierto con este equipo, lo limpiamos
-            if (document.getElementById('edit-eq-id').value === String(idRecibido)) {
+            // Limpiar formulario si estaba abierto
+            const inputEditId = document.getElementById('edit-eq-id');
+            if (inputEditId && inputEditId.value === String(idRecibido)) {
                 cancelarEdicionEquipo();
             }
 
         } catch (error) {
             console.error("Error al borrar equipo:", error);
             alert("❌ No se pudo eliminar el equipo en la nube. Revisa tu conexión.");
-            // Opcional: podrías recargar los datos para revertir el splice local si falló
             if (typeof initApp === 'function') initApp(); 
         }
     }
