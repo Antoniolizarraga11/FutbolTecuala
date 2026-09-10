@@ -1429,11 +1429,11 @@ nav::-webkit-scrollbar { display: none; }
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=1.9"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=1.9"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=1.9"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=2.0"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=2.0"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=2.0"></script>
 
-<script src="app.js?v=1.9"></script>
+<script src="app.js?v=2.0"></script>
 
 <script>
   // Configuración de Firebase
@@ -2204,12 +2204,15 @@ function editarPj(id) {
     document.getElementById('pj-nombre').focus();
 }
 
+// ⚠️ Configura aquí exactamente los nombres de los 3 equipos que comparten la misma cancha
+const EQUIPOS_MISMA_CANCHA = ["Equipo A", "Equipo B", "Equipo C"];
+
 function generarCalendario() {
     if (rolActual !== 'admin') {
         alert("⛔ Solo el Administrador principal puede regenerar el calendario.");
         return;
     }  
-    if (!confirm("⚠️ ¿Estás seguro? Se borrarán todos los resultados actuales.")) return;	
+    if (!confirm("⚠️ ¿Estás seguro? Se borrarán todos los resultados actuales.")) return;   
     if (db.equipos.length < 2) return alert("Mínimo 2 equipos para generar un torneo.");
 
     const numVueltas = parseInt(document.getElementById('vueltas').value);
@@ -2239,8 +2242,9 @@ function generarCalendario() {
                     v: visitante,
                     score: "vs",
                     jugado: false,
-		    fecha: "",
-		    hora: "",
+                    fecha: "",
+                    hora: "",
+                    cancha: "",
                     inc: []
                 });
             }
@@ -2262,8 +2266,9 @@ function generarCalendario() {
                     v: pIda.l,
                     score: "vs",
                     jugado: false,
-		    fecha: "",
-		    hora: "",
+                    fecha: "",
+                    hora: "",
+                    cancha: "",
                     inc: []
                 });
             });
@@ -2280,7 +2285,6 @@ function renderCalendario() {
     const contenedor = document.getElementById('render-calendario');
     if (!contenedor) return;
 
-    // 1. Verificación de datos inicial
     if (!db.calendario || db.calendario.length === 0) {
         contenedor.innerHTML = `<div style="text-align:center; padding:40px; color:#94a3b8;">
             <div style="font-size:40px; margin-bottom:10px;">📅</div>
@@ -2292,10 +2296,9 @@ function renderCalendario() {
     const tienePermiso = (rolActual === 'admin' || rolActual === 'editor');
     const totalJornadas = db.calendario.length;
 
-    // --- SECCIÓN DE NAVEGACIÓN (FLECHAS + BOTONES) ---
+    // --- SECCIÓN DE NAVEGACIÓN ---
     let htmlBotones = `
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; background: #fff; padding: 5px; border-radius: 15px;">
-        
         <button onclick="cambiarJornadaRelativa(-1)" 
             ${jornadaSeleccionada <= 1 ? 'disabled' : ''}
             style="background: ${jornadaSeleccionada <= 1 ? '#f8fafc' : '#f1f5f9'}; 
@@ -2333,23 +2336,43 @@ function renderCalendario() {
         </button>
     </div>`;
 
-    // 2. Buscar la jornada actual para renderizar partidos
     const jornada = db.calendario.find(j => j.num === jornadaSeleccionada) || db.calendario[0];
 
-    let htmlPartidos = `
-    <div style="background:#fff; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease;">
-        <div style="background:var(--primary); color:white; padding:15px; font-weight:900; text-align:center; letter-spacing:2px; text-transform:uppercase; font-size:14px;">
-            JORNADA ${jornada.num}
+    // --- DETECCIÓN DE CONFLICTO DE CANCHA ---
+    const localesMismaCancha = jornada.partidos.filter(p => EQUIPOS_MISMA_CANCHA.includes(p.l));
+    let htmlAlertaCancha = "";
+    if (localesMismaCancha.length > 1) {
+        const nombresEmpalme = localesMismaCancha.map(p => p.l).join(" y ");
+        htmlAlertaCancha = `
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">⚠️</span> 
+            <span><strong>Aviso de Cancha:</strong> En la J${jornada.num}, ${nombresEmpalme} juegan como LOCAL. Programa sus horarios en turnos distintos.</span>
         </div>`;
+    }
+
+    // AÑADIDO: id="jornada-contenedor-${jornada.num}" para la captura de pantalla
+    let htmlPartidos = `
+    ${htmlAlertaCancha}
+    <div id="jornada-contenedor-${jornada.num}" style="background:#fff; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease;">
+        
+       <!-- CABECERA CON BOTÓN OMITIDO EN CAPTURA -->
+<div style="background:var(--primary); color:white; padding:15px; display:flex; align-items:center; justify-content:space-between;">
+    <div style="font-weight:900; letter-spacing:2px; text-transform:uppercase; font-size:14px; flex:1; text-align:center;">
+        JORNADA ${jornada.num}
+    </div>
+    <button class="no-exportar" onclick="exportarJornadaJPG(${jornada.num})" style="background:#2563eb; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:800; font-size:11px; cursor:pointer; display:flex; align-items:center; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+        📸 JPG
+    </button>
+</div>`;
 
     const equiposJugandoHoy = [];
 
-    jornada.partidos.forEach(p => {
+    jornada.partidos.forEach((p, idxInJornada) => {
         equiposJugandoHoy.push(p.l, p.v);
         let botonAccion = "";          
         
         if (p.jugado) {
-           botonAccion = `
+            botonAccion = `
             <div style="font-size:32px; font-weight:900; color:#1e293b; line-height:1;">${p.score}</div>
             <div style="display:flex; flex-direction:column; gap:6px; margin-top:10px;">
                 <button onclick="verReporte(${p.id})" 
@@ -2414,7 +2437,7 @@ function renderCalendario() {
                     <span style="background:#fff; padding:5px 10px; border-radius:8px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:4px;">🕒 ${p.hora || 'POR CONFIRMAR'}</span>
                     <span style="background:#e0f2fe; color:#0369a1; padding:5px 10px; border-radius:8px; border:1px solid #bae6fd; display:flex; align-items:center; gap:4px;">🏟️ ${p.cancha || 'POR ASIGNAR'}</span>
                     ${tienePermiso ? `
-                        <button onclick="editarHorario(${p.id})" style="background:#1e293b; color:white; border:none; border-radius:6px; cursor:pointer; font-size:10px; padding:6px 12px; font-weight:bold;">✏️ EDITAR</button>
+                        <button onclick="editarEncuentroCompleto(${jornada.num}, ${idxInJornada}, ${p.id})" style="background:#1e293b; color:white; border:none; border-radius:6px; cursor:pointer; font-size:10px; padding:6px 12px; font-weight:bold;">✏️ EDITAR</button>
                     ` : ''}
                 </div>
             </div>`;
@@ -2437,7 +2460,123 @@ function renderCalendario() {
     contenedor.innerHTML = htmlBotones + htmlPartidos;
 }
 
-// --- FUNCIONES DE CONTROL DE JORNADA (FUERA DE RENDER) ---
+function editarEncuentroCompleto(numJornada, idxPartido, partidoId) {
+    const jornada = db.calendario.find(j => j.num === numJornada);
+    if (!jornada) return;
+    const p = jornada.partidos[idxPartido];
+    if (!p) return;
+
+    const totalJornadas = db.calendario.length;
+    const totalIda = totalJornadas / 2;
+    const esSegundaVuelta = numJornada > totalIda;
+
+    // Equipos actuales del partido
+    const eqA = p.l;
+    const eqB = p.v;
+
+    const modalHtml = `
+    <div id="modal-editar-partido" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); display:flex; align-items:center; justify-content:center; z-index:10000; padding:15px; backdrop-filter:blur(3px);">
+        <div style="background:white; border-radius:16px; padding:20px; width:100%; max-width:400px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
+            <h3 style="margin:0 0 15px 0; font-size:16px; font-weight:900; color:#1e293b; text-align:center;">EDITAR PARTIDO J${numJornada}</h3>
+            
+            ${esSegundaVuelta ? `
+                <div style="background:#fffbe2; border:1px solid #fef08a; color:#854d0e; padding:8px 12px; border-radius:8px; font-size:11px; margin-bottom:12px; font-weight:bold; text-align:center;">
+                    ℹ️ Los roles de la 2.ª Vuelta derivan de la 1.ª Vuelta. Puedes ajustar Fecha, Hora y Cancha.
+                </div>
+            ` : ''}
+
+            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:15px;">
+                <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0;">
+                    <div style="font-size:11px; font-weight:800; color:#64748b; margin-bottom:6px;">CAMBIAR LOCALÍA</div>
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                            <label style="font-size:10px; font-weight:800; color:#94a3b8; display:block; margin-bottom:2px;">LOCAL</label>
+                            <select id="select-local-edit" onchange="sincronizarInversionEquipos('local', '${eqA}', '${eqB}')" ${esSegundaVuelta ? 'disabled' : ''} style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; font-size:12px; background:#fff;">
+                                <option value="${eqA}" ${p.l === eqA ? 'selected' : ''}>${eqA}</option>
+                                <option value="${eqB}" ${p.l === eqB ? 'selected' : ''}>${eqB}</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="font-size:10px; font-weight:800; color:#94a3b8; display:block; margin-bottom:2px;">VISITANTE</label>
+                            <select id="select-visitante-edit" onchange="sincronizarInversionEquipos('visitante', '${eqA}', '${eqB}')" ${esSegundaVuelta ? 'disabled' : ''} style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; font-size:12px; background:#fff;">
+                                <option value="${eqA}" ${p.v === eqA ? 'selected' : ''}>${eqA}</option>
+                                <option value="${eqB}" ${p.v === eqB ? 'selected' : ''}>${eqB}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-size:11px; font-weight:800; color:#64748b;">FECHA</label>
+                    <input type="date" id="input-fecha-edit" value="${p.fecha || ''}" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold;">
+                </div>
+
+                <div>
+                    <label style="font-size:11px; font-weight:800; color:#64748b;">HORA</label>
+                    <input type="time" id="input-hora-edit" value="${p.hora || ''}" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold;">
+                </div>
+
+                <div>
+                    <label style="font-size:11px; font-weight:800; color:#64748b;">CANCHA</label>
+                    <input type="text" id="input-cancha-edit" value="${p.cancha || ''}" placeholder="Nombre de la cancha" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold;">
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="document.getElementById('modal-editar-partido').remove()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:10px; border-radius:8px; font-weight:800; cursor:pointer;">CANCELAR</button>
+                <button onclick="guardarEdicionPartidos(${numJornada}, ${idxPartido})" style="flex:1; background:#22c55e; color:white; border:none; padding:10px; border-radius:8px; font-weight:800; cursor:pointer;">GUARDAR</button>
+            </div>
+        </div>
+    </div>`;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// Auxiliar para intercambiar automáticamente al seleccionar en el dropdown
+function sincronizarInversionEquipos(origen, eqA, eqB) {
+    const selLocal = document.getElementById('select-local-edit');
+    const selVisitante = document.getElementById('select-visitante-edit');
+
+    if (origen === 'local') {
+        selVisitante.value = (selLocal.value === eqA) ? eqB : eqA;
+    } else {
+        selLocal.value = (selVisitante.value === eqA) ? eqB : eqA;
+    }
+}
+
+function guardarEdicionPartidos(numJornada, idxPartido) {
+    const jornada = db.calendario.find(j => j.num === numJornada);
+    if (!jornada) return;
+    const p = jornada.partidos[idxPartido];
+
+    const nuevoLocal = document.getElementById('select-local-edit').value;
+    const nuevoVisitante = document.getElementById('select-visitante-edit').value;
+
+    p.l = nuevoLocal;
+    p.v = nuevoVisitante;
+    p.fecha = document.getElementById('input-fecha-edit').value;
+    p.hora = document.getElementById('input-hora-edit').value;
+    p.cancha = document.getElementById('input-cancha-edit').value;
+
+    // INVERSIÓN AUTOMÁTICA EN LA 2.ª VUELTA
+    const totalJornadas = db.calendario.length;
+    const totalIda = totalJornadas / 2;
+
+    if (numJornada <= totalIda) {
+        const numVueltaEquiv = numJornada + totalIda;
+        const jorVuelta = db.calendario.find(j => j.num === numVueltaEquiv);
+        if (jorVuelta && jorVuelta.partidos[idxPartido]) {
+            jorVuelta.partidos[idxPartido].l = nuevoVisitante;
+            jorVuelta.partidos[idxPartido].v = nuevoLocal;
+        }
+    }
+
+    document.getElementById('modal-editar-partido').remove();
+    persist();
+    renderCalendario();
+}
 
 function cambiarJornada(n) {
     jornadaSeleccionada = n;
@@ -6283,6 +6422,34 @@ async function eliminarPatrocinador(id, url) {
     } catch (e) {
         console.error(e);
     }
+}
+
+function exportarJornadaJPG(numJornada) {
+    const contenedorJornada = document.getElementById(`jornada-contenedor-${numJornada}`);
+    
+    if (!contenedorJornada) {
+        alert("No se encontró el contenedor de la jornada para exportar.");
+        return;
+    }
+
+    html2canvas(contenedorJornada, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        useCORS: true,
+        // Ignora cualquier elemento marcado con la clase 'no-exportar'
+        ignoreElements: (element) => element.classList.contains('no-exportar')
+    }).then(canvas => {
+        const imagenJpg = canvas.toDataURL("image/jpeg", 0.95);
+
+        const enlace = document.createElement('a');
+        enlace.download = `Jornada_${numJornada}_Calendario.jpg`;
+        enlace.href = imagenJpg;
+        enlace.click();
+        enlace.remove();
+    }).catch(err => {
+        console.error("Error al exportar a JPG:", err);
+        alert("Ocurrió un error al generar la imagen.");
+    });
 }
 
 function renderCarruselPatrocinadores() {
