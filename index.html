@@ -1429,11 +1429,11 @@ nav::-webkit-scrollbar { display: none; }
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=2.0"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=2.0"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=2.0"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=2.1"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=2.1"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=2.1"></script>
 
-<script src="app.js?v=2.0"></script>
+<script src="app.js?v=2.1"></script>
 
 <script>
   // Configuración de Firebase
@@ -2354,20 +2354,12 @@ function renderCalendario() {
         </div>`;
     }
 
-    // AÑADIDO: id="jornada-contenedor-${jornada.num}" para la captura de pantalla
     let htmlPartidos = `
     ${htmlAlertaCancha}
-    <div id="jornada-contenedor-${jornada.num}" style="background:#fff; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease;">
-        
-       <!-- CABECERA CON BOTÓN OMITIDO EN CAPTURA -->
-<div style="background:var(--primary); color:white; padding:15px; display:flex; align-items:center; justify-content:space-between;">
-    <div style="font-weight:900; letter-spacing:2px; text-transform:uppercase; font-size:14px; flex:1; text-align:center;">
-        JORNADA ${jornada.num}
-    </div>
-    <button class="no-exportar" onclick="exportarJornadaJPG(${jornada.num})" style="background:#2563eb; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:800; font-size:11px; cursor:pointer; display:flex; align-items:center; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
-        📸 JPG
-    </button>
-</div>`;
+    <div style="background:#fff; border-radius:15px; overflow:hidden; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); animation: fadeIn 0.3s ease;">
+        <div style="background:var(--primary); color:white; padding:15px; font-weight:900; text-align:center; letter-spacing:2px; text-transform:uppercase; font-size:14px;">
+            JORNADA ${jornada.num}
+        </div>`;
 
     const equiposJugandoHoy = [];
 
@@ -2474,42 +2466,35 @@ function editarEncuentroCompleto(numJornada, idxPartido, partidoId) {
     const totalIda = totalJornadas / 2;
     const esSegundaVuelta = numJornada > totalIda;
 
-    // Equipos actuales del partido
-    const eqA = p.l;
-    const eqB = p.v;
+    // Generar opciones de equipos
+    const opcionesEquipos = db.equipos.map(e => `<option value="${e.nombre}">${e.nombre}</option>`).join('');
 
     const modalHtml = `
     <div id="modal-editar-partido" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); display:flex; align-items:center; justify-content:center; z-index:10000; padding:15px; backdrop-filter:blur(3px);">
         <div style="background:white; border-radius:16px; padding:20px; width:100%; max-width:400px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
-            <h3 style="margin:0 0 15px 0; font-size:16px; font-weight:900; color:#1e293b; text-align:center;">EDITAR PARTIDO J${numJornada}</h3>
+            <h3 style="margin-0 0 15px 0; font-size:16px; font-weight:900; color:#1e293b; text-align:center;">EDITAR PARTIDO J${numJornada}</h3>
             
             ${esSegundaVuelta ? `
                 <div style="background:#fffbe2; border:1px solid #fef08a; color:#854d0e; padding:8px 12px; border-radius:8px; font-size:11px; margin-bottom:12px; font-weight:bold; text-align:center;">
-                    ℹ️ Los roles de la 2.ª Vuelta derivan de la 1.ª Vuelta. Puedes ajustar Fecha, Hora y Cancha.
+                    ℹ️ Los equipos de la 2.ª Vuelta derivan automáticamente de la 1.ª Vuelta. Puedes cambiar Fecha, Hora y Cancha.
                 </div>
             ` : ''}
 
-            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:15px;">
-                <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0;">
-                    <div style="font-size:11px; font-weight:800; color:#64748b; margin-bottom:6px;">CAMBIAR LOCALÍA</div>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <div>
-                            <label style="font-size:10px; font-weight:800; color:#94a3b8; display:block; margin-bottom:2px;">LOCAL</label>
-                            <select id="select-local-edit" onchange="sincronizarInversionEquipos('local', '${eqA}', '${eqB}')" ${esSegundaVuelta ? 'disabled' : ''} style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; font-size:12px; background:#fff;">
-                                <option value="${eqA}" ${p.l === eqA ? 'selected' : ''}>${eqA}</option>
-                                <option value="${eqB}" ${p.l === eqB ? 'selected' : ''}>${eqB}</option>
-                            </select>
-                        </div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:15px;">
+                <div>
+                    <label style="font-size:11px; font-weight:800; color:#64748b;">LOCAL</label>
+                    <select id="select-local-edit" ${esSegundaVuelta ? 'disabled' : ''} style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold;">
+                        <option value="${p.l}">${p.l}</option>
+                        ${opcionesEquipos}
+                    </select>
+                </div>
 
-                        <div>
-                            <label style="font-size:10px; font-weight:800; color:#94a3b8; display:block; margin-bottom:2px;">VISITANTE</label>
-                            <select id="select-visitante-edit" onchange="sincronizarInversionEquipos('visitante', '${eqA}', '${eqB}')" ${esSegundaVuelta ? 'disabled' : ''} style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold; font-size:12px; background:#fff;">
-                                <option value="${eqA}" ${p.v === eqA ? 'selected' : ''}>${eqA}</option>
-                                <option value="${eqB}" ${p.v === eqB ? 'selected' : ''}>${eqB}</option>
-                            </select>
-                        </div>
-                    </div>
+                <div>
+                    <label style="font-size:11px; font-weight:800; color:#64748b;">VISITANTE</label>
+                    <select id="select-visitante-edit" ${esSegundaVuelta ? 'disabled' : ''} style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-weight:bold;">
+                        <option value="${p.v}">${p.v}</option>
+                        ${opcionesEquipos}
+                    </select>
                 </div>
 
                 <div>
@@ -2538,18 +2523,6 @@ function editarEncuentroCompleto(numJornada, idxPartido, partidoId) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-// Auxiliar para intercambiar automáticamente al seleccionar en el dropdown
-function sincronizarInversionEquipos(origen, eqA, eqB) {
-    const selLocal = document.getElementById('select-local-edit');
-    const selVisitante = document.getElementById('select-visitante-edit');
-
-    if (origen === 'local') {
-        selVisitante.value = (selLocal.value === eqA) ? eqB : eqA;
-    } else {
-        selLocal.value = (selVisitante.value === eqA) ? eqB : eqA;
-    }
-}
-
 function guardarEdicionPartidos(numJornada, idxPartido) {
     const jornada = db.calendario.find(j => j.num === numJornada);
     if (!jornada) return;
@@ -2557,6 +2530,11 @@ function guardarEdicionPartidos(numJornada, idxPartido) {
 
     const nuevoLocal = document.getElementById('select-local-edit').value;
     const nuevoVisitante = document.getElementById('select-visitante-edit').value;
+    
+    if (nuevoLocal === nuevoVisitante) {
+        alert("⚠️ El equipo local y visitante no pueden ser el mismo.");
+        return;
+    }
 
     p.l = nuevoLocal;
     p.v = nuevoVisitante;
@@ -2572,6 +2550,7 @@ function guardarEdicionPartidos(numJornada, idxPartido) {
         const numVueltaEquiv = numJornada + totalIda;
         const jorVuelta = db.calendario.find(j => j.num === numVueltaEquiv);
         if (jorVuelta && jorVuelta.partidos[idxPartido]) {
+            // Se invierten los roles para la segunda vuelta
             jorVuelta.partidos[idxPartido].l = nuevoVisitante;
             jorVuelta.partidos[idxPartido].v = nuevoLocal;
         }
