@@ -429,6 +429,37 @@
         break-inside: avoid;
     }
 }
+
+/* Limita y centra las secciones de datos, tablas y listas */
+#sec-tabla, 
+#sec-playoffs, 
+#sec-goleadores, 
+#sec-disciplina, 
+#sec-buscador,
+#sec-mi-calendario,
+.contenedor-tabla,
+.plantilla-grid {
+    max-width: 900px !important; /* Mismo ancho elegante que Inicio/Equipos */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Evita que las tablas modifiquen el ancho del contenedor */
+table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto;
+}
+
+/* Permite desplazamiento horizontal suave en móviles si la tabla es muy ancha */
+.tabla-responsive,
+.table-container {
+    overflow-x: auto;
+    border-radius: 10px;
+}
+
 </style>
 
 </head>
@@ -1438,11 +1469,11 @@ nav::-webkit-scrollbar { display: none; }
     </div> 
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=2.2"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=2.2"></script>
-<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=2.2"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js?v=2.3"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js?v=2.3"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js?v=2.3"></script>
 
-<script src="app.js?v=2.2"></script>
+<script src="app.js?v=2.3"></script>
 
 <script>
   // Configuración de Firebase
@@ -3928,7 +3959,7 @@ document.addEventListener('change', function(e) {
 
 function renderGoleadores() {
     const contenedor = document.getElementById('diseno-goleadores-pro');
-    const tituloGoleo = document.getElementById('titulo-torneo-goleo'); // El ID que pusimos en el HTML
+    const tituloGoleo = document.getElementById('titulo-torneo-goleo');
     const subtituloGoleo = document.getElementById('subtitulo-temporada-goleo');
     
     if (!contenedor) return;
@@ -3964,63 +3995,69 @@ function renderGoleadores() {
     const eqMvp = db.equipos.find(e => e.nombre === mvp.equipo);
     const promedio = (mvp.goles / (mvp.pj || 1)).toFixed(2);
 
-    // 4. Renderizado con estructura de DOS COLUMNAS para la captura perfecta
+    // 4. Renderizado con fotos ampliadas
     contenedor.innerHTML = `
-    <div style="display: flex; gap: 20px; align-items: flex-start; text-align: left;">
+    <div style="display: flex; gap: 20px; align-items: flex-start; text-align: left; flex-wrap: wrap;">
         
-        <div class="mvp-card" style="flex: 1; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 25px; display: flex; flex-direction: column; align-items: center;">
-            <div class="mvp-photo-wrapper" style="margin-bottom: 10px; position: relative;">
-                <img src="${mvp.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mvp.nombre)}&size=200&background=22c55e&color=fff`}" 
-                     style="width: 180px; height: 180px; border-radius: 50%; border: 5px solid #22c55e; object-fit: cover;">
-                <div style="position: absolute; bottom: 5px; right: 5px; background: #22c55e; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 3px solid white;">1º</div>
+        <!-- TARJETA LÍDER / MVP -->
+        <div class="mvp-card" style="flex: 1; min-width: 280px; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 25px; display: flex; flex-direction: column; align-items: center;">
+            <div class="mvp-photo-wrapper" style="margin-bottom: 12px; position: relative;">
+                <!-- Foto MVP ampliada a 220px -->
+                <img src="${mvp.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mvp.nombre)}&size=250&background=22c55e&color=fff`}" 
+                     style="width: 220px; height: 220px; border-radius: 50%; border: 6px solid #22c55e; object-fit: cover; box-shadow: 0 8px 16px rgba(34, 197, 94, 0.25);">
+                <div style="position: absolute; bottom: 8px; right: 8px; background: #22c55e; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">1º</div>
             </div>
 
-            <h2 style="margin: 10px 0 0; font-size: 24px; color: #1e293b; text-transform: uppercase;">${mvp.nombre}</h2>
-            <div style="color: #22c55e; font-weight: 800; text-transform: uppercase; font-size: 14px; margin-bottom: 15px;">${mvp.equipo}</div>
+            <h2 style="margin: 8px 0 0; font-size: 24px; color: #1e293b; text-transform: uppercase; text-align: center;">${mvp.nombre}</h2>
+            <div style="color: #22c55e; font-weight: 800; text-transform: uppercase; font-size: 14px; margin-bottom: 12px;">${mvp.equipo}</div>
 
-            <img src="${eqMvp?.logo || ''}" style="width: 70px; height: 70px; object-fit: contain; margin-bottom: 15px;" onerror="this.style.display='none'">
+            <img src="${eqMvp?.logo || ''}" style="width: 65px; height: 65px; object-fit: contain; margin-bottom: 15px;" onerror="this.style.display='none'">
                 
             <div style="display: flex; gap: 10px; width: 100%;">
-                <div style="flex: 1; background: #f8fafc; border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #edf2f7;">
-                    <span style="font-size: 24px;">⚽</span>
+                <div style="flex: 1; background: #f8fafc; border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #edf2f7;">
+                    <span style="font-size: 22px;">⚽</span>
                     <div style="font-size: 28px; font-weight: 900; color: #16a34a;">${mvp.goles}</div>
                     <small style="font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase;">Goles</small>
                 </div>
-                <div style="flex: 1; background: #f8fafc; border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #edf2f7;">
-                    <span style="font-size: 24px;">🏟️</span>
+                <div style="flex: 1; background: #f8fafc; border-radius: 15px; padding: 12px; text-align: center; border: 1px solid #edf2f7;">
+                    <span style="font-size: 22px;">🏟️</span>
                     <div style="font-size: 28px; font-weight: 900; color: #1e293b;">${mvp.pj}</div>
                     <small style="font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase;">Partidos</small>
                 </div>
             </div>
 
-            <div style="margin-top: 20px; background: #f0fdf4; color: #16a34a; padding: 8px 20px; border-radius: 50px; font-size: 12px; font-weight: 800; border: 1.5px solid #16a34a;">
+            <div style="margin-top: 18px; background: #f0fdf4; color: #16a34a; padding: 8px 18px; border-radius: 50px; font-size: 12px; font-weight: 800; border: 1.5px solid #16a34a;">
                 ⚡ PROMEDIO: ${promedio} GOLES POR PARTIDO
             </div>
         </div>
 
-        <div class="lista-goleadores" style="flex: 1.3; display: flex; flex-direction: column; gap: 8px;">
+        <!-- LISTA DEL RESTO DEL TOP (2º AL 10º) -->
+        <div class="lista-goleadores" style="flex: 1.3; min-width: 300px; display: flex; flex-direction: column; gap: 10px;">
             ${resto.map((j, i) => {
                 const eq = db.equipos.find(e => e.nombre === j.equipo);
                 return `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; background: white; border-radius: 12px; border: 1px solid #edf2f7; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="color: #94a3b8; font-weight: 800; width: 30px;">${i + 2}º</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; background: white; border-radius: 14px; border: 1px solid #edf2f7; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <span style="color: #94a3b8; font-weight: 900; width: 25px; font-size: 15px;">${i + 2}º</span>
+                        
+                        <!-- Foto de la lista ampliada a 65px x 65px -->
                         <img src="${j.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nombre)}&background=f1f5f9&color=64748b`}" 
-                             style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                             style="width: 65px; height: 65px; border-radius: 12px; object-fit: cover; border: 2px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.08);">
+                        
                         <div>
-                            <div style="font-weight: 800; color: #1e293b; font-size: 14px;">${j.nombre}</div>
-                            <div style="color: #94a3b8; font-size: 10px; text-transform: uppercase; font-weight: bold;">${j.equipo}</div>
+                            <div style="font-weight: 800; color: #1e293b; font-size: 15px;">${j.nombre}</div>
+                            <div style="color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: bold; margin-top: 2px;">${j.equipo}</div>
                         </div>
                     </div>
                     
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <img src="${eq?.logo || ''}" style="width: 30px; height: 30px; object-fit: contain;">
-                        <div style="display: flex; align-items: center; background: #f8fafc; padding: 5px 12px; border-radius: 8px; gap: 8px; border: 1px solid #f1f5f9;">
-                            <span style="font-size: 14px;">⚽</span>
+                        <img src="${eq?.logo || ''}" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.style.display='none'">
+                        <div style="display: flex; align-items: center; background: #f8fafc; padding: 6px 12px; border-radius: 10px; gap: 8px; border: 1px solid #f1f5f9;">
+                            <span style="font-size: 15px;">⚽</span>
                             <span style="font-weight: 900; color: #16a34a; font-size: 18px;">${j.goles}</span>
-                            <span style="border-left: 1px solid #e2e8f0; height: 15px; margin: 0 2px;"></span>
-                            <span style="font-size: 14px;">🏟️</span>
-                            <span style="font-weight: bold; color: #475569;">${j.pj}</span>
+                            <span style="border-left: 1px solid #cbd5e1; height: 16px; margin: 0 2px;"></span>
+                            <span style="font-size: 15px;">🏟️</span>
+                            <span style="font-weight: bold; color: #475569; font-size: 15px;">${j.pj}</span>
                         </div>
                     </div>
                 </div>`;
@@ -4381,8 +4418,6 @@ function renderMiCalendario() {
                 const tieneResultado = p.score && /\d/.test(p.score);
                 
                 // --- COLORES INVERTIDOS ---
-                // Si es VS: Fondo Gris clarito (#f1f5f9) y texto Gris oscuro (#64748b)
-                // Si es Marcador: Fondo Verde suave y texto blanco para resaltar el éxito
                 const colorFondo = tieneResultado ? "#22c55e" : "#f1f5f9"; 
                 const colorTexto = tieneResultado ? "#ffffff" : "#64748b";
                 const textoMarcador = tieneResultado ? p.score : "VS";
@@ -4390,19 +4425,26 @@ function renderMiCalendario() {
                 html += `
                     <div style="display:flex; justify-content:space-between; padding:20px 10px; background:white; align-items:center; border-bottom:1px solid #f1f5f9;">
                         
+                        <!-- LOCAL -->
                         <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:10px;">
-                            <img src="${datosL.logo || ''}" style="width:75px; height:60px; object-fit:contain; ${!datosL.logo ? 'visibility:hidden;' : ''}">
+                            <div style="width: 90px; height: 80px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 3px 6px rgba(0,0,0,0.06); padding: 5px;">
+                                ${datosL.logo ? `<img src="${datosL.logo}" style="width:100%; height:100%; object-fit:contain;">` : '<span style="font-size:32px;">🛡️</span>'}
+                            </div>
                             <span style="font-weight:800; font-size:14px; text-align:center; color:#1e293b;">${p.l.toUpperCase()}</span>
                         </div>
 
+                        <!-- MARCADOR / VS -->
                         <div style="flex:0.5; display:flex; justify-content:center;">
                             <div style="background-color:${colorFondo} !important; color:${colorTexto} !important; padding:8px 15px; border-radius:8px; font-weight:900; font-size:18px; min-width:75px; text-align:center; -webkit-print-color-adjust: exact;">
                                 ${textoMarcador}
                             </div>
                         </div>
 
+                        <!-- VISITANTE -->
                         <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:10px;">
-                            <img src="${datosV.logo || ''}" style="width:75px; height:60px; object-fit:contain; ${!datosV.logo ? 'visibility:hidden;' : ''}">
+                            <div style="width: 90px; height: 80px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 3px 6px rgba(0,0,0,0.06); padding: 5px;">
+                                ${datosV.logo ? `<img src="${datosV.logo}" style="width:100%; height:100%; object-fit:contain;">` : '<span style="font-size:32px;">🛡️</span>'}
+                            </div>
                             <span style="font-weight:800; font-size:14px; text-align:center; color:#1e293b;">${p.v.toUpperCase()}</span>
                         </div>
 
@@ -4421,6 +4463,7 @@ function renderMiCalendario() {
 
     contenedor.innerHTML = html || `<p style='text-align:center; padding:20px;'>No se encontraron partidos para "${filtro}".</p>`;
 }
+
 function resolverDefault(idPartido) {
     let partido;
     db.calendario.forEach(j => {
@@ -5128,16 +5171,17 @@ function renderTabla() {
 
         return `
         <tr style="background: ${background}; border-bottom: 1px solid #edf2f7; border-left: ${borderLeft}; transition: all 0.3s;">
-            <td style="padding: 15px 5px; font-weight: 900; color: ${i === 0 ? '#b45309' : '#64748b'}; text-align: center; width: 40px; font-size: 16px;">
+            <td style="padding: 12px 5px; font-weight: 900; color: ${i === 0 ? '#b45309' : '#64748b'}; text-align: center; width: 40px; font-size: 17px;">
                 ${i + 1}
             </td>
             <td style="text-align: left; padding: 10px;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 10px; border: 1px solid #e2e8f0; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"> 
-                        ${e.logo ? `<img src="${e.logo}" style="width: 40px; height: 40px; object-fit: contain;">` : '<span style="font-size: 20px;">🛡️</span>'} 
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <!-- Contenedor del logo ampliado a 65px x 65px -->
+                    <div style="width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 12px; border: 1px solid #cbd5e1; flex-shrink: 0; box-shadow: 0 3px 6px rgba(0,0,0,0.06); padding: 4px;"> 
+                        ${e.logo ? `<img src="${e.logo}" style="width: 55px; height: 55px; object-fit: contain;">` : '<span style="font-size: 28px;">🛡️</span>'} 
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 2px;">
-                        <b style="font-size: 16px; color: #0f172a; text-transform: uppercase; line-height: 1.1;">
+                    <div style="display: flex; flex-direction: column; gap: 3px;">
+                        <b style="font-size: 17px; color: #0f172a; text-transform: uppercase; line-height: 1.1; font-weight: 800;">
                             ${e.nombre}
                         </b>
                         <div style="display: flex; align-items: center; gap: 4px; min-height: 14px;">
@@ -5146,15 +5190,15 @@ function renderTabla() {
                     </div>
                 </div>
             </td>
-            <td style="text-align: center; font-weight: 800;">${e.pj || 0}</td>
-            <td style="text-align: center; font-weight: 800;">${e.g || 0}</td>
-            <td style="text-align: center; font-weight: 800;">${e.e || 0}</td>
-            <td style="text-align: center; font-weight: 800;">${e.p || 0}</td>
-            <td style="text-align: center; font-weight: 800;">${e.gf || 0}</td>
-            <td style="text-align: center; font-weight: 800;">${e.gc || 0}</td>
-            <td style="text-align: center; font-weight: 800; color: ${dgColor};">${dg > 0 ? '+' : ''}${dg}</td>      
+            <td style="text-align: center; font-weight: 800; font-size: 15px;">${e.pj || 0}</td>
+            <td style="text-align: center; font-weight: 800; font-size: 15px;">${e.g || 0}</td>
+            <td style="text-align: center; font-weight: 800; font-size: 15px;">${e.e || 0}</td>
+            <td style="text-align: center; font-weight: 800; font-size: 15px;">${e.p || 0}</td>
+            <td style="text-align: center; font-weight: 800; font-size: 15px;">${e.gf || 0}</td>
+            <td style="text-align: center; font-weight: 800; font-size: 15px;">${e.gc || 0}</td>
+            <td style="text-align: center; font-weight: 800; font-size: 15px; color: ${dgColor};">${dg > 0 ? '+' : ''}${dg}</td>     
             <td style="text-align: center; padding: 10px;">
-                <div style="background: ${i === 0 ? '#f59e0b' : '#1e293b'}; color: white; padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 900; font-size: 16px;">
+                <div style="background: ${i === 0 ? '#f59e0b' : '#1e293b'}; color: white; padding: 7px 14px; border-radius: 8px; display: inline-block; font-weight: 900; font-size: 17px;">
                     ${e.pts || 0}
                 </div>
             </td>

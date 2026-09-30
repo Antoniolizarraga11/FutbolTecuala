@@ -1,4 +1,4 @@
-const CACHE_NAME = 'liga-v12'; // <--- CAMBIA ESTO A v3, v4 cada vez que actualices
+const CACHE_NAME = 'liga-v13'; // <--- CAMBIA ESTO A v3, v4 cada vez que actualices
 const assets = [
   './', 
   './index.html'
